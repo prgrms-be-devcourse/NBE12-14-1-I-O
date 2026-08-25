@@ -1,0 +1,35 @@
+package io.project.domain.product.controller;
+
+import io.project.domain.product.dto.ProductRequest;
+import io.project.domain.product.service.ProductService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/admin/products")
+public class AdminProductController {
+
+    private final ProductService productService;
+
+    @PatchMapping("/{productId}")
+    public ResponseEntity<String> updateProduct(
+            @PathVariable(name = "productId") Integer id,
+            @Valid @RequestBody ProductRequest.ProductUpdateRequest request
+    ) {
+        productService.updateProduct(id, request);
+
+        return ResponseEntity.ok("상품 정보가 성공적으로 수정되었습니다.");
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<String> deleteProduct(
+            @PathVariable(name = "productId") Integer id
+    ) {
+        productService.deleteProduct(id);
+
+        return ResponseEntity.ok("상품이 성공적으로 삭제되었습니다.");
+    }
+}
