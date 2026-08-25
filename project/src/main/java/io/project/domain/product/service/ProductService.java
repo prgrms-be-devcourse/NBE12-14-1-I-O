@@ -1,11 +1,15 @@
 package io.project.domain.product.service;
 
+import io.project.domain.product.dto.ProductAddRequest;
 import io.project.domain.product.dto.ProductRequest;
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -36,5 +40,19 @@ public class ProductService {
 //    삭제 시간 기록 시 사용
 //    product.delete();
 
+    }
+
+    public List<Product> findAll() {
+        return productRepository.findAll();
+    }
+
+    public void save(ProductAddRequest dto) {
+        Product product = new Product(dto.name(), dto.stock(), dto.price(), dto.filename());
+
+        try {
+            productRepository.save(product);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("중복되는 이름입니다.");
+        }
     }
 }

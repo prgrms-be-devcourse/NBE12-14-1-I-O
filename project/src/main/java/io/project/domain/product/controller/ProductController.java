@@ -1,6 +1,8 @@
-package io.project.domain.product;
+package io.project.domain.product.controller;
 
 import io.project.domain.product.dto.ProductListResponse;
+import io.project.domain.product.entity.Product;
+import io.project.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +33,7 @@ public class ProductController {
                         product.getId(),
                         product.getName(),
                         product.getPrice(),
-                        product.getImageFilename())
+                        product.getFileName())
         ).toList();
 
         return ResponseEntity.ok(response);

@@ -1,6 +1,9 @@
 package io.project.domain.product;
 
 import io.project.domain.product.dto.ProductAddRequest;
+import io.project.domain.product.entity.Product;
+import io.project.domain.product.repository.ProductRepository;
+import io.project.domain.product.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +29,7 @@ class ProductServiceTest {
         when(productRepository.findAll())
                 .thenReturn(
                         IntStream.rangeClosed(1, 10)
-                                .mapToObj(i -> Product.of("name" + i, i, i, "filename" + i))
+                                .mapToObj(i -> new Product("name" + i, i, i, "filename" + i))
                                 .toList()
                 );
 
@@ -44,13 +47,12 @@ class ProductServiceTest {
         ProductRepository productRepository = mock(ProductRepository.class);
         ProductService productService = new ProductService(productRepository);
 
-        Product testProduct = Product.of("name1", 1, 1, "1");
+        Product testProduct = new Product("name1", 1, 1, "1");
         when(productRepository.save(testProduct))
                 .thenReturn(testProduct);
 
-        boolean isSaved = productService.save(new ProductAddRequest("name1", 1, 1, "1"));
-
-        assertTrue(isSaved);
+        productService.save(new ProductAddRequest("name1", 1, 1, "1"));
+        // 예외가 발생하지 않으면 성공
     }
 
     @Test
@@ -59,19 +61,18 @@ class ProductServiceTest {
         ProductRepository productRepository = mock(ProductRepository.class);
         ProductService productService = new ProductService(productRepository);
 
-        Product testProduct = Product.of("name1", 1, 1, "1");
+        Product testProduct = new Product("name1", 1, 1, "1");
         when(productRepository.save(any(Product.class)))
                 .thenReturn(testProduct)
                 .thenThrow(DataIntegrityViolationException.class);
 
         ProductAddRequest requestDto = new ProductAddRequest("name1", 1, 1, "1");
-        boolean isSaved = productService.save(requestDto);
-        assertTrue(isSaved);
-        isSaved = productService.save(requestDto);
-        assertFalse(isSaved);
 
-        // 나중에 ProductService에서 GlobalExceptionHandler로 설정하면 테스트 케이스 수정해야 함
-//        assertThrows(DataIntegrityViolationException.class,
-//                () -> productService.save(requestDto));
+        // 첫번째 실행은 예외가 발생되지 않음
+        productService.save(requestDto);
+
+        // 두번째 실행은 unique 규칙이 설정된 name을 같은 이름으로 등록했으므로 예외 발생
+        assertThrows(DataIntegrityViolationException.class,
+                () -> productService.save(requestDto));
     }
 }
