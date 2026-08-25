@@ -17,9 +17,5 @@ public class ProductRequest {
 
             String fileName
     ) {
-        @AssertTrue(message = "하나 이상의 상품 정보를 올바르게 수정해야 합니다.")
-        public boolean isUpdateRequested() {
-            return name != null || price != null || stock != null || fileName != null;
-        }
     }
 }
