@@ -29,3 +29,53 @@
 |   신시원    | 상품 수정 기능 (관리자), 상품 삭제 기능 (관리자) |
 
 ---
+
+### 네이밍 & 작성 규칙
+
+#### 1. PR
+
+- 제목 규칙: `[타입] 작업내용`
+- 예시:
+  - `[feat] 주문 생성 API 구현`
+  - `[fix] 주문 총액 계산 오류 수정`
+- PR 본문은 PR Template에 맞춰 작성한다.
+- 최소 1명의 리뷰 승인 후 main에 merge한다.
+
+#### 2. Branch
+
+- 모든 작업 브랜치는 최신 `main` 브랜치에서 생성한다.
+- 명명 규칙: `타입/작업명`
+- 영문 소문자를 사용하고 단어는 `-`로 구분한다.
+
+예시:
+
+- `feat/order-create`
+- `feat/order-list`
+- `fix/order-price`
+- `chore/project-setting`
+
+`main` 브랜치에는 직접 push하지 않으며 반드시 PR을 통해 merge한다.
+
+#### 3. Commit Message
+
+형식:
+
+`타입: 작업내용`
+
+타입:
+
+- `feat`: 새로운 기능
+- `fix`: 버그 수정
+- `refactor`: 기능 변경 없는 코드 개선
+- `test`: 테스트 코드
+- `docs`: 문서 수정
+- `chore`: 설정 및 개발 환경 작업
+
+예시:
+
+- `feat: 주문 생성 API 구현`
+- `fix: 주문 총액 계산 오류 수정`
+- `refactor: 주문 생성 로직 분리`
+- `test: 주문 생성 테스트 추가`
+- `docs: README 협업 규칙 추가`
+- `chore: H2 설정 추가`
