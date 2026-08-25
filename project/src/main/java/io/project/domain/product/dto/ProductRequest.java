@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Pattern;
 
 public class ProductRequest {
     public record ProductUpdateRequest(
-            @Pattern(regexp = ".*\\S.*")
             String name,
 
             @Min(value = 0, message = "재고는 0개 이상이어야 합니다.")
@@ -17,5 +16,10 @@ public class ProductRequest {
 
             String fileName
     ) {
+        public ProductUpdateRequest {
+            if (name != null && name.isBlank()) {
+                throw new IllegalArgumentException("이름은 공백일 수 없습니다.");
+            }
+        }
     }
 }
