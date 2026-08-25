@@ -43,6 +43,16 @@ public class Product extends BaseEntity {
         if (fileName != null) this.fileName = fileName;
     }
 
+    public void removeStock(Integer quantity) {
+        int restStock = this.stock - quantity;
+
+        if (restStock < 0) {
+            throw new IllegalArgumentException("주문 수량은 재고를 초과할 수 없습니다. 현재 재고: " + this.stock);
+        }
+
+        this.stock = restStock;
+    }
+
     /* 삭제 시간 기록 시 사용
     public void delete() {
         this.deletedAt = LocalDateTime.now();
