@@ -4,6 +4,7 @@ import io.project.domain.product.dto.ProductAddRequest;
 import io.project.domain.product.dto.ProductRequest;
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.repository.ProductRepository;
+import io.project.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class ProductService {
     public void updateProduct(Integer id, ProductRequest.ProductUpdateRequest request) {
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
 
         product.update(
                 request.name(),
@@ -33,7 +34,7 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Integer id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
 
         product.delete();
 
