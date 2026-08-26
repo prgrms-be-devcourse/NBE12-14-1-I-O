@@ -15,6 +15,16 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<RsData<Void>> businessException(BusinessException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new RsData<>(
+                        "400-0", // 비즈니스 공통 에러 코드
+                        e.getMessage()
+                ));
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<RsData<Void>> notFoundException(NotFoundException e) {
         return ResponseEntity
