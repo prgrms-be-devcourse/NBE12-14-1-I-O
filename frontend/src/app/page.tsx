@@ -51,7 +51,7 @@ const products = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#d8ccc4] px-8 py-6">
+    <main className="bg-transparent px-8 py-6">
       {/* 상품 목록 */}
       <section
         className="
@@ -63,6 +63,14 @@ export default function Home() {
           px-12 py-10
         "
       >
+        <div
+          className="
+          rounded-xl
+          border border-neutral-300
+          bg-[#fffaf0]
+          px-12 py-10
+          "
+        >
         <h2 className="mb-10 text-center text-4xl font-bold">
           전체 목록
         </h2>
@@ -72,10 +80,11 @@ export default function Home() {
             <article
               key={product.id}
               className="
-                rounded-xl
-                border border-neutral-200
+                flex flex-col
+                rounded-lg
+                border border-neutral-400
                 bg-white
-                p-5
+                p-6
               "
             >
               {/* 상품 이미지 자리 */}
@@ -83,7 +92,6 @@ export default function Home() {
                 className="
                   flex aspect-square
                   items-center justify-center
-                  rounded-lg
                   bg-neutral-100
                   text-neutral-400
                 "
@@ -106,56 +114,49 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* 수량 조절 UI */}
-              <div className="mt-5 flex items-center justify-center gap-3">
-                <button
-                  className="
-                    h-9 w-9
-                    rounded-md
-                    border border-neutral-400
-                  "
-                >
-                  -
-                </button>
-
+              {/* 수량 조절 + 장바구니 */}
+              <div className="mt-5 flex items-center gap-4">
+                {/* 수량 조절 */}
                 <div
                   className="
-                    flex h-9 w-12
-                    items-center justify-center
-                    rounded-md
-                    bg-neutral-700
-                    text-white
+                  flex flex-1
+                  items-center justify-between
+                  rounded-full
+                  border border-neutral-700
+                  px-4 py-2
                   "
                 >
-                  1
+                  <button className="text-xl">
+                    -
+                  </button>
+                  <span className="font-bold">
+                    1
+                  </span>
+                  <button className="text-xl">
+                    +
+                  </button>
                 </div>
 
+                {/* 장바구니 버튼 */}
                 <button
                   className="
-                    h-9 w-9
-                    rounded-md
-                    border border-neutral-400
+                  flex h-11 w-11
+                  shrink-0
+                  items-center justify-center
+                  rounded-full
+                  bg-[#FF902A]
                   "
                 >
-                  +
+                  <img
+                    src="/images/cart-icon.png"
+                    alt="장바구니 담기"
+                    className="h-5 w-5"
+                  />
                 </button>
               </div>
-
-              {/* 장바구니 담기 */}
-              <button
-                className="
-                  mt-5 w-full
-                  rounded-lg
-                  bg-neutral-800
-                  py-3
-                  font-semibold
-                  text-white
-                "
-              >
-                장바구니 담기
-              </button>
             </article>
           ))}
+          </div>
         </div>
       </section>
     </main>

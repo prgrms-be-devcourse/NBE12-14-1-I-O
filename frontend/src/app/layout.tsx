@@ -26,7 +26,12 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <div className="min-h-screen bg-[#d8ccc4] px-8 py-6">
+        <div 
+        className="min-h-screen bg-cover bg-center px-8 py-6"
+        style={{
+          backgroundImage: "url('/images/background.png')",
+        }}
+        >
           <Header />
 
           {children}

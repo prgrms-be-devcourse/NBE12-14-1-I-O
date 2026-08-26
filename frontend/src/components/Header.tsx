@@ -1,6 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
+  const pathname = usePathname();
+
+  const isAdmin = pathname.startsWith("/admin");
+
   return (
     <header className="relative flex flex-col items-center gap-6">
       <Link href="/">
@@ -10,9 +17,23 @@ export default function Header() {
       </Link>
 
       <nav className="flex gap-6 rounded-full bg-white px-10 py-3">
-        <Link href="/">상품목록</Link>
-        <Link href="/cart">장바구니</Link>
-        <Link href="/orders">주문찾기</Link>
+        <Link href="/">
+          상품목록
+        </Link>
+
+        <Link href="/cart">
+          장바구니
+        </Link>
+
+        <Link href="/orders">
+          주문찾기
+        </Link>
+
+        {isAdmin && (
+          <Link href="/admin">
+            상품 관리
+          </Link>
+        )}
       </nav>
 
       <Link
