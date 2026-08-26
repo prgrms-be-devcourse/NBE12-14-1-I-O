@@ -29,10 +29,8 @@ public class Product extends BaseEntity {
     @NotNull(message = "재고는 필수 항목입니다.")
     private Integer stock;
 
-    /* 삭제 시간 기록 시 사용 (or BaseEntity)
     @Column
     private LocalDateTime deletedAt;
-     */
 
     private String fileName;
 
@@ -61,9 +59,11 @@ public class Product extends BaseEntity {
         this.stock += quantity;
     }
 
-    /* 삭제 시간 기록 시 사용
     public void delete() {
+        if (this.deletedAt != null) {
+            throw new IllegalStateException("이미 판매 중지된 상품입니다.");
+        }
         this.deletedAt = LocalDateTime.now();
     }
-     */
+
 }
