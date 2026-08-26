@@ -1,6 +1,5 @@
 package io.project.domain.product.controller;
 
-import io.project.domain.product.dto.ProductListResponse;
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static io.project.domain.product.dto.ProductResponse.ProductListResponse;
 
 @RestController
 @RequiredArgsConstructor
