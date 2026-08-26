@@ -153,7 +153,7 @@ git rebase --continue
 
 이후 push 합니다.
 ```
-git push origin feat/order-creat
+git push origin feat/order-create
 or
 git push origin feat/order-create -f
 ```
