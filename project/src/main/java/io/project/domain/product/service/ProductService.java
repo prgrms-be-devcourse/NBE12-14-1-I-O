@@ -3,8 +3,11 @@ package io.project.domain.product.service;
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.repository.ProductRepository;
 import io.project.global.exception.NotFoundException;
+<<<<<<< HEAD
 import io.project.global.exception.DuplicatedException;
 import io.project.global.exception.InvalidException;
+=======
+>>>>>>> 88f518c (feat: 주문 생성 기능 추가)
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,16 @@ public class ProductService {
                 request.stock(),
                 request.fileName()
         );
+    }
+
+    @Transactional
+    public Product findAndRemoveStock(Integer id, Integer count) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new NotFoundException("존재하지 않는 상품입니다.")
+                );
+        product.removeStock(count);
+        return product;
     }
 
     @Transactional

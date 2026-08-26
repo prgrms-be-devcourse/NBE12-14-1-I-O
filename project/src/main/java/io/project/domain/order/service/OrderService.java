@@ -8,7 +8,6 @@ import io.project.domain.order.entity.Order;
 import io.project.domain.order.entity.OrderItem;
 import io.project.domain.order.repository.OrderRepository;
 import io.project.domain.product.entity.Product;
-import io.project.domain.product.repository.ProductRepository;
 import io.project.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,28 +26,6 @@ public class OrderService {
     private final DeliveryRepository deliveryRepository;
     private final ProductService productService;
 
-    /*
-    사용자가 주는 건:
-    email
-    address
-    postalCode
-    items
-
-    서버가 만드는 건:
-    orderedAt
-    processingDate
-    unitPrice
-    status
-
-    OrderService.createOrder(request)
-    - 현재 주문 시각 생성
-    - processingDate 계산
-    - Delivery 결정
-    - Order 생성
-    - OrderItem 생성
-    - 재고 차감
-
-     */
     @Transactional
     public Order createOrder(OrderCreateRequest request) {
         // 이 주문이 들어온 서버 시간
@@ -86,7 +63,7 @@ public class OrderService {
 
         for (OrderItemRequest itemRequest : request.items()) {
 
-            Product product = productService.orderProduct(itemRequest.productId(), itemRequest.quantity());
+            Product product = productService.findAndRemoveStock(itemRequest.productId(), itemRequest.quantity());
 
             OrderItem orderItem = new OrderItem(
                     order,
