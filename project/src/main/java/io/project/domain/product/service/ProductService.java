@@ -2,6 +2,7 @@ package io.project.domain.product.service;
 
 import io.project.domain.product.dto.ProductRequest;
 import io.project.domain.product.entity.Product;
+import io.project.domain.product.exception.ProductImageInvalidException;
 import io.project.domain.product.exception.ProductNameDuplicatedException;
 import io.project.domain.product.repository.ProductRepository;
 import io.project.global.exception.NotFoundException;
@@ -79,7 +80,7 @@ public class ProductService {
                     IMAGE_PATH + productName + "-Image." + image.getOriginalFilename().split("\\.")[1]),
                     image.getBytes());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ProductImageInvalidException(e);
         }
     }
 }
