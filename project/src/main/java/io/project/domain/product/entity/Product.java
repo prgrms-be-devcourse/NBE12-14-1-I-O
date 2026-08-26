@@ -53,6 +53,14 @@ public class Product extends BaseEntity {
         this.stock = restStock;
     }
 
+    public void addStock(Integer quantity) {
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException("주문 취소 복구 수량은 0 이하일 수 없습니다.");
+        }
+
+        this.stock += quantity;
+    }
+
     /* 삭제 시간 기록 시 사용
     public void delete() {
         this.deletedAt = LocalDateTime.now();
