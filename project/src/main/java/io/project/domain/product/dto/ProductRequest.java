@@ -2,6 +2,7 @@ package io.project.domain.product.dto;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public class ProductRequest {
@@ -21,5 +22,14 @@ public class ProductRequest {
                 throw new IllegalArgumentException("이름은 공백일 수 없습니다.");
             }
         }
+    }
+
+    public record ProductAddRequest(
+            @NotNull(message = "상품명을 입력해주세요.")
+            String name,
+            @NotNull(message = "상품의 재고를 입력해주세요.")
+            Integer stock,
+            @NotNull(message = "상품의 가격을 입력해주세요.")
+            Integer price) {
     }
 }

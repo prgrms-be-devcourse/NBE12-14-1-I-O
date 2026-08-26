@@ -1,9 +1,10 @@
 package io.project.domain.product;
 
-import io.project.domain.product.dto.ProductAddRequest;
+
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.repository.ProductRepository;
 import io.project.domain.product.service.ProductService;
+import io.project.global.exception.DuplicatedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,8 +13,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import io.project.domain.product.dto.ProductRequest.*;
 
 @SpringBootTest
 class ProductServiceTest {
@@ -51,7 +54,7 @@ class ProductServiceTest {
         when(productRepository.save(testProduct))
                 .thenReturn(testProduct);
 
-        productService.save(new ProductAddRequest("name1", 1, 1, "1"));
+        productService.save(new ProductAddRequest("name1", 1, 1), null);
         // 예외가 발생하지 않으면 성공
     }
 
@@ -66,13 +69,13 @@ class ProductServiceTest {
                 .thenReturn(testProduct)
                 .thenThrow(DataIntegrityViolationException.class);
 
-        ProductAddRequest requestDto = new ProductAddRequest("name1", 1, 1, "1");
+        ProductAddRequest requestDto = new ProductAddRequest("name1", 1, 1);
 
         // 첫번째 실행은 예외가 발생되지 않음
-        productService.save(requestDto);
+        productService.save(requestDto, null);
 
         // 두번째 실행은 unique 규칙이 설정된 name을 같은 이름으로 등록했으므로 예외 발생
-        assertThrows(DataIntegrityViolationException.class,
-                () -> productService.save(requestDto));
+        assertThrows(DuplicatedException.class,
+                () -> productService.save(requestDto, null));
     }
 }

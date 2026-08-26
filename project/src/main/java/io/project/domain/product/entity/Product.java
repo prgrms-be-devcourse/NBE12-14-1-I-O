@@ -68,4 +68,11 @@ public class Product extends BaseEntity {
         this.deletedAt = LocalDateTime.now();
     }
 
+    public Product(String name, Integer price, Integer stock, String fileName) {
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
+        this.deletedAt = null;
+        this.fileName = fileName;
+    }
 }

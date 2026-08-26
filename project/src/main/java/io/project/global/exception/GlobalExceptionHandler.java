@@ -35,6 +35,26 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(InvalidException.class)
+    public ResponseEntity<RsData<Void>> invalidException(InvalidException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new RsData<>(
+                        "400",
+                        e.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(DuplicatedException.class)
+    public ResponseEntity<RsData<Void>> duplicatedException(DuplicatedException e) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new RsData<>(
+                        "409",
+                        e.getMessage()
+                ));
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<RsData<Void>> noSuchElementException() {
         return ResponseEntity
