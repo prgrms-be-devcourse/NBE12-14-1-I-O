@@ -1,7 +1,6 @@
 package io.project.domain.order.entity;
 
 import io.project.domain.delivery.entity.Delivery;
-import io.project.domain.order.dto.OrderItemRequest;
 import io.project.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -42,5 +41,9 @@ public class Order extends BaseEntity {
 
     public void addOrderItem(OrderItem orderItem) {
         this.orderItems.add(orderItem);
+    }
+
+    public void cancel() {
+        this.status = OrderStatus.CANCELED;
     }
 }

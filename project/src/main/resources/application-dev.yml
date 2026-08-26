@@ -1,6 +1,6 @@
 spring:
   datasource:
     url: jdbc:h2:./db_dev;MODE=MySQL
-    username: sa
-    password:
+    username: kmj12004
+    password: dream5450@
     driver-class-name: org.h2.Driver
