@@ -35,7 +35,11 @@ public class ProductController {
                         product.getName(),
                         product.getPrice(),
                         product.getStock(),
+<<<<<<< HEAD
                         "images/" + product.getFileName())
+=======
+                        product.getFileName())
+>>>>>>> a81cdbd (feat: 관리자 페이지 상품 목록 출력(백엔드 서버 요청), fix: 백엔드 서버 ProductListResponse DTO(add: stock) 수정)
         ).toList();
 
         return ResponseEntity.ok(response);
