@@ -3,33 +3,6 @@ import ProductAddModal from "@/components/admin/ProductAddModal";
 import ProductCard from "@/components/ProductCard";
 import { useEffect, useState } from "react";
 
-const products = [
-  {
-    id: 1,
-    name: "에티오피아 예가체프",
-    price: 4800,
-    stock: 13,
-  },
-  {
-    id: 2,
-    name: "콜롬비아 수프리모",
-    price: 4500,
-    stock: 14,
-  },
-  {
-    id: 3,
-    name: "과테말라 안티구아",
-    price: 5000,
-    stock: 15,
-  },
-  {
-    id: 4,
-    name: "브라질 산토스",
-    price: 4300,
-    stock: 16,
-  },
-];
-
 type Product = {
   id: number,
   name: string,
@@ -49,7 +22,9 @@ export default function AdminPage() {
       .then((data) => {
         setProducts(data);
       });
-  }, []);
+  }, [productAdd]);
+
+  console.log(products);
 
   const handleProductAddClick = () => {
     setProductAdd(!productAdd);
