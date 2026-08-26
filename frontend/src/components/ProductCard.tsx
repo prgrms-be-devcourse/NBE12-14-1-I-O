@@ -1,0 +1,33 @@
+import { Product } from '@/types/product';
+
+interface ProductCardProps {
+    product: Product
+}
+
+export default function ProductCard({ product }: ProductCardProps) {
+    return (
+        <article
+            className="rounded-lg border bg-white p-4"
+        >
+            <div className="aspect-square rounded bg-neutral-100" />
+
+            <h3 className="mt-4 font-bold">
+                {product.name}
+            </h3>
+
+            <p>
+                {product.price.toLocaleString()}원
+            </p>
+
+            <div className="mt-4 flex gap-2">
+                <button className="flex-1 rounded bg-neutral-600 py-2 text-white">
+                    수정
+                </button>
+
+                <button className="flex-1 rounded bg-red-500 py-2 text-white">
+                    삭제
+                </button>
+            </div>
+        </article>
+    );
+}
