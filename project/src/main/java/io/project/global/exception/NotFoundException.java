@@ -1,6 +1,4 @@
-package java.io.project.global.exception;
-
-import io.project.global.exception.BusinessException;
+package io.project.global.exception;
 
 public class NotFoundException extends BusinessException {
 

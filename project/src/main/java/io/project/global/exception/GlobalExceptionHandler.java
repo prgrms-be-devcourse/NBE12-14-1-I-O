@@ -15,6 +15,16 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<RsData<Void>> notFoundException(NotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new RsData<>(
+                        "404",
+                        e.getMessage()
+                ));
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<RsData<Void>> noSuchElementException() {
         return ResponseEntity
