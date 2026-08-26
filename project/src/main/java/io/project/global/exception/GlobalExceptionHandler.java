@@ -1,4 +1,4 @@
-package io.project.global.exceptionhandler;
+package io.project.global.exception;
 
 import io.project.global.dto.RsData;
 import org.springframework.http.HttpStatus;
@@ -7,15 +7,23 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Comparator;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<RsData<Void>> notFoundException(NotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new RsData<>(
+                        "404",
+                        e.getMessage()
+                ));
+    }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<RsData<Void>> noSuchElementException() {
