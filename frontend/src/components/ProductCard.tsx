@@ -7,7 +7,10 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
     return (
         <article
-            className="rounded-lg border bg-white p-4"
+            className="rounded-lg
+                  border border-neutral-300
+                  bg-white
+                  p-4"
         >
             <div className="aspect-square rounded bg-neutral-100" />
 
@@ -17,6 +20,10 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             <p>
                 {product.price.toLocaleString()}원
+            </p>
+
+            <p>
+                {product.stock}개
             </p>
 
             <div className="mt-4 flex gap-2">
