@@ -1,11 +1,14 @@
 package io.project.domain.product.controller;
 
-import io.project.domain.product.dto.ProductRequest;
 import io.project.domain.product.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import static io.project.domain.product.dto.ProductRequest.ProductAddRequest;
+import static io.project.domain.product.dto.ProductRequest.ProductUpdateRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,7 +20,7 @@ public class AdminProductController {
     @PatchMapping("/{productId}")
     public ResponseEntity<String> updateProduct(
             @PathVariable(name = "productId") Integer id,
-            @Valid @RequestBody ProductRequest.ProductUpdateRequest request
+            @Valid @RequestBody ProductUpdateRequest request
     ) {
         productService.updateProduct(id, request);
 
@@ -31,6 +34,16 @@ public class AdminProductController {
         productService.deleteProduct(id);
 
         return ResponseEntity.ok("상품이 성공적으로 삭제되었습니다.");
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createProduct(
+            ProductAddRequest request,
+            @RequestPart MultipartFile image
+    ) {
+        productService.save(request, image);
+
+        return ResponseEntity.ok("상품이 성공적으로 등록되었습니다.");
     }
 
 }

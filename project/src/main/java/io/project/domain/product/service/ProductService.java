@@ -1,14 +1,15 @@
 package io.project.domain.product.service;
 
-import io.project.domain.product.dto.ProductAddRequest;
 import io.project.domain.product.dto.ProductRequest;
 import io.project.domain.product.entity.Product;
+import io.project.domain.product.exception.ProductNameDuplicatedException;
 import io.project.domain.product.repository.ProductRepository;
 import io.project.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -44,13 +45,12 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public void save(ProductAddRequest dto) {
-        Product product = new Product(dto.name(), dto.stock(), dto.price(), dto.filename());
-
+    public void save(ProductRequest.ProductAddRequest dto, MultipartFile image) {
+        Product product = new Product(dto.name(), dto.price(), dto.stock(), dto.filename());
         try {
             productRepository.save(product);
         } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException("중복되는 이름입니다.");
+            throw new ProductNameDuplicatedException();
         }
     }
 }
