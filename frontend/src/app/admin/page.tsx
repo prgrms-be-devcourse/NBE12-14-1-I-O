@@ -1,7 +1,7 @@
 'use client';
 import ProductAddModal from "@/components/admin/ProductAddModal";
 import ProductCard from "@/components/ProductCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const products = [
   {
@@ -30,9 +30,26 @@ const products = [
   },
 ];
 
+type Product = {
+  id: number,
+  name: string,
+  price: number,
+  stock: number
+};
+
 export default function AdminPage() {
 
   const [productAdd, setProductAdd] = useState(false);
+
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8080/product')
+      .then((res) => res.json())
+      .then((data) => {
+        setProducts(data);
+      });
+  }, []);
 
   const handleProductAddClick = () => {
     setProductAdd(!productAdd);

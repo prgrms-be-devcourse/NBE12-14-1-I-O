@@ -34,6 +34,7 @@ public class ProductController {
                         product.getId(),
                         product.getName(),
                         product.getPrice(),
+                        product.getStock(),
                         product.getFileName())
         ).toList();
 
