@@ -33,7 +33,7 @@ public class ProductService {
     @Transactional
     public void orderProduct(Integer id, Integer count) {
         Product product = productRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("주문 수량이 재고보다 많습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("주문 수량이 재고보다 많습니다."));
 
         product.removeStock(count);
     }
@@ -43,10 +43,7 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
 
-        productRepository.delete(product);
-
-//    삭제 시간 기록 시 사용
-//    product.delete();
+        product.delete();
 
     }
 

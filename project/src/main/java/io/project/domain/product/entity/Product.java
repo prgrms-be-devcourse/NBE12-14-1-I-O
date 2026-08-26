@@ -29,10 +29,8 @@ public class Product extends BaseEntity {
     @NotNull(message = "재고는 필수 항목입니다.")
     private Integer stock;
 
-    /* 삭제 시간 기록 시 사용 (or BaseEntity)
     @Column
     private LocalDateTime deletedAt;
-     */
 
     private String fileName;
 
@@ -53,9 +51,19 @@ public class Product extends BaseEntity {
         this.stock = restStock;
     }
 
-    /* 삭제 시간 기록 시 사용
+    public void addStock(Integer quantity) {
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException("주문 취소 복구 수량은 0 이하일 수 없습니다.");
+        }
+
+        this.stock += quantity;
+    }
+
     public void delete() {
+        if (this.deletedAt != null) {
+            throw new IllegalStateException("이미 판매 중지된 상품입니다.");
+        }
         this.deletedAt = LocalDateTime.now();
     }
-     */
+
 }
