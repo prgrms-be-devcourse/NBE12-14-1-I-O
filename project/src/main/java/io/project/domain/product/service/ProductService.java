@@ -1,18 +1,16 @@
 package io.project.domain.product.service;
 
-import io.project.domain.product.dto.ProductRequest;
 import io.project.domain.product.entity.Product;
-import io.project.domain.product.exception.ProductImageInvalidException;
-import io.project.domain.product.exception.ProductNameDuplicatedException;
 import io.project.domain.product.repository.ProductRepository;
 import io.project.global.exception.NotFoundException;
+import io.project.global.exception.DuplicatedException;
+import io.project.global.exception.InvalidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,7 +63,7 @@ public class ProductService {
         try {
             productRepository.save(product);
         } catch (DataIntegrityViolationException e) {
-            throw new ProductNameDuplicatedException();
+            throw new DuplicatedException("이미 존재하는 상품명입니다.");
         }
     }
 
@@ -80,7 +78,7 @@ public class ProductService {
                     IMAGE_PATH + productName + "-Image." + image.getOriginalFilename().split("\\.")[1]),
                     image.getBytes());
         } catch (IOException e) {
-            throw new ProductImageInvalidException(e);
+            throw new InvalidException("잘못된 형식의 이미지입니다.", e);
         }
     }
 }

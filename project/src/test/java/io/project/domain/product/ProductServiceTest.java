@@ -1,11 +1,10 @@
 package io.project.domain.product;
 
 
-import io.project.domain.product.dto.ProductRequest;
 import io.project.domain.product.entity.Product;
-import io.project.domain.product.exception.ProductNameDuplicatedException;
 import io.project.domain.product.repository.ProductRepository;
 import io.project.domain.product.service.ProductService;
+import io.project.global.exception.DuplicatedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -76,7 +75,7 @@ class ProductServiceTest {
         productService.save(requestDto, null);
 
         // 두번째 실행은 unique 규칙이 설정된 name을 같은 이름으로 등록했으므로 예외 발생
-        assertThrows(ProductNameDuplicatedException.class,
+        assertThrows(DuplicatedException.class,
                 () -> productService.save(requestDto, null));
     }
 }
