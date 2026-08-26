@@ -1,6 +1,7 @@
 package io.project.domain.order.entity;
 
 import io.project.domain.delivery.entity.Delivery;
+import io.project.domain.order.dto.OrderItemRequest;
 import io.project.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,4 +33,14 @@ public class Order extends BaseEntity {
             cascade = CascadeType.PERSIST
     )
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    public Order(LocalDateTime orderedAt, Delivery delivery) {
+        this.orderedAt = orderedAt;
+        this.delivery = delivery;
+        this.status = OrderStatus.ORDERED;
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        this.orderItems.add(orderItem);
+    }
 }

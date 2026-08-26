@@ -50,4 +50,16 @@ public class Delivery extends BaseEntity {
 
     @OneToMany(mappedBy = "delivery")
     private List<Order> orders = new ArrayList<>();
+
+    public Delivery(String email, String address, String postalCode, LocalDate processingDate) {
+        this.email = email;
+        this.address = address;
+        this.postalCode = postalCode;
+        this.status = DeliveryStatus.ORDERED;
+        this.processingDate = processingDate;
+    }
+
+    public void addOrder(Order order) {
+        this.orders.add(order);
+    }
 }

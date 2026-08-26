@@ -2,11 +2,11 @@ package io.project.domain.product.dto;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public class ProductRequest {
     public record ProductUpdateRequest(
-            @Pattern(regexp = ".*\\S.*")
             String name,
 
             @Min(value = 0, message = "재고는 0개 이상이어야 합니다.")
@@ -17,5 +17,19 @@ public class ProductRequest {
 
             String fileName
     ) {
+        public ProductUpdateRequest {
+            if (name != null && name.isBlank()) {
+                throw new IllegalArgumentException("이름은 공백일 수 없습니다.");
+            }
+        }
+    }
+
+    public record ProductAddRequest(
+            @NotNull(message = "상품명을 입력해주세요.")
+            String name,
+            @NotNull(message = "상품의 재고를 입력해주세요.")
+            Integer stock,
+            @NotNull(message = "상품의 가격을 입력해주세요.")
+            Integer price) {
     }
 }

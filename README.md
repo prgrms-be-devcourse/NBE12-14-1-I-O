@@ -133,25 +133,68 @@ chore/project-setting
 
 현재 작업 중인 브랜치에 최신 `main`의 변경 사항을 반영해야 하는 경우 다음과 같이 진행합니다.
 
-먼저 원격 저장소의 최신 정보를 가져옵니다.
+커밋 후 원격 저장소의 최신 정보를 가져옵니다.
 
 ```
-git fetch origin
+git add .
+git commit -m "feat: 주문 생성 기능 추가"
+git pull origin main --rebase
 ```
 
-`fetch`는 원격 저장소의 최신 정보를 가져오기만 하며, 현재 작업 중인 코드에는 바로 영향을 주지 않습니다.
+코드가 합쳐졌을 때 같은 줄을 동시에 수정했을 경우 conflict가 발생할 수도 있습니다.
 
-그다음 최신 `main`을 현재 작업 브랜치에 합칩니다.
+남길 코드를 정했다면 아래 코드를 입력합니다.
 
+충돌이 발생하지 않았을 경우 해당 부분은 건너뛰고 바로 push를 진행합니다.
 ```
-git merge origin/main
-```
-
-예를 들어 현재 브랜치가 `feat/order-create`라면,
-
-```
-git fetch origin
-git merge origin/main
+git add .
+git rebase --continue
 ```
 
-을 통해 최신 `main`의 변경 사항을 `feat/order-create`에 반영할 수 있습니다.
+이후 push 합니다.
+```
+git push origin feat/order-create
+or
+git push origin feat/order-create -f
+```
+
+깃허브에서 PR 승인을 받고 브랜치를 지운 후 다음 코드를 입력합니다.
+```
+git checkout main
+git pull origin main
+git branch -D feat/order-create
+git fetch --prune
+```
+
+1번으로 돌아가 새로운 작업을 시작합니다.
+
+--- 
+
+### 예외 처리
+
+- 예외 클래스는 `io/project/global/exception/비즈니스예외Exeption.java`를 상속받습니다.
+  - `BusinessException`: 비즈니스 예외 최상위 클래스
+  - `NotFoundException`
+  - 또 다른 예외가 생기는 경우 추가 바랍니다.
+- 각 도메인 패키지 하위 `/exception/비즈니스예외Exception.java` 로 생성하여 사용합니다.
+- `try-catch` 사용 또는 Optional로 기존 예외 대신 위에서 생성한 예외를 던져주시면 됩니다.
+- 사용
+  ```JAVA
+  public class ProductNotFoundException extends NotFoundException {
+    public ProductNotFoundException() {
+        super("제품을 찾을 수 없습니다.");
+    }
+  
+    public ProductNotFoundException(String message) {
+        super(message);
+    }
+
+    public ProductNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+  }
+  ```
+  ```JAVA
+  Product product = productRepository.findByName(name)
+                                        .orElseThrow(() -> new ProductNotFoundException());
+  ``` 
