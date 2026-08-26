@@ -3,11 +3,8 @@ package io.project.domain.product.service;
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.repository.ProductRepository;
 import io.project.global.exception.NotFoundException;
-<<<<<<< HEAD
 import io.project.global.exception.DuplicatedException;
 import io.project.global.exception.InvalidException;
-=======
->>>>>>> 88f518c (feat: 주문 생성 기능 추가)
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
