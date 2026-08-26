@@ -38,8 +38,8 @@ public class AdminProductController {
 
     @PostMapping
     public ResponseEntity<?> createProduct(
-            ProductAddRequest request,
-            @RequestPart MultipartFile image
+            @RequestPart(value = "request") @Valid ProductAddRequest request,
+            @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         productService.save(request, image);
 

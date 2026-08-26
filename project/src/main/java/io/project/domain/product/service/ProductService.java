@@ -11,15 +11,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+
+import static io.project.domain.product.dto.ProductRequest.*;
 
 @RequiredArgsConstructor
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
 
+    private final String IMAGE_PATH = "src/main/java/io/project/domain/product/images/";
+
     @Transactional
-    public void updateProduct(Integer id, ProductRequest.ProductUpdateRequest request) {
+    public void updateProduct(Integer id, ProductUpdateRequest request) {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
@@ -45,12 +53,33 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public void save(ProductRequest.ProductAddRequest dto, MultipartFile image) {
-        Product product = new Product(dto.name(), dto.price(), dto.stock(), dto.filename());
+    public void save(ProductAddRequest dto, MultipartFile image) {
+        String fileName = "baseImage.png";
+        if (image != null) {
+            imageSave(image, dto.name());
+            fileName = dto.name() + "-Image." + image.getOriginalFilename().split("\\.")[1];
+        }
+
+        Product product = new Product(dto.name(), dto.price(), dto.stock(), fileName);
         try {
             productRepository.save(product);
         } catch (DataIntegrityViolationException e) {
             throw new ProductNameDuplicatedException();
+        }
+    }
+
+    private void imageSave(MultipartFile image, String productName) {
+        try {
+            // 디렉토리 존재하지 않으면 생성
+            if (Files.notExists(Path.of(IMAGE_PATH))) {
+                Files.createDirectory(Path.of(IMAGE_PATH));
+            }
+
+            Files.write(Path.of(
+                    IMAGE_PATH + productName + "-Image." + image.getOriginalFilename().split("\\.")[1]),
+                    image.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

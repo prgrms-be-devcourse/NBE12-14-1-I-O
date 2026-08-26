@@ -28,9 +28,8 @@ public class ProductRequest {
             @NotNull(message = "상품명을 입력해주세요.")
             String name,
             @NotNull(message = "상품의 재고를 입력해주세요.")
-            int stock,
+            Integer stock,
             @NotNull(message = "상품의 가격을 입력해주세요.")
-            int price,
-            String filename) {
+            Integer price) {
     }
 }
