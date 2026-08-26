@@ -167,3 +167,34 @@ git fetch --prune
 ```
 
 1번으로 돌아가 새로운 작업을 시작합니다.
+
+--- 
+
+### 예외 처리
+
+- 예외 클래스는 `io/project/global/exception/비즈니스예외Exeption.java`를 상속받습니다.
+  - `BusinessException`: 비즈니스 예외 최상위 클래스
+  - `NotFoundException`
+  - 또 다른 예외가 생기는 경우 추가 바랍니다.
+- 각 도메인 패키지 하위 `/exception/비즈니스예외Exception.java` 로 생성하여 사용합니다.
+- `try-catch` 사용 또는 Optional로 기존 예외 대신 위에서 생성한 예외를 던져주시면 됩니다.
+- 사용
+  ```JAVA
+  public class ProductNotFoundException extends NotFoundException {
+    public ProductNotFoundException() {
+        super("제품을 찾을 수 없습니다.");
+    }
+  
+    public ProductNotFoundException(String message) {
+        super(message);
+    }
+
+    public ProductNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+  }
+  ```
+  ```JAVA
+  Product product = productRepository.findByName(name)
+                                        .orElseThrow(() -> new ProductNotFoundException());
+  ``` 
