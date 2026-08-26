@@ -40,6 +40,16 @@ public class ProductService {
     }
 
     @Transactional
+    public Product findAndRemoveStock(Integer id, Integer count) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new NotFoundException("존재하지 않는 상품입니다.")
+                );
+        product.removeStock(count);
+        return product;
+    }
+
+    @Transactional
     public void deleteProduct(Integer id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));

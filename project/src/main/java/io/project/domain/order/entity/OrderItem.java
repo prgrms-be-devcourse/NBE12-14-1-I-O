@@ -24,4 +24,11 @@ public class OrderItem extends BaseEntity {
 
     @Column(nullable = false)
     int unitPrice;
+
+    public OrderItem(Order order, Product product, int quantity, int unitPrice) {
+        this.order = order;
+        this.product = product;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+    }
 }
