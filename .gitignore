@@ -44,5 +44,3 @@ db_dev.trace.db
 ### MAC ###
 .DS_Store
 
-### Image ###
-project/src/main/java/io/project/domain/product/images/**

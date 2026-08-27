@@ -31,3 +31,7 @@ logging:
 server:
   servlet:
     context-path: /api/v1
+
+app:
+  image:
+    path: ${IMAGE_DIR:./images}

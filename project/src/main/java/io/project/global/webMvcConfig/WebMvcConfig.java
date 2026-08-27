@@ -21,7 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 프로젝트 폴더 경로 찾기
         String projectPath = System.getProperty("user.dir");
-        String uploadFolder = "file:///" + projectPath + "/src/main/java/io/project/domain/product/images/";
+        String uploadFolder = "file:///" + projectPath + "/images/";
 
         registry.addResourceHandler("/images/**")
                 .addResourceLocations(uploadFolder);
