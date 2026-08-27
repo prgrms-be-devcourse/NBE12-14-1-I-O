@@ -59,7 +59,7 @@ public class ProductService {
     }
 
     public List<Product> findAll() {
-        return productRepository.findAll();
+        return productRepository.findAllByDeletedAtIsNull();
     }
 
     public void save(ProductAddRequest dto, MultipartFile image) {
