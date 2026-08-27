@@ -41,7 +41,7 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
         };
     
         try {
-            const response = await fetch(`http://localhost:8080/admin/products/${product.id}`, {
+            const response = await fetch(`http://localhost:8080/api/v1/admin/products/${product.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
