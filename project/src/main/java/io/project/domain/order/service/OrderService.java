@@ -4,6 +4,7 @@ import io.project.domain.delivery.entity.Delivery;
 import io.project.domain.delivery.repository.DeliveryRepository;
 import io.project.domain.order.dto.OrderCreateRequest;
 import io.project.domain.order.dto.OrderItemRequest;
+import io.project.domain.order.dto.OrderListResponse;
 import io.project.domain.order.entity.Order;
 import io.project.domain.order.entity.OrderItem;
 import io.project.domain.order.repository.OrderRepository;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +27,17 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final DeliveryRepository deliveryRepository;
     private final ProductService productService;
+
+    @Transactional(readOnly = true)
+    public List<OrderListResponse> findAllByEmail(String email) {
+        List<Order> orderList = this.orderRepository.findAllByDeliveryEmail(email);
+        List<OrderListResponse> orderListResponseList = orderList.stream()
+                .map(OrderListResponse::new)
+                .toList();
+
+        return orderListResponseList;
+    }
+ 
 
     @Transactional
     public Order createOrder(OrderCreateRequest request) {
