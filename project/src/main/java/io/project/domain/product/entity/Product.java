@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Product extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NotBlank(message = "상품 이름은 필수이며 공백일 수 없습니다.")
     private String name;
 
