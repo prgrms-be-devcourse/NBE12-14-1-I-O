@@ -13,7 +13,7 @@ export default function Home() {
   useEffect(() => {
     fetch("http://localhost:8080/api/v1/products")
       .then((res) => res.json())
-      .then((data) => setProducts(data));
+      .then((data) => setProducts(data.data));
   }, []);
 
   return (
