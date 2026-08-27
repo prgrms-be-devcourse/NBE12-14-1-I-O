@@ -35,15 +35,7 @@ public class ProductController {
                         product.getName(),
                         product.getPrice(),
                         product.getStock(),
-<<<<<<< HEAD
-<<<<<<< HEAD
                         "images/" + product.getFileName())
-=======
-                        product.getFileName())
->>>>>>> a81cdbd (feat: 관리자 페이지 상품 목록 출력(백엔드 서버 요청), fix: 백엔드 서버 ProductListResponse DTO(add: stock) 수정)
-=======
-                        "images/" + product.getFileName())
->>>>>>> 8c25c46 (feat: 상품 이미지 출력, 백엔드 서버-서버 이미지 자원 접근 허용(WebMvcConfig.java - 이미지 요청 URL: http://localhost:8080/images/파일명))
         ).toList();
 
         return ResponseEntity.ok(response);
