@@ -1,5 +1,6 @@
 package io.project.domain.order.controller;
 
+import io.project.domain.order.dto.OrderDetailResponse;
 import io.project.domain.order.dto.OrderListResponse;
 
 import java.util.List;
@@ -11,12 +12,7 @@ import io.project.global.dto.RsData;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
@@ -33,13 +29,30 @@ public class OrderController {
         List<OrderListResponse> orderListResponseList = this.orderService.findAllByEmail(email);
 
         if(orderListResponseList.isEmpty()){
-            RsData<List<OrderListResponse>> rsData = new RsData<>("200","주문내역이 없습니다.",null);
+            RsData<List<OrderListResponse>> rsData = new RsData<>("200",
+                    "주문내역이 없습니다.",orderListResponseList);
             return ResponseEntity.ok(rsData);
         }
 
-        RsData<List<OrderListResponse>> rsData = new RsData<>("200","",orderListResponseList);
+        RsData<List<OrderListResponse>> rsData = new RsData<>("200",
+                "주문목록을 성공적으로 불러왔습니다.",
+                orderListResponseList);
         return ResponseEntity.ok(rsData);
     }
+
+    @GetMapping("{orderId}")
+    public ResponseEntity<RsData<OrderDetailResponse>> orderDetail(
+            @PathVariable(value = "orderId") int orderId){
+        Order order = this.orderService.findById(orderId);
+        OrderDetailResponse orderDetailResponse = new OrderDetailResponse(order);
+        RsData<OrderDetailResponse> rsData = new RsData<>(
+                "200",
+                "상세조회를 성공적으로 불러왔습니다.",
+                orderDetailResponse);
+
+        return ResponseEntity.ok(rsData);
+    }
+
     @PostMapping()
     public ResponseEntity<RsData<OrderCreateResponse>> createOrder(
             @Valid @RequestBody OrderCreateRequest request) {

@@ -1,6 +1,7 @@
 package io.project.domain.order.service;
 
 import io.project.domain.delivery.entity.Delivery;
+import io.project.domain.delivery.entity.DeliveryStatus;
 import io.project.domain.delivery.repository.DeliveryRepository;
 import io.project.domain.order.dto.OrderCreateRequest;
 import io.project.domain.order.dto.OrderItemRequest;
@@ -10,6 +11,7 @@ import io.project.domain.order.entity.OrderItem;
 import io.project.domain.order.repository.OrderRepository;
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.service.ProductService;
+import io.project.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +78,7 @@ public class OrderService {
 
         for (OrderItemRequest itemRequest : request.items()) {
 
-            Product product = productService.findAndRemoveStock(itemRequest.productId(), itemRequest.quantity());
+            Product product = productService.decreaseStockForOrder(itemRequest.productId(), itemRequest.quantity());
 
             OrderItem orderItem = new OrderItem(
                     order,
@@ -101,5 +103,19 @@ public class OrderService {
         }
 
         return orderedAt.toLocalDate().plusDays(1);
+    }
+
+    @Transactional
+    public void ship() {
+        List<Delivery> deliveries = deliveryRepository.findAllByStatusAndProcessingDate(
+                        DeliveryStatus.ORDERED, LocalDate.now());
+
+        deliveries.forEach(Delivery::updateShipped);
+    }
+  
+    @Transactional(readOnly = true)
+    public Order findById(int orderId) {
+        return this.orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
     }
 }

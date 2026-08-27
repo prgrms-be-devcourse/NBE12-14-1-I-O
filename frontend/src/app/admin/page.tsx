@@ -1,16 +1,8 @@
 'use client';
 import ProductAddModal from "@/components/admin/ProductAddModal";
 import ProductCard from "@/components/ProductCard";
-
+import { Product } from "@/types/product";
 import { useEffect, useState } from "react";
-
-type Product = {
-  id: number,
-  name: string,
-  price: number,
-  stock: number,
-  imageFileUrl: string;
-};
 
 export default function AdminPage() {
 
@@ -25,8 +17,6 @@ export default function AdminPage() {
         setProducts(data);
       });
   }, [productAdd]);
-
-  console.log(products);
 
   //상품 삭제
   const handleDeleteProduct = async (id: number) => {
