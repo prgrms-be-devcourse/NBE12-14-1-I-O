@@ -10,6 +10,7 @@ import io.project.domain.order.entity.OrderItem;
 import io.project.domain.order.repository.OrderRepository;
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.service.ProductService;
+import io.project.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,5 +102,11 @@ public class OrderService {
         }
 
         return orderedAt.toLocalDate().plusDays(1);
+    }
+
+    @Transactional(readOnly = true)
+    public Order findById(int orderId) {
+        return this.orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
     }
 }
