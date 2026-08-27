@@ -62,4 +62,9 @@ public class Delivery extends BaseEntity {
     public void addOrder(Order order) {
         this.orders.add(order);
     }
+
+    public void updateShipped() {
+        this.status = DeliveryStatus.SHIPPING;
+        this.shippedAt = LocalDateTime.now();
+    }
 }
