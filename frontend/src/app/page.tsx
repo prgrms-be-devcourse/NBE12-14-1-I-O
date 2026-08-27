@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 const products = [
   {
     id: 1,
@@ -49,7 +53,17 @@ const products = [
   }
 ];
 
+type CartItem = {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+};
+
 export default function Home() {
+
+  const [quantities, setQuantities] = useState<Record<number, number>>({});
+
   return (
     <main className="bg-transparent px-8 py-6">
       {/* 상품 목록 */}
@@ -126,19 +140,64 @@ export default function Home() {
                   px-4 py-2
                   "
                 >
-                  <button className="text-xl">
+                  <button 
+                  className="text-xl"
+                  onClick={() => {
+                    setQuantities((prev) => ({
+                      ...prev,
+                      [product.id]: Math.max((prev[product.id] ?? 1) - 1, 1),
+                    }));
+                  }}
+                  >
                     -
                   </button>
                   <span className="font-bold">
-                    1
+                    {quantities[product.id] ?? 1}
                   </span>
-                  <button className="text-xl">
+                  <button 
+                  className="text-xl"
+                  onClick={() => {
+                    setQuantities((prev) => ({
+                      ...prev,
+                      [product.id]: (prev[product.id] ?? 1) + 1,
+                    }));
+                  }}
+                  >
                     +
                   </button>
                 </div>
 
                 {/* 장바구니 버튼 */}
                 <button
+                onClick={() => {
+                  const cartItem: CartItem = {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: quantities[product.id] ?? 1,
+                  };
+                  const savedCart = localStorage.getItem("cart");
+                  
+                  const cartItems: CartItem[] = savedCart
+                  ? JSON.parse(savedCart)
+                  : [];
+
+                  const existingItem = cartItems.find(
+                    (item) => item.id === cartItem.id
+                  );
+                
+                  if (existingItem) {
+                    existingItem.quantity += cartItem.quantity;
+                  } else {
+                    cartItems.push(cartItem);
+                  }
+                  
+                  localStorage.setItem(
+                    "cart",
+                    JSON.stringify(cartItems)
+                  );
+                }}
+
                   className="
                   flex h-11 w-11
                   shrink-0

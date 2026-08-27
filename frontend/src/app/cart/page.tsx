@@ -1,27 +1,39 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const cartItems = [
-  {
-    id: 1,
-    name: "에티오피아 예가체프",
-    price: 4800,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: "콜롬비아 수프리모",
-    price: 4500,
-    quantity: 1,
-  },
-  {
-    id: 3,
-    name: "과테말라 안티구아",
-    price: 5000,
-    quantity: 1,
-  },
-];
+type CartItem = {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+  };
+
 
 export default function CartPage() {
+    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+    useEffect(() => {
+        const savedCart = localStorage.getItem("cart");
+
+        if (savedCart) {
+            const parsedCart: CartItem[] = JSON.parse(savedCart);
+
+            setCartItems(parsedCart);
+        }
+      }, []);
+
+    const totalQuantity = cartItems.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+    );
+
+    const totalPrice = cartItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+
   return (
     <main
       className="
@@ -69,9 +81,10 @@ export default function CartPage() {
               </p>
             </div>
 
-            {/* 수량 */}
-            <div
-              className="
+            <div className="flex items-center gap-3">
+                {/* 수량 */}
+                <div
+                className="
                 flex w-40
                 items-center justify-between
                 rounded-full
@@ -79,7 +92,25 @@ export default function CartPage() {
                 px-5 py-3
               "
             >
-              <button className="text-xl">
+                <button 
+                className="text-xl"
+                onClick={() => {
+                    const updatedCartItems = cartItems.map((cartItem) =>
+                        cartItem.id === item.id
+                    ? {
+                        ...cartItem,
+                        quantity: Math.max(cartItem.quantity - 1, 1),
+                    }
+                    : cartItem
+                );
+                setCartItems(updatedCartItems);
+                
+                localStorage.setItem(
+                    "cart",
+                    JSON.stringify(updatedCartItems)
+                );
+            }}
+            >
                 -
               </button>
 
@@ -87,10 +118,59 @@ export default function CartPage() {
                 {item.quantity}
               </span>
 
-              <button className="text-xl">
+              <button 
+              className="text-xl"
+              onClick={() => {
+                const updatedCartItems = cartItems.map((cartItem) =>
+                    cartItem.id === item.id
+                ? { ...cartItem, quantity: cartItem.quantity + 1 }
+                : cartItem);
+                setCartItems(updatedCartItems);
+
+                localStorage.setItem(
+                    "cart",
+                    JSON.stringify(updatedCartItems)
+                );
+            }}
+            >
                 +
               </button>
             </div>
+
+            {/* 삭제 */}
+            <button
+                onClick={() => {
+                    const updatedCartItems = cartItems.filter(
+                        (cartItem) => cartItem.id !== item.id
+                    );
+
+                    setCartItems(updatedCartItems);
+
+                    localStorage.setItem(
+                        "cart",
+                        JSON.stringify(updatedCartItems)
+                    );
+                }}
+                className="
+                      rounded-md
+                      bg-red-500
+                      px-4 py-3
+                      text-white
+                      "
+            >
+                삭제
+            </button>
+        </div>
+
+
+
+
+
+
+
+
+
+
           </article>
         ))}
       </section>
@@ -114,12 +194,12 @@ export default function CartPage() {
 
         <div className="flex justify-between text-lg">
           <span>상품 수량</span>
-          <span>3개</span>
+          <span>{totalQuantity}개</span>
         </div>
 
         <div className="mt-6 flex justify-between text-lg">
           <span>총 금액</span>
-          <span>14,300원</span>
+          <span>{totalPrice.toLocaleString()}원</span>
         </div>
 
         <Link
