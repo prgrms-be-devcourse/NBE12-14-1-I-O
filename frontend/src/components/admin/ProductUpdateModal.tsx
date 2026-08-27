@@ -33,30 +33,22 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
     const handleSubmit = async (e: SubmitEvent) => {
         e.preventDefault();
 
-        const formData = new FormData();
-
         const requestData = {
             name: name,
             price: Number(price),
             stock: Number(stock),
             fileName: imageFile ? imageFile.name : product.imageFileUrl
         };
-
-        const jsonBlob = new Blob([JSON.stringify(requestData)], {
-            type: 'application/json'
-        });
-
-        formData.append('request', jsonBlob);
-        if (imageFile) {
-            formData.append('image', imageFile);
-        }
-
+    
         try {
             const response = await fetch(`http://localhost:8080/admin/products/${product.id}`, {
                 method: 'PATCH',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
             });
-
+    
             if (response.ok) {
                 alert('상품이 수정되었습니다.');
                 onClose();
