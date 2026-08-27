@@ -3,5 +3,5 @@ export interface Product {
     name: string;
     price: number;
     stock: number;
-    imageFileUrl: string;
+    imageFileUrl: string
 }

@@ -43,7 +43,7 @@ public class Product extends BaseEntity {
         if (fileName != null) this.fileName = fileName;
     }
 
-    public void removeStock(Integer quantity) {
+    public void decreaseStock(Integer quantity) {
         int restStock = this.stock - quantity;
 
         if (restStock < 0) {

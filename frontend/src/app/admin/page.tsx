@@ -1,15 +1,8 @@
 'use client';
 import ProductAddModal from "@/components/admin/ProductAddModal";
 import ProductCard from "@/components/ProductCard";
-
+import { Product } from "@/types/product";
 import { useEffect, useState } from "react";
-
-type Product = {
-  id: number,
-  name: string,
-  price: number,
-  stock: number
-};
 
 export default function AdminPage() {
 
@@ -24,8 +17,6 @@ export default function AdminPage() {
         setProducts(data);
       });
   }, [productAdd]);
-
-  console.log(products);
 
   const handleProductAddClick = () => {
     setProductAdd(!productAdd);
