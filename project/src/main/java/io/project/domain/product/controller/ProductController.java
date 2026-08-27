@@ -3,6 +3,7 @@ package io.project.domain.product.controller;
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.service.ProductService;
 import io.project.global.dto.RsData;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static io.project.domain.product.dto.ProductResponse.ProductListResponse;
 
+@Tag(name = "상품 API", description = "상품 조회")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")

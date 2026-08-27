@@ -2,6 +2,7 @@ package io.project.domain.product.controller;
 
 import io.project.domain.product.service.ProductService;
 import io.project.global.dto.RsData;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import static io.project.domain.product.dto.ProductRequest.ProductAddRequest;
 import static io.project.domain.product.dto.ProductRequest.ProductUpdateRequest;
 
+@Tag(name = "관리자 API", description = "상품 생성, 조회, 취소, 삭제")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/products")

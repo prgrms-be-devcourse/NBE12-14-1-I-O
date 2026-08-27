@@ -3,17 +3,18 @@ import io.project.domain.order.dto.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import io.project.domain.order.dto.OrderCreateRequest;
+import io.project.domain.order.dto.OrderCreateResponse;
 import io.project.domain.order.entity.Order;
 import io.project.domain.order.service.OrderService;
 import io.project.global.dto.RsData;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Tag(name = "주문 API", description = "고객 주문 생성, 조회, 장바구니 담기, 취소")
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -93,7 +94,7 @@ public class OrderController {
 
         return ResponseEntity.ok(response);
     }
-  
+
     @GetMapping("/dashboard")
     public ResponseEntity<RsData<List<DashBoardResponse>>> dashBoard(
             @RequestParam("startDate")LocalDate startDate,
@@ -107,7 +108,7 @@ public class OrderController {
                 dashBoard
         ));
     }
-  
+
     // 주문 수정
     @PatchMapping("/{orderId}")
     public ResponseEntity<Void> updateOrder(
