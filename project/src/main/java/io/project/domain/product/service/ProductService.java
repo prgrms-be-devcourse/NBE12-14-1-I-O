@@ -26,16 +26,27 @@ public class ProductService {
     private final String IMAGE_PATH = "src/main/java/io/project/domain/product/images/";
 
     @Transactional
-    public void updateProduct(Integer id, ProductUpdateRequest request) {
+    public void updateProduct(Integer id, ProductUpdateRequest request, MultipartFile image) {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
+
+        String finalFileName = product.getFileName();
+
+        if (image != null && !image.isEmpty()) {
+            imageSave(image, request.name());
+
+            finalFileName = request.name() + "-Image." + image.getOriginalFilename().split("\\.")[1];
+        } else if (!product.getName().equals(request.name()) && finalFileName != null) {
+
+            finalFileName = request.name() + "-Image." + finalFileName.substring(finalFileName.lastIndexOf(".") + 1);
+        }
 
         product.update(
                 request.name(),
                 request.price(),
                 request.stock(),
-                request.fileName()
+                finalFileName
         );
     }
 
