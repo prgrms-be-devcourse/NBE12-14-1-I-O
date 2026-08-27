@@ -3,9 +3,10 @@ import { Product } from '@/types/product';
 interface ProductCardProps {
     product: Product
     onDelete: (id: number) => void;
+    onEdit: (product: Product) => void;
 }
 
-export default function ProductCard({ product, onDelete}: ProductCardProps) {
+export default function ProductCard({ product, onDelete, onEdit }: ProductCardProps) {
     
     // 삭제 버튼 클릭 핸들러
     const handleDeleteClick = () => {
@@ -40,7 +41,9 @@ export default function ProductCard({ product, onDelete}: ProductCardProps) {
             </p>
 
             <div className="mt-4 flex gap-2">
-                <button className="flex-1 rounded bg-neutral-600 py-2 text-white">
+                <button
+                onClick={() => onEdit(product)}
+                className="flex-1 rounded bg-neutral-600 py-2 text-white hover:bg-neutral-700 transition">
                     수정
                 </button>
 

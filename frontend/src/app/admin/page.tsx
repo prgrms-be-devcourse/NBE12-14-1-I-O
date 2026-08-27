@@ -1,5 +1,6 @@
 'use client';
 import ProductAddModal from "@/components/admin/ProductAddModal";
+import ProductUpdateModal from "@/components/admin/ProductUpdateModal";
 import ProductCard from "@/components/ProductCard";
 import { Product } from "@/types/product";
 import { useEffect, useState } from "react";
@@ -7,6 +8,10 @@ import { useEffect, useState } from "react";
 export default function AdminPage() {
 
   const [productAdd, setProductAdd] = useState(false);
+
+  const [productUpdate, setProductUpdate] = useState(false);
+
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -16,9 +21,9 @@ export default function AdminPage() {
       .then((data) => {
         setProducts(data);
       });
-  }, [productAdd]);
+  }, [productAdd, productUpdate]);
 
-  //상품 삭제
+  // 상품 삭제
   const handleDeleteProduct = async (id: number) => {
     try {
       const response = await fetch(`http://localhost:8080/api/v1/admin/products/${id}`, {
@@ -38,13 +43,29 @@ export default function AdminPage() {
     }
   };
 
+  const handleProductEditClick = (product: Product) => {
+    setSelectedProduct(product);
+    setProductUpdate(true);
+  };
+
   const handleProductAddClick = () => {
     setProductAdd(!productAdd);
+  }
+
+  const handleProductUpdateClose = () => {
+    setProductUpdate(false);
+    setSelectedProduct(null);
   }
 
   return (
     <main className="mx-auto mt-8 max-w-7xl rounded-[40px] bg-white p-12">
       {productAdd ? <ProductAddModal onClose={handleProductAddClick} /> : undefined}
+      {productUpdate && selectedProduct ? (
+      <ProductUpdateModal 
+        product={selectedProduct} 
+        onClose={handleProductUpdateClose} 
+      />
+    ) : undefined}
       <section className="
             rounded-xl
             border border-neutral-300
@@ -58,9 +79,10 @@ export default function AdminPage() {
         <div className="mt-8 grid grid-cols-4 gap-6">
           {products.map((product) => (
             <ProductCard 
-            key={product.id} 
-            product={product}
-            onDelete={handleDeleteProduct}
+              key={product.id} 
+              product={product}
+              onDelete={handleDeleteProduct}
+              onEdit={handleProductEditClick} 
             />
           ))}
         </div>
