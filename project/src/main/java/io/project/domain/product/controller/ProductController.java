@@ -34,7 +34,8 @@ public class ProductController {
                         product.getId(),
                         product.getName(),
                         product.getPrice(),
-                        product.getFileName())
+                        product.getStock(),
+                        "images/" + product.getFileName())
         ).toList();
 
         return ResponseEntity.ok(response);

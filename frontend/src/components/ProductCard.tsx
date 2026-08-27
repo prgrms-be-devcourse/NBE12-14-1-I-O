@@ -12,7 +12,10 @@ export default function ProductCard({ product }: ProductCardProps) {
                   bg-white
                   p-4"
         >
-            <div className="aspect-square rounded bg-neutral-100" />
+            <img
+                className="w-full aspect-square rounded bg-neutral-100 object-cover"
+                src={`http://localhost:8080/${product.imageFileUrl}`}
+                alt="상품 이미지" />
 
             <h3 className="mt-4 font-bold">
                 {product.name}
