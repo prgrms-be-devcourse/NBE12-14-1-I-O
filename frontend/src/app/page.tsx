@@ -4,59 +4,6 @@ import ProductCardUser from "@/components/ProductCardUser";
 import { Product } from "@/types/Product";
 import { useEffect, useState } from "react";
 
-const products = [
-  {
-    id: 1,
-    name: "에티오피아 예가체프",
-    description: "꽃향과 시트러스가 어우러진 라이트 로스팅",
-    price: 4800,
-  },
-  {
-    id: 2,
-    name: "콜롬비아 수프리모",
-    description: "부드러운 바디감과 균형 잡힌 산미",
-    price: 4500,
-  },
-  {
-    id: 3,
-    name: "과테말라 안티구아",
-    description: "초콜릿과 스모키한 풍미가 어우러진 원두",
-    price: 5000,
-  },
-  {
-    id: 4,
-    name: "브라질 산토스",
-    description: "고소한 너트향과 낮은 산미가 특징인 원두",
-    price: 4300,
-  },
-  {
-    id: 5,
-    name: "에티오피아 예가체프",
-    description: "꽃향과 시트러스가 어우러진 라이트 로스팅",
-    price: 4800,
-  },
-  {
-    id: 6,
-    name: "콜롬비아 수프리모",
-    description: "부드러운 바디감과 균형 잡힌 산미",
-    price: 4500,
-  },
-  {
-    id: 7,
-    name: "과테말라 안티구아",
-    description: "초콜릿과 스모키한 풍미가 어우러진 원두",
-    price: 5000,
-  },
-  {
-    id: 8,
-    name: "브라질 산토스",
-    description: "고소한 너트향과 낮은 산미가 특징인 원두",
-    price: 4300,
-  }
-];
-
-
-
 export default function Home() {
 
   const [quantities, setQuantities] = useState<Record<number, number>>({});
@@ -100,7 +47,6 @@ export default function Home() {
                 key={product.id}
                 product={product}
                 quantities={quantities[product.id]}
-                setQuantities={(value: any) => { setQuantities(value) }}
                 handleClickDecrease={() => {
                   setQuantities((prev) => ({
                     ...prev,
