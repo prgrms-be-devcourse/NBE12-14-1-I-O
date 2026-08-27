@@ -1,5 +1,6 @@
 package io.project.domain.product.dto;
 
+import io.project.global.exception.InvalidException;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +20,7 @@ public class ProductRequest {
     ) {
         public ProductUpdateRequest {
             if (name != null && name.isBlank()) {
-                throw new IllegalArgumentException("이름은 공백일 수 없습니다.");
+                throw new InvalidException("이름은 공백일 수 없습니다.");
             }
         }
     }
