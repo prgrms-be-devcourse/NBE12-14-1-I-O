@@ -3,6 +3,7 @@ package io.project.domain.product.controller;
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.service.ProductService;
 import io.project.global.dto.RsData;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,10 @@ public class ProductController {
      *
      * @return 전체 상품 목록 DTO 응답
      */
+    @Operation(
+            summary = "상품 정보 조회",
+            description = "현재 판매 중인 모든 상품들을 조회합니다."
+    )
     @GetMapping
     public ResponseEntity<RsData<List<ProductListResponse>>> productList() {
 
