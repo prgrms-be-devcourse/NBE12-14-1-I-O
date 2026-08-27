@@ -3,6 +3,7 @@ package io.project.domain.order.service;
 import io.project.domain.delivery.entity.Delivery;
 import io.project.domain.delivery.entity.DeliveryStatus;
 import io.project.domain.delivery.repository.DeliveryRepository;
+import io.project.domain.order.dto.DashBoardResponse;
 import io.project.domain.order.dto.OrderCreateRequest;
 import io.project.domain.order.dto.OrderItemRequest;
 import io.project.domain.order.dto.OrderListResponse;
@@ -117,5 +118,10 @@ public class OrderService {
     public Order findById(int orderId) {
         return this.orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
+    }
+
+    public List<DashBoardResponse> getDashBoard() {
+        List<DashBoardResponse> dashBoard = deliveryRepository.findDashBoard();
+        return dashBoard;
     }
 }

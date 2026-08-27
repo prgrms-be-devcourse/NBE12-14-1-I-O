@@ -1,11 +1,10 @@
 package io.project.domain.order.controller;
 
-import io.project.domain.order.dto.OrderDetailResponse;
-import io.project.domain.order.dto.OrderListResponse;
+import io.project.domain.order.dto.*;
 
+import java.time.LocalDate;
 import java.util.List;
-import io.project.domain.order.dto.OrderCreateRequest;
-import io.project.domain.order.dto.OrderCreateResponse;
+
 import io.project.domain.order.entity.Order;
 import io.project.domain.order.service.OrderService;
 import io.project.global.dto.RsData;
@@ -68,6 +67,20 @@ public class OrderController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<RsData<List<DashBoardResponse>>> dashBoard(
+            @RequestParam("startDate")LocalDate startDate,
+            @RequestParam("endDate")LocalDate endDate
+            ) {
+        List<DashBoardResponse> dashBoard = orderService.getDashBoard();
+
+        return ResponseEntity.ok(new RsData<>(
+                "200",
+                "대시보드를 성공적으로 불러왔습니다.",
+                dashBoard
+        ));
     }
 
 }

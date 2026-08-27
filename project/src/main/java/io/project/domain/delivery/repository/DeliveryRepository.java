@@ -2,7 +2,9 @@ package io.project.domain.delivery.repository;
 
 import io.project.domain.delivery.entity.Delivery;
 import io.project.domain.delivery.entity.DeliveryStatus;
+import io.project.domain.order.dto.DashBoardResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,4 +19,17 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Integer> {
     );
 
     List<Delivery> findAllByStatusAndProcessingDate(DeliveryStatus status, LocalDate processingDate);
+
+    List<Delivery> findAllByStatusIsNotAndProcessingDate(DeliveryStatus status, LocalDate processingDate);
+
+    @Query("select p.name, sum(oi.quantity), sum(oi.unitPrice), sum(oi.quantity * oi.unitPrice)" +
+            "from Delivery d " +
+            "join Order o on d.id = o.delivery.id " +
+            "join OrderItem oi on o.id = oi.order.id " +
+            "join Product p on oi.product.id = p.id " +
+            "where d.status != DeliveryStatus.CANCELLED " +
+            "AND CAST(d.createdAt as date) = CURDATE() " +
+            "group by p.name")
+    List<DashBoardResponse> findDashBoard();
+
 }
