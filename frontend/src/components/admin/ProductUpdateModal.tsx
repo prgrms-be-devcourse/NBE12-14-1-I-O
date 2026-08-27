@@ -1,5 +1,5 @@
 'use client';
-import { Product } from "@/types/product";
+import { Product } from "@/types/Product";
 import Image from "next/image";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 

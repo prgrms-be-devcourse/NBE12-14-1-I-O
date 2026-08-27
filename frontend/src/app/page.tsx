@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import ProductCardUser from "@/components/ProductCardUser";
+import { Product } from "@/types/Product";
+import { useEffect, useState } from "react";
 
 const products = [
   {
@@ -53,16 +55,19 @@ const products = [
   }
 ];
 
-type CartItem = {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-};
+
 
 export default function Home() {
 
   const [quantities, setQuantities] = useState<Record<number, number>>({});
+
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/v1/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data));
+  }, []);
 
   return (
     <main className="bg-transparent px-8 py-6">
@@ -85,141 +90,37 @@ export default function Home() {
           px-12 py-10
           "
         >
-        <h2 className="mb-10 text-center text-4xl font-bold">
-          전체 목록
-        </h2>
+          <h2 className="mb-10 text-center text-4xl font-bold">
+            전체 목록
+          </h2>
 
-        <div className="grid grid-cols-4 gap-6">
-          {products.map((product) => (
-            <article
-              key={product.id}
-              className="
-                flex flex-col
-                rounded-lg
-                border border-neutral-400
-                bg-white
-                p-6
-              "
-            >
-              {/* 상품 이미지 자리 */}
-              <div
-                className="
-                  flex aspect-square
-                  items-center justify-center
-                  bg-neutral-100
-                  text-neutral-400
-                "
-              >
-                IMAGE
-              </div>
-
-              {/* 상품 정보 */}
-              <div className="mt-5">
-                <h3 className="text-xl font-bold">
-                  {product.name}
-                </h3>
-
-                <p className="mt-2 min-h-12 text-sm text-neutral-500">
-                  {product.description}
-                </p>
-
-                <p className="mt-4 text-xl font-bold">
-                  {product.price.toLocaleString()}원
-                </p>
-              </div>
-
-              {/* 수량 조절 + 장바구니 */}
-              <div className="mt-5 flex items-center gap-4">
-                {/* 수량 조절 */}
-                <div
-                  className="
-                  flex flex-1
-                  items-center justify-between
-                  rounded-full
-                  border border-neutral-700
-                  px-4 py-2
-                  "
-                >
-                  <button 
-                  className="text-xl"
-                  onClick={() => {
-                    setQuantities((prev) => ({
-                      ...prev,
-                      [product.id]: Math.max((prev[product.id] ?? 1) - 1, 1),
-                    }));
-                  }}
-                  >
-                    -
-                  </button>
-                  <span className="font-bold">
-                    {quantities[product.id] ?? 1}
-                  </span>
-                  <button 
-                  className="text-xl"
-                  onClick={() => {
-                    setQuantities((prev) => ({
-                      ...prev,
-                      [product.id]: (prev[product.id] ?? 1) + 1,
-                    }));
-                  }}
-                  >
-                    +
-                  </button>
-                </div>
-
-                {/* 장바구니 버튼 */}
-                <button
-                onClick={() => {
-                  const cartItem: CartItem = {
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    quantity: quantities[product.id] ?? 1,
-                  };
-                  const savedCart = localStorage.getItem("cart");
-                  
-                  const cartItems: CartItem[] = savedCart
-                  ? JSON.parse(savedCart)
-                  : [];
-
-                  const existingItem = cartItems.find(
-                    (item) => item.id === cartItem.id
-                  );
-                
-                  if (existingItem) {
-                    existingItem.quantity += cartItem.quantity;
-                  } else {
-                    cartItems.push(cartItem);
-                  }
-                  
-                  localStorage.setItem(
-                    "cart",
-                    JSON.stringify(cartItems)
-                  );
-
+          <div className="grid grid-cols-4 gap-6">
+            {products.map((product) => (
+              <ProductCardUser
+                key={product.id}
+                product={product}
+                quantities={quantities[product.id]}
+                setQuantities={(value: any) => { setQuantities(value) }}
+                handleClickDecrease={() => {
+                  setQuantities((prev) => ({
+                    ...prev,
+                    [product.id]: Math.max((prev[product.id] ?? 1) - 1, 1),
+                  }));
+                }}
+                handleClickIncrease={() => {
+                  setQuantities((prev) => ({
+                    ...prev,
+                    [product.id]: (prev[product.id] ?? 1) + 1,
+                  }));
+                }}
+                handleClickCartItem={() => {
                   setQuantities((prev) => ({
                     ...prev,
                     [product.id]: 1,
                   }));
                 }}
-
-                  className="
-                  flex h-11 w-11
-                  shrink-0
-                  items-center justify-center
-                  rounded-full
-                  bg-[#FF902A]
-                  "
-                >
-                  <img
-                    src="/images/cart-icon.png"
-                    alt="장바구니 담기"
-                    className="h-5 w-5"
-                  />
-                </button>
-              </div>
-            </article>
-          ))}
+              />
+            ))}
           </div>
         </div>
       </section>

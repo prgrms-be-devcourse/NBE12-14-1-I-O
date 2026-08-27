@@ -1,8 +1,8 @@
 'use client';
 import ProductAddModal from "@/components/admin/ProductAddModal";
 import ProductUpdateModal from "@/components/admin/ProductUpdateModal";
-import ProductCard from "@/components/ProductCard";
-import { Product } from "@/types/product";
+import ProductCard from "@/components/admin/ProductCard";
+import { Product } from "@/types/Product";
 import { useEffect, useState } from "react";
 
 export default function AdminPage() {
