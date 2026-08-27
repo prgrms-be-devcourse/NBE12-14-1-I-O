@@ -1,6 +1,7 @@
 package io.project.domain.product.controller;
 
 import io.project.domain.product.service.ProductService;
+import io.project.global.dto.RsData;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -39,13 +40,15 @@ public class AdminProductController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createProduct(
+    public ResponseEntity<RsData<?>> createProduct(
             @RequestPart(value = "request") @Valid ProductAddRequest request,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         productService.save(request, image);
 
-        return ResponseEntity.ok("상품이 성공적으로 등록되었습니다.");
+        return ResponseEntity.ok(new RsData<>(
+                "201",
+                "상품이 성공적으로 등록되었습니다."));
     }
 
 }
