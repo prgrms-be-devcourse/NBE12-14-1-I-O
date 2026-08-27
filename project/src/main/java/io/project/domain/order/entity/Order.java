@@ -1,6 +1,7 @@
 package io.project.domain.order.entity;
 
 import io.project.domain.delivery.entity.Delivery;
+import io.project.domain.order.dto.OrderItemRequest;
 import io.project.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Table(name = "orders")
 @Entity

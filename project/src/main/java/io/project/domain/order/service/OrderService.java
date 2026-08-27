@@ -6,8 +6,6 @@ import io.project.domain.delivery.repository.DeliveryRepository;
 import io.project.domain.order.dto.OrderCreateRequest;
 import io.project.domain.order.dto.OrderItemRequest;
 import io.project.domain.order.dto.OrderListResponse;
-import io.project.domain.order.dto.OrderResponse;
-import io.project.domain.order.dto.OrderUpdateRequest;
 import io.project.domain.order.entity.Order;
 import io.project.domain.order.entity.OrderItem;
 import io.project.domain.order.entity.OrderStatus;
@@ -22,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -38,7 +34,6 @@ public class OrderService {
     // 주문 목록 조회
     @Transactional(readOnly = true)
     public List<OrderListResponse> findAllByEmail(String email) {
-
         List<Order> orderList =
                 orderRepository.findAllByDeliveryEmail(email);
 
@@ -50,12 +45,9 @@ public class OrderService {
     // 주문 상세 조회
     @Transactional(readOnly = true)
     public Order findById(int orderId) {
-
         return orderRepository.findById(orderId)
                 .orElseThrow(() ->
-                        new NotFoundException(
-                                "주문을 찾을 수 없습니다."
-                        )
+                        new NotFoundException("주문을 찾을 수 없습니다.")
                 );
     }
 
@@ -64,7 +56,6 @@ public class OrderService {
     public Order createOrder(OrderCreateRequest request) {
 
         LocalDateTime orderedAt = LocalDateTime.now();
-
         LocalDate processingDate =
                 calculateProcessingDate(orderedAt);
 
@@ -80,7 +71,6 @@ public class OrderService {
         Delivery delivery;
 
         if (optionalDelivery.isPresent()) {
-
             delivery = optionalDelivery.get();
 
         } else {
@@ -126,18 +116,13 @@ public class OrderService {
 
     // 주문 수정
     @Transactional
-    public OrderResponse updateOrder(
+    public void updateOrder(
             int orderId,
-            OrderUpdateRequest request
+            int orderItemId,
+            int quantity
     ) {
 
-        Order order =
-                orderRepository.findById(orderId)
-                        .orElseThrow(() ->
-                                new IllegalArgumentException(
-                                        "존재하지 않는 주문입니다."
-                                )
-                        );
+        Order order = findById(orderId);
 
         if (order.getStatus() == OrderStatus.CANCELED) {
             throw new IllegalStateException(
@@ -145,66 +130,56 @@ public class OrderService {
             );
         }
 
-        Map<Integer, Integer> requestedQuantities =
-                new HashMap<>();
-
-        for (OrderUpdateRequest.OrderItemUpdateRequest itemRequest
-                : request.getOrderItems()) {
-
-            requestedQuantities.put(
-                    itemRequest.getOrderItemId(),
-                    itemRequest.getQuantity()
+        if (quantity < 1) {
+            throw new IllegalArgumentException(
+                    "주문 수량은 1개 이상이어야 합니다."
             );
         }
 
-        for (OrderItem orderItem : order.getOrderItems()) {
+        OrderItem orderItem =
+                order.getOrderItems()
+                        .stream()
+                        .filter(item ->
+                                item.getId() == orderItemId
+                        )
+                        .findFirst()
+                        .orElseThrow(() ->
+                                new NotFoundException(
+                                        "주문 상품을 찾을 수 없습니다."
+                                )
+                        );
 
-            int orderItemId =
-                    orderItem.getId();
+        int oldQuantity =
+                orderItem.getQuantity();
 
-            Integer newQuantity =
-                    requestedQuantities.get(orderItemId);
+        int quantityDifference =
+                quantity - oldQuantity;
 
-            if (newQuantity == null) {
-                continue;
-            }
+        // 주문 수량 증가
+        if (quantityDifference > 0) {
 
-            int oldQuantity =
-                    orderItem.getQuantity();
+            productService.decreaseStockForOrder(
+                    orderItem.getProduct().getId(),
+                    quantityDifference
+            );
 
-            int quantityDifference =
-                    newQuantity - oldQuantity;
+            // 주문 수량 감소
+        } else if (quantityDifference < 0) {
 
-            // 주문 수량 증가
-            if (quantityDifference > 0) {
-
-                orderItem.getProduct()
-                        .removeStock(quantityDifference);
-
-                // 주문 수량 감소
-            } else if (quantityDifference < 0) {
-
-                orderItem.getProduct()
-                        .addStock(-quantityDifference);
-            }
-
-            orderItem.updateQuantity(newQuantity);
+            productService.increaseStockForCancel(
+                    orderItem.getProduct().getId(),
+                    -quantityDifference
+            );
         }
 
-        return new OrderResponse(order);
+        orderItem.updateQuantity(quantity);
     }
 
     // 주문 취소
     @Transactional
-    public OrderResponse cancelOrder(int orderId) {
+    public void cancelOrder(int orderId) {
 
-        Order order =
-                orderRepository.findById(orderId)
-                        .orElseThrow(() ->
-                                new IllegalArgumentException(
-                                        "존재하지 않는 주문입니다."
-                                )
-                        );
+        Order order = findById(orderId);
 
         if (order.getStatus() == OrderStatus.CANCELED) {
             throw new IllegalStateException(
@@ -214,15 +189,13 @@ public class OrderService {
 
         for (OrderItem orderItem : order.getOrderItems()) {
 
-            orderItem.getProduct()
-                    .addStock(
-                            orderItem.getQuantity()
-                    );
+            productService.increaseStockForCancel(
+                    orderItem.getProduct().getId(),
+                    orderItem.getQuantity()
+            );
         }
 
         order.cancel();
-
-        return new OrderResponse(order);
     }
 
     // 배송 처리 날짜 계산
@@ -234,7 +207,6 @@ public class OrderService {
                 LocalTime.of(14, 0);
 
         if (orderedAt.toLocalTime().isBefore(cutoff)) {
-
             return orderedAt.toLocalDate();
         }
 
@@ -243,7 +215,7 @@ public class OrderService {
                 .plusDays(1);
     }
 
-    // 배송 시작 처리
+    // 배송 처리
     @Transactional
     public void ship() {
 

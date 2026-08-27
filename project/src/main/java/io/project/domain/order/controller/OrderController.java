@@ -4,8 +4,6 @@ import io.project.domain.order.dto.OrderCreateRequest;
 import io.project.domain.order.dto.OrderCreateResponse;
 import io.project.domain.order.dto.OrderDetailResponse;
 import io.project.domain.order.dto.OrderListResponse;
-import io.project.domain.order.dto.OrderResponse;
-import io.project.domain.order.dto.OrderUpdateRequest;
 import io.project.domain.order.entity.Order;
 import io.project.domain.order.service.OrderService;
 import io.project.global.dto.RsData;
@@ -57,10 +55,10 @@ public class OrderController {
     // 주문 상세 조회
     @GetMapping("/{orderId}")
     public ResponseEntity<RsData<OrderDetailResponse>> orderDetail(
-            @PathVariable(value = "orderId") int orderId
+            @PathVariable int orderId
     ) {
 
-        Order order = this.orderService.findById(orderId);
+        Order order = orderService.findById(orderId);
 
         OrderDetailResponse orderDetailResponse =
                 new OrderDetailResponse(order);
@@ -88,7 +86,9 @@ public class OrderController {
                         "201-1",
                         "주문이 생성되었습니다.",
                         new OrderCreateResponse(
-                                order.getId()
+                                order.getId(),
+                                order.getDelivery().getId(),
+                                order.getOrderedAt()
                         )
                 );
 
@@ -97,38 +97,29 @@ public class OrderController {
 
     // 주문 수정
     @PatchMapping("/{orderId}")
-    public ResponseEntity<RsData<OrderResponse>> updateOrder(
+    public ResponseEntity<Void> updateOrder(
             @PathVariable int orderId,
-            @Valid @RequestBody OrderUpdateRequest request
+            @RequestParam int orderItemId,
+            @RequestParam int quantity
     ) {
 
-        OrderResponse response =
-                orderService.updateOrder(orderId, request);
-
-        return ResponseEntity.ok(
-                new RsData<>(
-                        "200",
-                        "주문 수정이 완료되었습니다.",
-                        response
-                )
+        orderService.updateOrder(
+                orderId,
+                orderItemId,
+                quantity
         );
+
+        return ResponseEntity.noContent().build();
     }
 
     // 주문 취소
     @DeleteMapping("/{orderId}")
-    public ResponseEntity<RsData<OrderResponse>> cancelOrder(
+    public ResponseEntity<Void> cancelOrder(
             @PathVariable int orderId
     ) {
 
-        OrderResponse response =
-                orderService.cancelOrder(orderId);
+        orderService.cancelOrder(orderId);
 
-        return ResponseEntity.ok(
-                new RsData<>(
-                        "200",
-                        "주문 취소가 완료되었습니다.",
-                        response
-                )
-        );
+        return ResponseEntity.noContent().build();
     }
 }
