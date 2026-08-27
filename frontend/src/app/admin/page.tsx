@@ -16,7 +16,7 @@ export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/v1/product')
+    fetch('http://localhost:8080/api/v1/products')
       .then((res) => {
         if (!res.ok) {
           throw new Error(`백엔드 조회 실패 (상태코드: ${res.status})`);
