@@ -1,6 +1,6 @@
 'use client';
 import { Order } from "@/types/Order";
-import { formatDate } from "@/util/FormatDate";
+import { formatDate } from "@/utils/FormatDate";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
@@ -44,7 +44,7 @@ export default function OrderDetailPage({
 
   const [order, setOrder] = useState<Order | null>(null);
   useEffect(() => {
-    fetch(`http://localhost:8080/orders/${orderId}`)
+    fetch(`http://localhost:8080/api/v1/orders/${orderId}`)
       .then((res) => res.json())
       .then((data) => setOrder(data.data));
   }
