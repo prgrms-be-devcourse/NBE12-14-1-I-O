@@ -2,6 +2,7 @@ package io.project.domain.product.controller;
 
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.service.ProductService;
+import io.project.global.dto.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ public class ProductController {
      * @return 전체 상품 목록 DTO 응답
      */
     @GetMapping
-    public ResponseEntity<?> productList() {
+    public ResponseEntity<RsData<List<ProductListResponse>>> productList() {
 
         List<Product> products = productService.findAll();
 
@@ -38,6 +39,9 @@ public class ProductController {
                         "images/" + product.getFileName())
         ).toList();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new RsData<>(
+                "200",
+                "상품 목록을 조회했습니다.",
+                response));
     }
 }
