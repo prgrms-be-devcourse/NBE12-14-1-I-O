@@ -5,6 +5,7 @@ import io.project.domain.delivery.entity.DeliveryStatus;
 import io.project.domain.delivery.repository.DeliveryRepository;
 import io.project.domain.order.dto.OrderCreateRequest;
 import io.project.domain.order.dto.OrderItemRequest;
+import io.project.domain.order.dto.OrderListGroupResponse;
 import io.project.domain.order.dto.OrderListResponse;
 import io.project.domain.order.entity.Order;
 import io.project.domain.order.entity.OrderItem;
@@ -31,13 +32,36 @@ public class OrderService {
     private final ProductService productService;
 
     @Transactional(readOnly = true)
-    public List<OrderListResponse> findAllByEmail(String email) {
+    public OrderListGroupResponse findAllByEmail(String email) {
         List<Order> orderList = this.orderRepository.findAllByDeliveryEmail(email);
-        List<OrderListResponse> orderListResponseList = orderList.stream()
+
+        //배송 상태별 그룹화
+
+        List<OrderListResponse> orderedList = orderList.stream()
+                .filter(order -> order.getDelivery().getStatus() == DeliveryStatus.ORDERED)
                 .map(OrderListResponse::new)
                 .toList();
+        List<OrderListResponse> shippingList = orderList.stream()
+                .filter(order -> order.getDelivery().getStatus() == DeliveryStatus.SHIPPING)
+                .map(OrderListResponse::new)
+                .toList();
+        List<OrderListResponse> deliveredList = orderList.stream()
+                .filter(order -> order.getDelivery().getStatus() == DeliveryStatus.DELIVERED)
+                .map(OrderListResponse::new)
+                .toList();
+        List<OrderListResponse> cancelledList = orderList.stream()
+                .filter(order -> order.getDelivery().getStatus() == DeliveryStatus.CANCELLED)
+                .map(OrderListResponse::new)
+                .toList();
+        int orderedTotalPrice = orderedList.stream()
+                .mapToInt(item -> item.totalPrice())
+                .sum();
+        int shippingTotalPrice = shippingList.stream()
+                .mapToInt(item -> item.totalPrice())
+                .sum();
 
-        return orderListResponseList;
+        return new OrderListGroupResponse(orderedList,shippingList,deliveredList,cancelledList,
+                orderedTotalPrice,shippingTotalPrice);
     }
  
 

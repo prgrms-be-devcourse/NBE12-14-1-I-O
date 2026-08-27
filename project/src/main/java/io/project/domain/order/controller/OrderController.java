@@ -1,11 +1,9 @@
 package io.project.domain.order.controller;
 
-import io.project.domain.order.dto.OrderDetailResponse;
-import io.project.domain.order.dto.OrderListResponse;
+import io.project.domain.order.dto.*;
 
 import java.util.List;
-import io.project.domain.order.dto.OrderCreateRequest;
-import io.project.domain.order.dto.OrderCreateResponse;
+
 import io.project.domain.order.entity.Order;
 import io.project.domain.order.service.OrderService;
 import io.project.global.dto.RsData;
@@ -22,21 +20,15 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ResponseEntity<RsData<List<OrderListResponse>>> orderList(
+    public ResponseEntity<RsData<OrderListGroupResponse>> orderList(
             @RequestParam(value = "email") String email
     ){
 
-        List<OrderListResponse> orderListResponseList = this.orderService.findAllByEmail(email);
+        OrderListGroupResponse orderListGroupResponse = this.orderService.findAllByEmail(email);
 
-        if(orderListResponseList.isEmpty()){
-            RsData<List<OrderListResponse>> rsData = new RsData<>("200",
-                    "주문내역이 없습니다.",orderListResponseList);
-            return ResponseEntity.ok(rsData);
-        }
-
-        RsData<List<OrderListResponse>> rsData = new RsData<>("200",
+        RsData<OrderListGroupResponse> rsData = new RsData<>("200",
                 "주문목록을 성공적으로 불러왔습니다.",
-                orderListResponseList);
+                orderListGroupResponse);
         return ResponseEntity.ok(rsData);
     }
 
