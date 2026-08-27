@@ -13,6 +13,7 @@ export default function ProductCard({ product, onDelete}: ProductCardProps) {
             onDelete(product.id);
         }
     };
+    console.log(product.imageFileUrl);
 
     return (
         <article
@@ -23,7 +24,7 @@ export default function ProductCard({ product, onDelete}: ProductCardProps) {
         >
             <img
                 className="w-full aspect-square rounded bg-neutral-100 object-cover"
-                src={`http://localhost:8080/${product.imageFileUrl}`}
+                src={product.imageFileUrl === 'images/null' ? '/baseThumbnail.png' : `http://localhost:8080/${product.imageFileUrl}`}
                 alt="상품 이미지" />
 
             <h3 className="mt-4 font-bold">

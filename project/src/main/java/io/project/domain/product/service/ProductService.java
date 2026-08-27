@@ -63,7 +63,7 @@ public class ProductService {
     }
 
     public void save(ProductAddRequest dto, MultipartFile image) {
-        String fileName = "baseImage.png";
+        String fileName = null;
         if (image != null) {
             imageSave(image, dto.name());
             fileName = dto.name() + "-Image." + image.getOriginalFilename().split("\\.")[1];
