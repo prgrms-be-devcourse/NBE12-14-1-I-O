@@ -3,6 +3,7 @@ package io.project.domain.product.controller;
 import io.project.domain.product.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,12 +18,13 @@ public class AdminProductController {
 
     private final ProductService productService;
 
-    @PatchMapping("/{productId}")
+    @PatchMapping(value = "/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateProduct(
             @PathVariable(name = "productId") Integer id,
-            @Valid @RequestBody ProductUpdateRequest request
+            @RequestPart(value = "request") @Valid ProductUpdateRequest request,
+            @RequestPart(value = "image", required = false) MultipartFile image
     ) {
-        productService.updateProduct(id, request);
+        productService.updateProduct(id, request, image);
 
         return ResponseEntity.ok("상품 정보가 성공적으로 수정되었습니다.");
     }
