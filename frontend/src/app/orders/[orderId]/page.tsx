@@ -1,6 +1,6 @@
 'use client';
 import { Order } from "@/types/Order";
-import { formatDate } from "@/util/FormatDate";
+import { formatDate } from "@/utils/FormatDate";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
@@ -11,40 +11,9 @@ export default function OrderDetailPage({
 }) {
   const { orderId } = use(params);
 
-  // 임시 주문 데이터
-  // 나중에는 GET /orders/{orderId} 결과로 교체
-  const order1 = {
-    id: orderId,
-    date: "2026.08.28",
-    status: "주문 완료",
-    price: 14300,
-    address: "서울시 강남구",
-    zipCode: "12345",
-    items: [
-      {
-        id: 1,
-        name: "에티오피아 예가체프",
-        quantity: 1,
-        price: 4800,
-      },
-      {
-        id: 2,
-        name: "콜롬비아 수프리모",
-        quantity: 1,
-        price: 4500,
-      },
-      {
-        id: 3,
-        name: "과테말라 안티구아",
-        quantity: 1,
-        price: 5000,
-      },
-    ],
-  };
-
   const [order, setOrder] = useState<Order | null>(null);
   useEffect(() => {
-    fetch(`http://localhost:8080/orders/${orderId}`)
+    fetch(`http://localhost:8080/api/v1/orders/${orderId}`)
       .then((res) => res.json())
       .then((data) => setOrder(data.data));
   }
