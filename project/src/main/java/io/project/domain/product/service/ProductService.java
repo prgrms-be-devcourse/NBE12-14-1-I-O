@@ -36,12 +36,26 @@ public class ProductService {
         String finalFileName = product.getFileName();
 
         if (image != null && !image.isEmpty()) {
-            imageSave(image, request.name());
+            try {
+                String originalName = image.getOriginalFilename();
+                String ext = originalName.substring(originalName.lastIndexOf(".") + 1);
 
-            finalFileName = request.name() + "-Image." + image.getOriginalFilename().split("\\.")[1];
+                finalFileName = request.name() + "-Image." + ext;
+
+                Path targetPath = Path.of(IMAGE_PATH + finalFileName);
+                if (Files.notExists(targetPath.getParent())) {
+                    Files.createDirectories(targetPath.getParent());
+                }
+
+                Files.write(targetPath, image.getBytes());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new InvalidException("잘못된 형식의 이미지입니다.", e);
+            }
         } else if (!product.getName().equals(request.name()) && finalFileName != null) {
-
-            finalFileName = request.name() + "-Image." + finalFileName.substring(finalFileName.lastIndexOf(".") + 1);
+            String ext = finalFileName.substring(finalFileName.lastIndexOf(".") + 1);
+            finalFileName = request.name() + "-Image." + ext;
         }
 
         product.update(

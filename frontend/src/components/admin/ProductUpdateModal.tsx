@@ -5,7 +5,7 @@ import { ChangeEvent, FormEvent, useRef, useState } from "react";
 
 interface ProductUpdateModalProps {
     product: Product;
-    onClose: () => void;
+    onClose: (updatedProduct?: { name: string; price: number; stock: number; fileName: string }) => void;
 }
 
 export default function ProductUpdateModal({ product, onClose }: ProductUpdateModalProps) {
@@ -55,12 +55,17 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
 
             const response = await fetch(`http://localhost:8080/api/v1/admin/products/${product.id}`, {
                 method: 'PATCH',
-                body: formData, // 👈 JSON 대신 상자 묶음 자체를 body로 지정합니다.
+                body: formData,
             });
     
             if (response.ok) {
                 alert('상품이 수정되었습니다.');
-                onClose();
+                onClose({
+                    name: name,
+                    price: Number(price),
+                    stock: Number(stock),
+                    fileName: imageFile ? imageFile.name : (product.imageFileUrl || '')
+                });
             } else {
                 const errorText = await response.text();
                 alert(`상품 수정 실패: ${errorText}`);
