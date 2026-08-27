@@ -60,12 +60,12 @@ export default function ProductCardUser({ product, quantities, handleClickDecrea
                   items-center justify-between
                   rounded-full
                   border border-neutral-700
-                  px-4 py-2
+                  px-1 py-1
                   "
                 >
                     <button
                         type="button"
-                        className="text-xl"
+                        className="text-xl px-3 py-1"
                         onClick={handleClickDecrease}
                     >
                         -
@@ -75,7 +75,7 @@ export default function ProductCardUser({ product, quantities, handleClickDecrea
                     </span>
                     <button
                         type="button"
-                        className="text-xl"
+                        className="text-xl px-3 py-1"
                         onClick={handleClickIncrease}
                     >
                         +
@@ -111,7 +111,7 @@ export default function ProductCardUser({ product, quantities, handleClickDecrea
                                 alert(`모든 재고를 장바구니에 담았습니다.`);
                                 return;
                             }
-                            
+
                             if (existingItem.quantity + cartItem.quantity > product.stock) {
                                 alert(`재고가 부족합니다.\n최대 담을 수 있는 수량: ${product.stock - existingItem.quantity}개`);
                                 return;
