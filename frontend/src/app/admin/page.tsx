@@ -17,9 +17,22 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetch('http://localhost:8080/api/v1/product')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`백엔드 조회 실패 (상태코드: ${res.status})`);
+        }
+        return res.json();
+      })
       .then((data) => {
-        setProducts(data);
+        if (Array.isArray(data)) {
+          setProducts(data);
+        } else {
+          setProducts([]); 
+        }
+      })
+      .catch((err) => {
+        console.error("서버 연결 실패 또는 타입 에러:", err);
+        setProducts([]);
       });
   }, [productAdd, productUpdate]);
 
