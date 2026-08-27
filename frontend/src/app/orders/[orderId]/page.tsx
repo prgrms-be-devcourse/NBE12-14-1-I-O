@@ -1,5 +1,6 @@
 'use client';
 import { Order } from "@/types/Order";
+import { formatDate } from "@/util/FormatDate";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
@@ -52,7 +53,7 @@ export default function OrderDetailPage({
   console.log(order);
 
   if (order === null) {
-    return <div>데이터 가져오는 중...</div>
+    return <div className="flex justify-center text-2xl font-bold m-4">데이터를 찾을 수 없습니다.</div>
   }
 
   return (
@@ -103,7 +104,7 @@ export default function OrderDetailPage({
                 <span className="font-bold">
                   주문날짜
                 </span>
-                <span>{order.orderedAt}</span>
+                <span>{formatDate(order.orderedAt)}</span>
               </div>
 
               <div className="flex justify-between">
