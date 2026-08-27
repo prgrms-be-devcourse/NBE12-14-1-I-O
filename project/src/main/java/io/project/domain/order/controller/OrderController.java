@@ -63,9 +63,7 @@ public class OrderController {
                 "201-1",
                 "주문이 생성되었습니다.",
                 new OrderCreateResponse(
-                        order.getId(),
-                        order.getDelivery().getId(),
-                        order.getOrderedAt()
+                        order.getId()
                 )
         );
 

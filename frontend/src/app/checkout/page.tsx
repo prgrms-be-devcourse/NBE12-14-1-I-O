@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type CartItem = {
     id: number;
@@ -10,6 +11,7 @@ type CartItem = {
   };
 
 export default function CheckoutPage() {
+    const router = useRouter();
 
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [email, setEmail] = useState("");
@@ -147,12 +149,18 @@ export default function CheckoutPage() {
                 body: JSON.stringify(requestBody),
               });
 
-              console.log("status:", response.status);
-              console.log("ok:", response.ok);
-          
               const result = await response.json();
-          
-              console.log("result:", result);
+
+              if (!response.ok) {
+                console.log("주문 생성 실패:", result);
+                return;
+              }
+              
+              const orderId = result.data.orderId;
+              
+              localStorage.removeItem("cart");
+
+              router.push(`/orders/${orderId}?from=checkout`);
             }}
 
             className="

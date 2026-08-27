@@ -1,4 +1,5 @@
 'use client';
+
 import { Order } from "@/types/Order";
 import { formatDate } from "@/utils/FormatDate";
 import Link from "next/link";
@@ -6,10 +7,15 @@ import { use, useEffect, useState } from "react";
 
 export default function OrderDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ orderId: string }>;
+  searchParams: Promise<{ from?: string }>;
 }) {
   const { orderId } = use(params);
+  const { from } = use(searchParams);
+
+  const closeHref = from === "checkout" ? "/" : "/orders";
 
   const [order, setOrder] = useState<Order | null>(null);
   useEffect(() => {
@@ -19,7 +25,11 @@ export default function OrderDetailPage({
   }
     , []);
 
+    console.log("=== 내가 수정한 상세페이지 ===");
   console.log(order);
+  console.log("orderId:", orderId);
+  console.log("from:", from);
+  console.log("closeHref:", closeHref);
 
   if (order === null) {
     return <div className="flex justify-center text-2xl font-bold m-4">데이터를 찾을 수 없습니다.</div>
@@ -188,7 +198,7 @@ export default function OrderDetailPage({
           </button>
 
           <Link
-            href="/orders"
+            href={closeHref}
             className="
               rounded-md
               bg-neutral-700

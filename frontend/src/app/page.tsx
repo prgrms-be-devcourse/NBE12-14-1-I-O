@@ -196,6 +196,11 @@ export default function Home() {
                     "cart",
                     JSON.stringify(cartItems)
                   );
+
+                  setQuantities((prev) => ({
+                    ...prev,
+                    [product.id]: 1,
+                  }));
                 }}
 
                   className="
