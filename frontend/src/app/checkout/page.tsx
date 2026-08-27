@@ -1,4 +1,36 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+type CartItem = {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+  };
+
 export default function CheckoutPage() {
+
+    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [email, setEmail] = useState("");
+    const [address, setAddress] = useState("");
+    const [postalCode, setPostalCode] = useState("");
+
+    useEffect(() => {
+        const savedCart = localStorage.getItem("cart");
+      
+        if (savedCart) {
+          const parsedCart: CartItem[] = JSON.parse(savedCart);
+      
+          setCartItems(parsedCart);
+        }
+    }, []);
+
+    const totalPrice = cartItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+
     return (
       <main
         className="
@@ -27,6 +59,10 @@ export default function CheckoutPage() {
             </label>
   
             <input
+            value={email}
+            onChange={(e) => {
+                setEmail(e.target.value);
+              }}
               className="
                 mt-2 w-full
                 rounded-md
@@ -46,6 +82,10 @@ export default function CheckoutPage() {
             </label>
   
             <input
+            value={address}
+            onChange={(e) => {
+                setAddress(e.target.value);
+              }}
               className="
                 mt-2 w-full
                 rounded-md
@@ -65,6 +105,10 @@ export default function CheckoutPage() {
             </label>
   
             <input
+            value={postalCode}
+            onChange={(e) => {
+                setPostalCode(e.target.value);
+              }}
               className="
                 mt-2 w-full
                 rounded-md
@@ -82,6 +126,35 @@ export default function CheckoutPage() {
           </p>
   
           <button
+          onClick={async () => {
+            const items = cartItems.map((item) => ({
+              productId: item.id,
+              quantity: item.quantity,
+            }));
+
+            const requestBody = {
+                email,
+                address,
+                postalCode,
+                items,
+              };
+
+              const response = await fetch("http://localhost:8080/orders", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+              });
+
+              console.log("status:", response.status);
+              console.log("ok:", response.ok);
+          
+              const result = await response.json();
+          
+              console.log("result:", result);
+            }}
+
             className="
               mt-5 w-full
               rounded-md
@@ -112,27 +185,27 @@ export default function CheckoutPage() {
           <hr className="my-5 border-neutral-400" />
   
           <div className="space-y-4">
-            <div className="flex justify-between">
-              <span>에티오피아 예가체프 × 1</span>
-              <span>4,800원</span>
-            </div>
-  
-            <div className="flex justify-between">
-              <span>콜롬비아 수프리모 × 1</span>
-              <span>4,500원</span>
-            </div>
-  
-            <div className="flex justify-between">
-              <span>과테말라 안티구아 × 1</span>
-              <span>5,000원</span>
-            </div>
+            {cartItems.map((item) => (
+                <div
+                key={item.id}
+                className="flex justify-between"
+                >
+                    <span>
+                    {item.name} × {item.quantity}
+                    </span>
+
+                    <span>
+                    {(item.price * item.quantity).toLocaleString()}원
+                    </span>
+                </div>
+                ))}
           </div>
   
           <hr className="my-6 border-neutral-400" />
   
           <div className="flex justify-between text-lg">
             <span>총 금액</span>
-            <span>14,300원</span>
+            <span>{totalPrice.toLocaleString()}원</span>
           </div>
         </aside>
       </main>
