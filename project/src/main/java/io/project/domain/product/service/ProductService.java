@@ -29,7 +29,6 @@ public class ProductService {
 
     @Transactional
     public void updateProduct(Integer id, ProductUpdateRequest request, MultipartFile image) {
-
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
 
@@ -38,24 +37,35 @@ public class ProductService {
         if (image != null && !image.isEmpty()) {
             try {
                 String originalName = image.getOriginalFilename();
-                String ext = originalName.substring(originalName.lastIndexOf(".") + 1);
+                String ext = originalName.substring(originalName.lastIndexOf(".") + 1).toLowerCase();
 
-                finalFileName = request.name() + "-Image." + ext;
+                finalFileName = request.name() + "-image-" + System.currentTimeMillis() + "." + ext;
 
-                Path targetPath = Path.of(IMAGE_PATH + finalFileName);
+                Path targetPath = Path.of(IMAGE_PATH).toAbsolutePath().normalize().resolve(finalFileName);
                 if (Files.notExists(targetPath.getParent())) {
                     Files.createDirectories(targetPath.getParent());
                 }
 
                 Files.write(targetPath, image.getBytes());
-
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new InvalidException("잘못된 형식의 이미지입니다.", e);
             }
         } else if (!product.getName().equals(request.name()) && finalFileName != null) {
-            String ext = finalFileName.substring(finalFileName.lastIndexOf(".") + 1);
-            finalFileName = request.name() + "-Image." + ext;
+            try {
+                String ext = finalFileName.substring(finalFileName.lastIndexOf(".") + 1).toLowerCase();
+                String newFileName = request.name() + "-image-" + System.currentTimeMillis() + "." + ext;
+
+                Path sourcePath = Path.of(IMAGE_PATH).toAbsolutePath().normalize().resolve(finalFileName);
+                Path targetPath = Path.of(IMAGE_PATH).toAbsolutePath().normalize().resolve(newFileName);
+
+                if (Files.exists(sourcePath)) {
+                    Files.move(sourcePath, targetPath);
+                }
+                finalFileName = newFileName;
+            } catch (IOException e) {
+                throw new InvalidException("파일 이름 변경 중 오류가 발생했습니다.", e);
+            }
         }
 
         product.update(
