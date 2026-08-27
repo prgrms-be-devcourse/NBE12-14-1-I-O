@@ -11,7 +11,7 @@ export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:8080/product')
+    fetch('http://localhost:8080/api/v1/product')
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
@@ -21,7 +21,7 @@ export default function AdminPage() {
   //상품 삭제
   const handleDeleteProduct = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:8080/admin/products/${id}`, {
+      const response = await fetch(`http://localhost:8080/api/v1/admin/products/${id}`, {
         method: 'DELETE',
       });
 
