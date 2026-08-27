@@ -74,7 +74,7 @@ public class OrderController {
             @RequestParam("startDate")LocalDate startDate,
             @RequestParam("endDate")LocalDate endDate
             ) {
-        List<DashBoardResponse> dashBoard = orderService.getDashBoard();
+        List<DashBoardResponse> dashBoard = orderService.getDashBoard(startDate, endDate);
 
         return ResponseEntity.ok(new RsData<>(
                 "200",

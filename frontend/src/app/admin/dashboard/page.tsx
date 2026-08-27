@@ -32,15 +32,22 @@ export default function DashBoardPage() {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = new FormData(e.currentTarget);
+        const startDate = String(form.get("startDate"));
+        const endDate = String(form.get("endDate"));
 
-        setDate({ startDate: String(form.get("startDate")), endDate: String(form.get("endDate")) });
+        if (startDate > endDate) {
+            alert("시작일이 종료일보다 늦으면 안됩니다.");
+            return;
+        }
+
+        setDate({ startDate: startDate, endDate: endDate });
     }
 
     return (
         <main className="mx-auto mt-8 max-w-7xl rounded-[40px] bg-white p-10">
             <div className="flex justify-between">
                 <h1 className="justify-center text-2xl font-bold">대시보드</h1>
-                <form className="flex items-end gap-3 m-3">
+                <form onSubmit={handleSubmit} className="flex items-end gap-3 m-3">
                     <div className="flex items-center gap-3">
                         <label htmlFor="startDate" className="block text-sm font-medium">
                             시작일
@@ -88,7 +95,7 @@ export default function DashBoardPage() {
             p-8
           ">
                 <div>
-                    <span className="text-3xl py-8">수익: {revenue}원</span>
+                    <span className="text-3xl py-8">총 수익: {revenue}원</span>
                 </div>
                 <div>
                     <span className="text-3xl py-8">판매 목록</span>

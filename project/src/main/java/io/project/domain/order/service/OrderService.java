@@ -120,8 +120,11 @@ public class OrderService {
                 .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
     }
 
-    public List<DashBoardResponse> getDashBoard() {
-        List<DashBoardResponse> dashBoard = deliveryRepository.findDashBoard();
+    public List<DashBoardResponse> getDashBoard(LocalDate startDate, LocalDate endDate) {
+        List<DashBoardResponse> dashBoard = deliveryRepository.findDashBoard(startDate, endDate);
+        for (DashBoardResponse dashBoardResponse : dashBoard) {
+            System.out.println("dashBoardResponse = " + dashBoardResponse);
+        }
         return dashBoard;
     }
 }
