@@ -76,7 +76,7 @@ public class OrderService {
 
         for (OrderItemRequest itemRequest : request.items()) {
 
-            Product product = productService.findAndRemoveStock(itemRequest.productId(), itemRequest.quantity());
+            Product product = productService.decreaseStockForOrder(itemRequest.productId(), itemRequest.quantity());
 
             OrderItem orderItem = new OrderItem(
                     order,
