@@ -45,7 +45,7 @@ export default function ProductAddModal({ onClose }: ProductAddModalProps) {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/admin/products', {
+            const response = await fetch('http://localhost:8080/api/v1/admin/products', {
                 method: 'POST',
                 body: formData,
             });
