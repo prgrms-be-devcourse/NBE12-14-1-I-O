@@ -72,7 +72,7 @@ export default function ProductAddModal({ onClose }: ProductAddModalProps) {
                 <form onSubmit={handleSubmit} className="flex flex-col mx-16 gap-y-8">
                     <div className="flex flex-col gap-2">
                         <label htmlFor="name" className="font-bold text-xl">상품명</label>
-                        <input onChange={(e) => setName(e.target.value)} type="text" name="name" id="name" className="p-2 rounded border bg-white" placeholder="상품명을 입력해주세요." />
+                        <input onChange={(e) => setName(e.target.value)}type="text" name="name" id="name" className="p-2 rounded border bg-white" placeholder="상품명을 입력해주세요." />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label htmlFor="price" className="font-bold text-xl">가격</label>
@@ -93,9 +93,7 @@ export default function ProductAddModal({ onClose }: ProductAddModalProps) {
                         />
                         {/* <img className="w-20 h-20"></img> */}
                         <Image src={previewUrl} alt="기본 상품 이미지" width={70} height={70}></Image>
-                        <label htmlFor="image" className="border rounded w-48 p-1">
-                            {imageFile ? imageFile.name : "선택된 파일 없음"}
-                        </label>
+                        <label htmlFor="image" className="border rounded w-48 p-1">{imageFile ? imageFile.name : "선택된 파일 없음"}</label>
                         <button onClick={() => fileInputRef.current?.click()}
                             type="button" className="rounded p-2 bg-gray-700 text-white text-sm hover:bg-black">이미지 선택</button>
                     </div>
