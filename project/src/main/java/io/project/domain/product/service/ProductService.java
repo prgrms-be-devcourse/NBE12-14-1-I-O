@@ -119,27 +119,32 @@ public class ProductService {
             throw new InvalidException("잘못된 형식의 이미지입니다.", e);
         }
     }
-    // 주문 생성/수량 증가 시 재고 차감
-    public void removeStock(Integer quantity) {
-        int restStock = this.stock - quantity;
-        if (restStock < 0) {
-            throw new IllegalArgumentException("주문 수량은 재고를 초과할 수 없습니다. 현재 재고: " + this.stock);
-        }
-        this.stock = restStock;
+
+    @Transactional
+    public Product decreaseStockForOrder(
+            int productId,
+            int quantity
+    ) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new NotFoundException("상품을 찾을 수 없습니다.")
+                );
+
+        product.decreaseStock(quantity);
+
+        return product;
     }
 
-    // 주문 취소/수량 감소 시 재고 복원
-    public void addStock(Integer quantity) {
-        if (quantity == null || quantity <= 0) {
-            throw new IllegalArgumentException("주문 취소 복구 수량은 0 이하일 수 없습니다.");
-        }
-        this.stock += quantity;
-    }
+    @Transactional
+    public void increaseStockForCancel(
+            int productId,
+            int quantity
+    ) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new NotFoundException("상품을 찾을 수 없습니다.")
+                );
 
-    public void delete() {
-        if (this.deletedAt != null) {
-            throw new IllegalStateException("이미 판매 중지된 상품입니다.");
-        }
-        this.deletedAt = LocalDateTime.now();
+        product.increaseStock(quantity);
     }
 }
