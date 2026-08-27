@@ -18,6 +18,26 @@ export default function AdminPage() {
       });
   }, [productAdd]);
 
+  //상품 삭제
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:8080/admin/products/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('상품 삭제에 실패했습니다.');
+      }
+
+      // 백엔드 삭제 완료 후 화면 새로고침 효과
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+      alert('성공적으로 삭제되었습니다.');
+    } catch (error) {
+      console.error(error);
+      alert('삭제 중 오류가 발생했습니다.');
+    }
+  };
+
   const handleProductAddClick = () => {
     setProductAdd(!productAdd);
   }
@@ -37,7 +57,11 @@ export default function AdminPage() {
 
         <div className="mt-8 grid grid-cols-4 gap-6">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product}/>
+            <ProductCard 
+            key={product.id} 
+            product={product}
+            onDelete={handleDeleteProduct}
+            />
           ))}
         </div>
 

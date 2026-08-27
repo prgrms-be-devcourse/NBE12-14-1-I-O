@@ -2,9 +2,18 @@ import { Product } from '@/types/product';
 
 interface ProductCardProps {
     product: Product
+    onDelete: (id: number) => void;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, onDelete}: ProductCardProps) {
+    
+    // 삭제 버튼 클릭 핸들러
+    const handleDeleteClick = () => {
+        if (window.confirm(`"${product.name}" 상품을 삭제하시겠습니까?`)) {
+            onDelete(product.id);
+        }
+    };
+
     return (
         <article
             className="rounded-lg
@@ -34,7 +43,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                     수정
                 </button>
 
-                <button className="flex-1 rounded bg-red-500 py-2 text-white">
+                <button onClick={handleDeleteClick}
+                className="flex-1 rounded bg-red-500 py-2 text-white hover:bg-red-600 transition">
                     삭제
                 </button>
             </div>
