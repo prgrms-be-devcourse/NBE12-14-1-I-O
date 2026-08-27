@@ -1,6 +1,7 @@
 package io.project.domain.order.service;
 
 import io.project.domain.delivery.entity.Delivery;
+import io.project.domain.delivery.entity.DeliveryStatus;
 import io.project.domain.delivery.repository.DeliveryRepository;
 import io.project.domain.order.dto.OrderCreateRequest;
 import io.project.domain.order.dto.OrderItemRequest;
@@ -104,6 +105,14 @@ public class OrderService {
         return orderedAt.toLocalDate().plusDays(1);
     }
 
+    @Transactional
+    public void ship() {
+        List<Delivery> deliveries = deliveryRepository.findAllByStatusAndProcessingDate(
+                        DeliveryStatus.ORDERED, LocalDate.now());
+
+        deliveries.forEach(Delivery::updateShipped);
+    }
+  
     @Transactional(readOnly = true)
     public Order findById(int orderId) {
         return this.orderRepository.findById(orderId)
