@@ -14,7 +14,6 @@ export default function ProductCard({ product, onDelete, onEdit }: ProductCardPr
             onDelete(product.id);
         }
     };
-    console.log(product.imageFileUrl);
 
     return (
         <article

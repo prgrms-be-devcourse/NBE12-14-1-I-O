@@ -24,8 +24,8 @@ export default function AdminPage() {
         return res.json();
       })
       .then((data) => {
-        if (Array.isArray(data)) {
-          setProducts(data);
+        if (Array.isArray(data.data)) {
+          setProducts(data.data);
         } else {
           setProducts([]); 
         }
