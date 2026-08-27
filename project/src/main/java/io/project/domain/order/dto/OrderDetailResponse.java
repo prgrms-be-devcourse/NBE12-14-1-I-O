@@ -14,13 +14,14 @@ public record OrderDetailResponse(
         String email,
         String address,
         String postalCode,
+        int price,
         DeliveryStatus deliveryStatus,
         LocalDateTime createdAt,
         LocalDateTime shippedAt,
         LocalDateTime deliveredAt,
         List<OrderItemResponse> orderItemResponses
-){
-    public OrderDetailResponse(Order order){
+) {
+    public OrderDetailResponse(Order order) {
         this(
                 order.getId(),
                 order.getOrderedAt(),
@@ -28,6 +29,9 @@ public record OrderDetailResponse(
                 order.getDelivery().getEmail(),
                 order.getDelivery().getAddress(),
                 order.getDelivery().getPostalCode(),
+                order.getOrderItems().stream()
+                        .mapToInt(oi -> oi.getUnitPrice() * oi.getQuantity())
+                        .sum(),
                 order.getDelivery().getStatus(),
                 order.getCreatedAt(),
                 order.getDelivery().getShippedAt(),

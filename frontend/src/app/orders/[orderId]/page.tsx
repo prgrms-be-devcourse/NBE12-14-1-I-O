@@ -1,15 +1,19 @@
+'use client';
+import { Order } from "@/types/Order";
+import { formatDate } from "@/util/FormatDate";
 import Link from "next/link";
+import { use, useEffect, useState } from "react";
 
-export default async function OrderDetailPage({
+export default function OrderDetailPage({
   params,
 }: {
   params: Promise<{ orderId: string }>;
 }) {
-  const { orderId } = await params;
+  const { orderId } = use(params);
 
   // 임시 주문 데이터
   // 나중에는 GET /orders/{orderId} 결과로 교체
-  const order = {
+  const order1 = {
     id: orderId,
     date: "2026.08.28",
     status: "주문 완료",
@@ -37,6 +41,20 @@ export default async function OrderDetailPage({
       },
     ],
   };
+
+  const [order, setOrder] = useState<Order | null>(null);
+  useEffect(() => {
+    fetch(`http://localhost:8080/orders/${orderId}`)
+      .then((res) => res.json())
+      .then((data) => setOrder(data.data));
+  }
+    , []);
+
+  console.log(order);
+
+  if (order === null) {
+    return <div className="flex justify-center text-2xl font-bold m-4">데이터를 찾을 수 없습니다.</div>
+  }
 
   return (
     <main
@@ -79,21 +97,23 @@ export default async function OrderDetailPage({
                 <span className="font-bold">
                   주문번호
                 </span>
-                <span>{order.id}</span>
+                <span>{order.orderId}</span>
               </div>
 
               <div className="flex justify-between">
                 <span className="font-bold">
                   주문날짜
                 </span>
-                <span>{order.date}</span>
+                <span>{formatDate(order.orderedAt)}</span>
               </div>
 
               <div className="flex justify-between">
                 <span className="font-bold">
                   주문상태
                 </span>
-                <span>{order.status}</span>
+                <span>{order.deliveryStatus === 'ORDERED' ? '배송 전' :
+                 order.deliveryStatus === 'SHIPPING' ? '배송 중' :
+                 order.deliveryStatus === 'DELIVERED' ? '배송 완료' : '주문 취소'}</span>
               </div>
 
               <div className="flex justify-between">
@@ -121,7 +141,7 @@ export default async function OrderDetailPage({
                 </span>
 
                 <span>
-                  {order.zipCode}
+                  {order.postalCode}
                 </span>
               </div>
             </div>
@@ -146,9 +166,9 @@ export default async function OrderDetailPage({
             <hr className="my-5 border-neutral-400" />
 
             <div className="space-y-4">
-              {order.items.map((item) => (
+              {order.orderItemResponses.map((item, index) => (
                 <div
-                  key={item.id}
+                  key={index}
                   className="flex justify-between gap-6"
                 >
                   <span>
