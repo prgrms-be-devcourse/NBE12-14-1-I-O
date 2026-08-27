@@ -40,12 +40,12 @@ public class ProductService {
     }
 
     @Transactional
-    public Product findAndRemoveStock(Integer id, Integer count) {
+    public Product decreaseStockForOrder(Integer id, Integer count) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() ->
                         new NotFoundException("존재하지 않는 상품입니다.")
                 );
-        product.removeStock(count);
+        product.decreaseStock(count);
         return product;
     }
 
