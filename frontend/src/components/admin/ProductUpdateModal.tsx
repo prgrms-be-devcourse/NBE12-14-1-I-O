@@ -1,7 +1,7 @@
 'use client';
 import { Product } from "@/types/product";
 import Image from "next/image";
-import { ChangeEvent, SubmitEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 
 interface ProductUpdateModalProps {
     product: Product;
@@ -30,7 +30,7 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
         }
     }
 
-    const handleSubmit = async (e: SubmitEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         const requestData = {
@@ -41,12 +41,21 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
         };
     
         try {
+            const jsonBlob = new Blob([JSON.stringify(requestData)], {
+                type: 'application/json'
+            });
+
+            const formData = new FormData();
+            
+            formData.append('request', jsonBlob);
+            
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
             const response = await fetch(`http://localhost:8080/api/v1/admin/products/${product.id}`, {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData),
+                body: formData, // 👈 JSON 대신 상자 묶음 자체를 body로 지정합니다.
             });
     
             if (response.ok) {
