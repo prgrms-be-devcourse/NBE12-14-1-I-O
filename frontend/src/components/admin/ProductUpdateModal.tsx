@@ -17,7 +17,7 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
     const [imageFile, setImageFile] = useState<File | null>(null);
     // 미리보기용 주소
     const [previewUrl, setPreviewUrl] = useState<string>(
-        product.imageFileUrl ? `http://localhost:8080/api/v1/${product.imageFileUrl}` : '/baseThumbnail.png'
+        product.imageFileUrl ? `http://localhost:8080/${product.imageFileUrl}` : '/baseThumbnail.png'
     );
 
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -33,27 +33,20 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
     const handleSubmit = async (e: SubmitEvent) => {
         e.preventDefault();
 
-        const formData = new FormData();
-
         const requestData = {
             name: name,
             price: Number(price),
             stock: Number(stock),
+            fileName: imageFile ? imageFile.name : product.imageFileUrl
         };
-
-        const jsonBlob = new Blob([JSON.stringify(requestData)], {
-            type: 'application/json'
-        });
-
-        formData.append('request', jsonBlob);
-        if (imageFile) {
-            formData.append('image', imageFile);
-        }
     
         try {
             const response = await fetch(`http://localhost:8080/api/v1/admin/products/${product.id}`, {
                 method: 'PATCH',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
             });
     
             if (response.ok) {

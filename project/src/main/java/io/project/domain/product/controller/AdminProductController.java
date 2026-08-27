@@ -20,10 +20,9 @@ public class AdminProductController {
     @PatchMapping("/{productId}")
     public ResponseEntity<String> updateProduct(
             @PathVariable(name = "productId") Integer id,
-            @RequestPart(value = "request") @Valid ProductUpdateRequest request,
-            @RequestPart(value = "image", required = false) MultipartFile image
+            @Valid @RequestBody ProductUpdateRequest request
     ) {
-        productService.updateProduct(id, request, image);
+        productService.updateProduct(id, request);
 
         return ResponseEntity.ok("상품 정보가 성공적으로 수정되었습니다.");
     }
