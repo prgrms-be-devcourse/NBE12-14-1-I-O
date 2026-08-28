@@ -29,17 +29,9 @@ export default function ProductAddModal({ onClose }: ProductAddModalProps) {
 
         const formData = new FormData();
 
-        const requestData = {
-            name: name,
-            price: Number(price),
-            stock: Number(stock)
-        };
-
-        const jsonBlob = new Blob([JSON.stringify(requestData)], {
-            type: 'application/json'
-        });
-
-        formData.append('request', jsonBlob);
+        formData.append('name', name);
+        formData.append('price', price);
+        formData.append('stock', stock);
         if (imageFile) {
             formData.append('image', imageFile);
         }
@@ -47,7 +39,7 @@ export default function ProductAddModal({ onClose }: ProductAddModalProps) {
         try {
             const response = await fetch('http://localhost:8080/api/v1/admin/products', {
                 method: 'POST',
-                body: formData,
+                body: formData
             });
 
             if (response.ok) {
