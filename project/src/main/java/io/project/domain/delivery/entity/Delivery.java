@@ -51,7 +51,12 @@ public class Delivery extends BaseEntity {
     @OneToMany(mappedBy = "delivery")
     private List<Order> orders = new ArrayList<>();
 
-    public Delivery(String email, String address, String postalCode, LocalDate processingDate) {
+    public Delivery(
+            String email,
+            String address,
+            String postalCode,
+            LocalDate processingDate
+    ) {
         this.email = email;
         this.address = address;
         this.postalCode = postalCode;
@@ -66,5 +71,19 @@ public class Delivery extends BaseEntity {
     public void updateShipped() {
         this.status = DeliveryStatus.SHIPPING;
         this.shippedAt = LocalDateTime.now();
+    }
+
+    // 배송 취소
+    public void cancel() {
+        this.status = DeliveryStatus.CANCELLED;
+    }
+
+    // 배송지 주소 수정
+    public void updateAddress(
+            String address,
+            String postalCode
+    ) {
+        this.address = address;
+        this.postalCode = postalCode;
     }
 }
