@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 
-    List<Order> findAllByDeliveryEmail(String email);
+    List<Order> findAllByDeliveryEmailOrderByOrderedAtDesc(String email);
 
-    List<Order> findAllByDeliveryEmailAndOrderedAtBetween(
+    List<Order> findAllByDeliveryEmailAndOrderedAtBetweenOrderByOrderedAtDesc(
             String email,
             LocalDateTime startDate,
             LocalDateTime endDate

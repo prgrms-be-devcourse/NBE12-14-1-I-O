@@ -239,7 +239,7 @@ public class OrderService {
             LocalDate startDate,
             LocalDate endDate
     ) {
-        
+
         if (startDate == null && endDate != null) {
             throw new InvalidException("시작일을 입력해주세요.");
         }
@@ -251,7 +251,7 @@ public class OrderService {
         if (startDate != null && endDate != null) {
             LocalDateTime startDateTime = startDate.atStartOfDay();
             LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
-            List<Order> orderList =  this.orderRepository.findAllByDeliveryEmailAndOrderedAtBetween(
+            List<Order> orderList =  this.orderRepository.findAllByDeliveryEmailAndOrderedAtBetweenOrderByOrderedAtDesc(
                     email,startDateTime,endDateTime);
 
             return orderList.stream()
@@ -259,7 +259,7 @@ public class OrderService {
                     .toList();
         }
 
-        List<Order> orderList = this.orderRepository.findAllByDeliveryEmail(email);
+        List<Order> orderList = this.orderRepository.findAllByDeliveryEmailOrderByOrderedAtDesc(email);
 
         return orderList.stream()
                 .map(OrderListResponse::new)
