@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {OrderList} from "@/types/OrderList";
 import {useState} from "react";
+import {formatDate} from "@/utils/FormatDate";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<OrderList[]>([]);
@@ -156,7 +157,7 @@ export default function OrdersPage() {
                   <span className="font-bold">
                     주문날짜
                   </span>
-                  <span>{order.orderedAt}</span>
+                  <span>{formatDate(order.orderedAt)}</span>
                 </div>
 
                 <div className="flex justify-between">
