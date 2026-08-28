@@ -25,7 +25,7 @@ public class OrderController {
     // 주문 목록 조회
     @Operation(
             summary = "주문 검색",
-            description = "이메일로 검색해서 고객의 주문 내역을 조회합니다."
+            description = "이메일과 조회 기간을 기준으로 고객의 주문 내역을 조회합니다."
     )
     @GetMapping
     public ResponseEntity<RsData<List<OrderListResponse>>> orderList(
