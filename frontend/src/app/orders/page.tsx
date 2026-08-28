@@ -1,33 +1,23 @@
-import Link from "next/link";
+"use client";
 
-const orders = [
-  {
-    id: 1,
-    date: "2026.08.26",
-    status: "주문 완료",
-    price: 10000,
-    address: "서울시 강남구",
-    zipCode: "12345",
-  },
-  {
-    id: 2,
-    date: "2026.08.27",
-    status: "주문 완료",
-    price: 20000,
-    address: "서울시 송파구",
-    zipCode: "05678",
-  },
-  {
-    id: 3,
-    date: "2026.08.28",
-    status: "주문 완료",
-    price: 30000,
-    address: "서울시 마포구",
-    zipCode: "04123",
-  },
-];
+import Link from "next/link";
+import {OrderList} from "@/types/OrderList";
+import {useState} from "react";
 
 export default function OrdersPage() {
+  const [orders, setOrders] = useState<OrderList[]>([]);
+  const [email, setEmail] = useState("");
+  const handleSearch = async () => {
+    if (!email.trim()) {
+      alert("이메일을 입력해주세요.")
+      return;
+    }
+    const res = await fetch(
+        `http://localhost:8080/api/v1/orders?email=${encodeURIComponent(email)}`
+    );
+    const data = await res.json();
+    setOrders(data.data);
+  };
   return (
     <main
       className="
@@ -57,6 +47,9 @@ export default function OrdersPage() {
             <input
               type="email"
               placeholder="example@email.com"
+              value={email}
+              onChange={(e)=>
+                  setEmail(e.target.value)}
               className="
                 mt-2 w-full
                 rounded-md
@@ -107,6 +100,7 @@ export default function OrdersPage() {
 
           {/* 검색 버튼 */}
           <button
+              onClick={handleSearch}
             className="
               rounded-md
               bg-neutral-800
@@ -122,7 +116,7 @@ export default function OrdersPage() {
         <div className="mt-10 grid grid-cols-3 gap-6">
           {orders.map((order) => (
             <article
-              key={order.id}
+              key={order.orderId}
               className="
                 rounded-xl
                 border border-neutral-300
@@ -135,21 +129,21 @@ export default function OrdersPage() {
                   <span className="font-bold">
                     주문번호
                   </span>
-                  <span>{order.id}</span>
+                  <span>{order.orderId}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="font-bold">
                     주문날짜
                   </span>
-                  <span>{order.date}</span>
+                  <span>{order.orderedAt}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="font-bold">
                     주문상태
                   </span>
-                  <span>{order.status}</span>
+                  <span>{order.deliveryStatus}</span>
                 </div>
 
                 <div className="flex justify-between">
@@ -174,12 +168,12 @@ export default function OrdersPage() {
                   <span className="font-bold">
                     우편번호
                   </span>
-                  <span>{order.zipCode}</span>
+                  <span>{order.postalCode}</span>
                 </div>
               </div>
 
               <Link
-                href={`/orders/${order.id}`}
+                href={`/orders/${order.orderId}`}
                 className="
                   mt-6 block
                   rounded-md

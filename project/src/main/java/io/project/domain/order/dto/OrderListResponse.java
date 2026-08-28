@@ -14,6 +14,7 @@ public record OrderListResponse(
         DeliveryStatus deliveryStatus,
         String address,
         String postalCode,
+        int price,
         List<OrderItemResponse> orderItemResponses
 ){
     public OrderListResponse(Order order){
@@ -24,6 +25,9 @@ public record OrderListResponse(
                 order.getDelivery().getStatus(),
                 order.getDelivery().getAddress(),
                 order.getDelivery().getPostalCode(),
+                order.getOrderItems().stream()
+                        .mapToInt(oi -> oi.getUnitPrice() * oi.getQuantity())
+                        .sum(),
                 order.getOrderItems().stream()
                         .map(OrderItemResponse::new)
                         .toList()
