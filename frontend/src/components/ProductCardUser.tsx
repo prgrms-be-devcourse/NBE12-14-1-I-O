@@ -34,11 +34,11 @@ export default function ProductCardUser({ product, quantities, handleClickDecrea
 
             {/* 상품 정보 */}
             <div className="mt-5">
-                <h3 className="text-xl font-bold">
+                <h3 className="pr-5 text-l font-bold w-[200px] truncate">
                     {product.name}
                 </h3>
 
-                <p className="mt-2 min-h-12 text-sm text-neutral-500">
+                <p className="w-[200px] truncate line-clamp-3" title={product.description}>
                     {product.description}
                 </p>
 
