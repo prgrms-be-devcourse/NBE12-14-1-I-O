@@ -1,10 +1,6 @@
 package io.project.domain.order.controller;
-import io.project.domain.order.dto.*;
 
-import java.time.LocalDate;
-import java.util.List;
-import io.project.domain.order.dto.OrderCreateRequest;
-import io.project.domain.order.dto.OrderCreateResponse;
+import io.project.domain.order.dto.*;
 import io.project.domain.order.entity.Order;
 import io.project.domain.order.service.OrderService;
 import io.project.global.dto.RsData;
@@ -14,6 +10,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Tag(name = "주문 API", description = "고객 주문 생성, 조회, 장바구니 담기, 취소")
 @RestController
@@ -98,7 +97,6 @@ public class OrderController {
                         "주문이 생성되었습니다.",
                         new OrderCreateResponse(
                                 order.getId(),
-                                order.getDelivery().getId(),
                                 order.getOrderedAt()
                         )
                 );
