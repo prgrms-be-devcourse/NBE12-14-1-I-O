@@ -25,34 +25,18 @@ public class OrderController {
     // 주문 목록 조회
     @Operation(
             summary = "주문 검색",
-            description = "이메일로 검색해서 고객의 주문 내역을 조회합니다."
+            description = "이메일과 조회 기간을 기준으로 고객의 주문 내역을 조회합니다."
     )
     @GetMapping
     public ResponseEntity<RsData<List<OrderListResponse>>> orderList(
-            @RequestParam(value = "email") String email
-    ) {
+            @Valid @ModelAttribute OrderListRequest request
+    ){
+        List<OrderListResponse> orderListResponseList = this.orderService.orderList(
+                request.email(),request.startDate(),request.endDate());
 
-        List<OrderListResponse> orderListResponseList =
-                this.orderService.findAllByEmail(email);
-
-        if (orderListResponseList.isEmpty()) {
-            RsData<List<OrderListResponse>> rsData =
-                    new RsData<>(
-                            "200",
-                            "주문내역이 없습니다.",
-                            orderListResponseList
-                    );
-
-            return ResponseEntity.ok(rsData);
-        }
-
-        RsData<List<OrderListResponse>> rsData =
-                new RsData<>(
-                        "200",
-                        "주문목록을 성공적으로 불러왔습니다.",
-                        orderListResponseList
-                );
-
+        RsData<List<OrderListResponse>> rsData = new RsData<>("200",
+                "주문목록을 성공적으로 불러왔습니다.",
+                orderListResponseList);
         return ResponseEntity.ok(rsData);
     }
 
