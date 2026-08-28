@@ -13,6 +13,7 @@ import io.project.domain.order.entity.OrderStatus;
 import io.project.domain.order.repository.OrderRepository;
 import io.project.domain.product.entity.Product;
 import io.project.domain.product.service.ProductService;
+import io.project.global.exception.InvalidException;
 import io.project.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -239,5 +240,39 @@ public class OrderService {
             System.out.println("dashBoardResponse = " + dashBoardResponse);
         }
         return dashBoard;
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderListResponse> findAllByEmailAndDate(
+            String email,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        // 시작일 미입력시
+        if (startDate == null && endDate != null) {
+            throw new InvalidException("시작일을 입력해주세요.");
+        }
+        // 종료일 미 입력시
+        if (startDate != null && endDate == null) {
+            throw new InvalidException("종료일을 입력해주세요.");
+        }
+
+
+        if (startDate != null && endDate != null) {
+            LocalDateTime startDateTime = startDate.atStartOfDay();
+            LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
+            List<Order> orderList =  this.orderRepository.findAllByDeliveryEmailAndOrderedAtBetween(
+                    email,startDateTime,endDateTime);
+
+            return orderList.stream()
+                    .map(OrderListResponse::new)
+                    .toList();
+        }
+
+        List<Order> orderList = this.orderRepository.findAllByDeliveryEmail(email);
+
+        return orderList.stream()
+                .map(OrderListResponse::new)
+                .toList();
     }
 }
