@@ -29,9 +29,9 @@ public class AdminProductController {
             summary = "상품 정보 수정",
             description = "상품의 이름, 가격, 재고 정보와 첨부 이미지를 새롭게 갱신합니다."
     )
-    @PatchMapping(value = "/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponse(responseCode = "200", description = "상품 수정 성공",
             content = @Content(examples = @ExampleObject(value = "상품 정보가 성공적으로 수정되었습니다.")))
+    @PatchMapping(value = "/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateProduct(
             @PathVariable(name = "productId") Integer id,
             @ModelAttribute @Valid ProductUpdateRequest request
@@ -45,6 +45,8 @@ public class AdminProductController {
             summary = "상품 비활성화",
             description = "상품을 비활성화하여 상품 조회 목록에서 제외합니다."
     )
+    @ApiResponse(responseCode = "200", description = "상품 삭제 성공",
+            content = @Content(examples = @ExampleObject(value = "상품이 성공적으로 삭제되었습니다.")))
     @DeleteMapping("/{productId}")
     public ResponseEntity<String> deleteProduct(
             @PathVariable(name = "productId") Integer id
