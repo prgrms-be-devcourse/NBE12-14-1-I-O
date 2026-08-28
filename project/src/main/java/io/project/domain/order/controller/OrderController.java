@@ -61,7 +61,7 @@ public class OrderController {
             summary = "주문 내역 상세조회",
             description = "주문한 내역의 상세 내용을 확인합니다."
     )
-    @GetMapping("{orderId}")
+
     // 주문 상세 조회
     @GetMapping("/{orderId}")
     public ResponseEntity<RsData<OrderDetailResponse>> orderDetail(
@@ -87,7 +87,7 @@ public class OrderController {
             summary = "새로운 주문 생성",
             description = "상품 정보를 받아 새로운 주문을 생성합니다."
     )
-    @PostMapping()
+
     // 주문 생성
     @PostMapping
     public ResponseEntity<RsData<OrderCreateResponse>> createOrder(
