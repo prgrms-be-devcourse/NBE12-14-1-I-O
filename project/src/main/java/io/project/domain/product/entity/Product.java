@@ -75,4 +75,33 @@ public class Product extends BaseEntity {
         this.deletedAt = null;
         this.fileName = fileName;
     }
+
+    public void decreaseStock(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException(
+                    "주문 수량은 1개 이상이어야 합니다."
+            );
+        }
+
+        int restStock = this.stock - quantity;
+
+        if (restStock < 0) {
+            throw new IllegalArgumentException(
+                    "주문 수량은 재고를 초과할 수 없습니다. 현재 재고: "
+                            + this.stock
+            );
+        }
+
+        this.stock = restStock;
+    }
+
+    public void increaseStock(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException(
+                    "복원할 재고 수량은 1개 이상이어야 합니다."
+            );
+        }
+
+        this.stock += quantity;
+    }
 }

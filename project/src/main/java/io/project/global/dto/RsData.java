@@ -18,4 +18,8 @@ public class RsData<T> {
         this.data = null;
     }
 
+
+
+
+
 }

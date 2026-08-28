@@ -119,4 +119,32 @@ public class ProductService {
             throw new InvalidException("잘못된 형식의 이미지입니다.", e);
         }
     }
+
+    @Transactional
+    public Product decreaseStockForOrder(
+            int productId,
+            int quantity
+    ) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new NotFoundException("상품을 찾을 수 없습니다.")
+                );
+
+        product.decreaseStock(quantity);
+
+        return product;
+    }
+
+    @Transactional
+    public void increaseStockForCancel(
+            int productId,
+            int quantity
+    ) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new NotFoundException("상품을 찾을 수 없습니다.")
+                );
+
+        product.increaseStock(quantity);
+    }
 }
