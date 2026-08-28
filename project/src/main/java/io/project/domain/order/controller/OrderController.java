@@ -29,38 +29,9 @@ public class OrderController {
     )
     @GetMapping
     public ResponseEntity<RsData<List<OrderListResponse>>> orderList(
-            @RequestParam(value = "email") String email
-    ) {
-
-        List<OrderListResponse> orderListResponseList =
-                this.orderService.findAllByEmail(email);
-
-        if (orderListResponseList.isEmpty()) {
-            RsData<List<OrderListResponse>> rsData =
-                    new RsData<>(
-                            "200",
-                            "주문내역이 없습니다.",
-                            orderListResponseList
-                    );
-
-            return ResponseEntity.ok(rsData);
-        }
-
-        RsData<List<OrderListResponse>> rsData =
-                new RsData<>(
-                        "200",
-                        "주문목록을 성공적으로 불러왔습니다.",
-                        orderListResponseList
-                );
-
-        return ResponseEntity.ok(rsData);
-    }
-
-    @GetMapping
-    public ResponseEntity<RsData<List<OrderListResponse>>> getListByDate(
             @Valid @ModelAttribute OrderListRequest request
     ){
-        List<OrderListResponse> orderListResponseList = this.orderService.findAllByEmailAndDate(
+        List<OrderListResponse> orderListResponseList = this.orderService.orderList(
                 request.email(),request.startDate(),request.endDate());
 
         RsData<List<OrderListResponse>> rsData = new RsData<>("200",

@@ -33,16 +33,6 @@ public class OrderService {
     private final DeliveryRepository deliveryRepository;
     private final ProductService productService;
 
-    // 주문 목록 조회
-    @Transactional(readOnly = true)
-    public List<OrderListResponse> findAllByEmail(String email) {
-        List<Order> orderList =
-                orderRepository.findAllByDeliveryEmail(email);
-
-        return orderList.stream()
-                .map(OrderListResponse::new)
-                .toList();
-    }
 
     // 주문 상세 조회
     @Transactional(readOnly = true)
@@ -242,17 +232,17 @@ public class OrderService {
         return dashBoard;
     }
 
+    // 주문 목록 조회
     @Transactional(readOnly = true)
-    public List<OrderListResponse> findAllByEmailAndDate(
+    public List<OrderListResponse> orderList(
             String email,
             LocalDate startDate,
             LocalDate endDate
     ) {
-        // 시작일 미입력시
+        
         if (startDate == null && endDate != null) {
             throw new InvalidException("시작일을 입력해주세요.");
         }
-        // 종료일 미 입력시
         if (startDate != null && endDate == null) {
             throw new InvalidException("종료일을 입력해주세요.");
         }
