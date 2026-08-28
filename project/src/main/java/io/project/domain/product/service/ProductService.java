@@ -37,34 +37,27 @@ public class ProductService {
         if (image != null && !image.isEmpty()) {
             try {
                 String originalName = image.getOriginalFilename();
-                String ext = originalName.substring(originalName.lastIndexOf(".") + 1).toLowerCase();
+                String ext = org.springframework.util.StringUtils.getFilenameExtension(originalName);
+                if (ext == null) {
+                    throw new InvalidException("올바르지 않은 파일 형식입니다.");
+                }
+                ext = ext.toLowerCase();
 
-                finalFileName = request.name() + "-image-" + System.currentTimeMillis() + "." + ext;
+                finalFileName = java.util.UUID.randomUUID().toString() + "." + ext;
 
                 Path targetPath = Path.of(IMAGE_PATH).toAbsolutePath().normalize().resolve(finalFileName);
                 if (Files.notExists(targetPath.getParent())) {
                     Files.createDirectories(targetPath.getParent());
                 }
 
+                if (product.getFileName() != null) {
+                    Path oldPath = Path.of(IMAGE_PATH).toAbsolutePath().normalize().resolve(product.getFileName());
+                    Files.deleteIfExists(oldPath);
+                }
+
                 Files.write(targetPath, image.getBytes());
             } catch (IOException e) {
-                e.printStackTrace();
-                throw new InvalidException("잘못된 형식의 이미지입니다.", e);
-            }
-        } else if (!product.getName().equals(request.name()) && finalFileName != null) {
-            try {
-                String ext = finalFileName.substring(finalFileName.lastIndexOf(".") + 1).toLowerCase();
-                String newFileName = request.name() + "-image-" + System.currentTimeMillis() + "." + ext;
-
-                Path sourcePath = Path.of(IMAGE_PATH).toAbsolutePath().normalize().resolve(finalFileName);
-                Path targetPath = Path.of(IMAGE_PATH).toAbsolutePath().normalize().resolve(newFileName);
-
-                if (Files.exists(sourcePath)) {
-                    Files.move(sourcePath, targetPath);
-                }
-                finalFileName = newFileName;
-            } catch (IOException e) {
-                throw new InvalidException("파일 이름 변경 중 오류가 발생했습니다.", e);
+                throw new InvalidException("이미지 저장 중 오류가 발생했습니다.", e);
             }
         }
 
@@ -125,5 +118,33 @@ public class ProductService {
         } catch (IOException e) {
             throw new InvalidException("잘못된 형식의 이미지입니다.", e);
         }
+    }
+
+    @Transactional
+    public Product decreaseStockForOrder(
+            int productId,
+            int quantity
+    ) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new NotFoundException("상품을 찾을 수 없습니다.")
+                );
+
+        product.decreaseStock(quantity);
+
+        return product;
+    }
+
+    @Transactional
+    public void increaseStockForCancel(
+            int productId,
+            int quantity
+    ) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new NotFoundException("상품을 찾을 수 없습니다.")
+                );
+
+        product.increaseStock(quantity);
     }
 }

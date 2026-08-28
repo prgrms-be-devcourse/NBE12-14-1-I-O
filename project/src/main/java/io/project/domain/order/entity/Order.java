@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Table(name = "orders")
 @Entity
 @Getter
@@ -42,5 +43,9 @@ public class Order extends BaseEntity {
 
     public void addOrderItem(OrderItem orderItem) {
         this.orderItems.add(orderItem);
+    }
+
+    public void cancel() {
+        this.status = OrderStatus.CANCELED;
     }
 }
