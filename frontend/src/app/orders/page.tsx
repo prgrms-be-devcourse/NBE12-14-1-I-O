@@ -7,13 +7,29 @@ import {useState} from "react";
 export default function OrdersPage() {
   const [orders, setOrders] = useState<OrderList[]>([]);
   const [email, setEmail] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   const handleSearch = async () => {
     if (!email.trim()) {
       alert("이메일을 입력해주세요.")
       return;
     }
+    if ((startDate && !endDate) || (!startDate && endDate)) {
+      alert("시작일과 종료일을 모두 입력해주세요.");
+      return;
+    }
+    const params = new URLSearchParams({
+      email: email,
+    });
+
+    if (startDate && endDate) {
+      params.append("startDate", startDate);
+      params.append("endDate", endDate);
+    }
+
     const res = await fetch(
-        `http://localhost:8080/api/v1/orders?email=${encodeURIComponent(email)}`
+        `http://localhost:8080/api/v1/orders?${params.toString()}`
     );
     const data = await res.json();
     setOrders(data.data);
@@ -68,6 +84,8 @@ export default function OrdersPage() {
 
             <input
               type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
               className="
                 mt-2 rounded-md
                 border border-neutral-300
@@ -89,6 +107,8 @@ export default function OrdersPage() {
 
             <input
               type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
               className="
                 mt-2 rounded-md
                 border border-neutral-300
