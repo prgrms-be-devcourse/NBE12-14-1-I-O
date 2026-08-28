@@ -22,37 +22,37 @@ public class ProductInitData {
 
             productRepository.save(
                     new Product(
-                            "에티오피아 예가체프",
+                            "Columbia Nariño",
                             4800,
                             100,
-                            "ethiopia.jpg"
+                            "Columbia_Nariño-image.png"
                     )
             );
 
             productRepository.save(
                     new Product(
-                            "콜롬비아 수프리모",
+                            "Brazil Serra Do Caparaó",
                             4500,
                             100,
-                            "colombia.jpg"
+                            "Brazil_Serra_Do_Caparaó-image.png"
                     )
             );
 
             productRepository.save(
                     new Product(
-                            "과테말라 안티구아",
+                            "Columbia Quindío (White Wine Extended Fermentation)",
                             5000,
                             100,
-                            "guatemala.jpg"
+                            "Columbia_Quindío-image.png"
                     )
             );
 
             productRepository.save(
                     new Product(
-                            "브라질 산토스",
+                            "Ethiopia Sidamo",
                             4300,
                             100,
-                            "brazil.jpg"
+                            "Ethiopia_Sidamo-image.png"
                     )
             );
         };
