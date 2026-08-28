@@ -23,11 +23,11 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    // 주문 목록 조회
     @Operation(
             summary = "주문 검색",
             description = "이메일로 검색해서 고객의 주문 내역을 조회합니다."
     )
-    // 주문 목록 조회
     @GetMapping
     public ResponseEntity<RsData<List<OrderListResponse>>> orderList(
             @RequestParam(value = "email") String email
@@ -61,8 +61,6 @@ public class OrderController {
             summary = "주문 내역 상세조회",
             description = "주문한 내역의 상세 내용을 확인합니다."
     )
-
-    // 주문 상세 조회
     @GetMapping("/{orderId}")
     public ResponseEntity<RsData<OrderDetailResponse>> orderDetail(
             @PathVariable int orderId
@@ -87,8 +85,6 @@ public class OrderController {
             summary = "새로운 주문 생성",
             description = "상품 정보를 받아 새로운 주문을 생성합니다."
     )
-
-    // 주문 생성
     @PostMapping
     public ResponseEntity<RsData<OrderCreateResponse>> createOrder(
             @Valid @RequestBody OrderCreateRequest request
@@ -110,6 +106,10 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "대시 보드",
+            description = "설정한 기간 내의 대시보드를 조회합니다."
+    )
     @GetMapping("/dashboard")
     public ResponseEntity<RsData<List<DashBoardResponse>>> dashBoard(
             @RequestParam("startDate")LocalDate startDate,
@@ -124,7 +124,10 @@ public class OrderController {
         ));
     }
 
-    // 주문 수정
+    @Operation(
+            summary = "주문 수정",
+            description = "주문을 수정합니다."
+    )
     @PatchMapping("/{orderId}")
     public ResponseEntity<Void> updateOrder(
             @PathVariable int orderId,
@@ -141,7 +144,10 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    // 주문 취소
+    @Operation(
+            summary = "주문 취소",
+            description = "결제한 주문을 취소합니다."
+    )
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> cancelOrder(
             @PathVariable int orderId
