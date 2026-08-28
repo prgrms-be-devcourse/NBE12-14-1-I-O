@@ -13,14 +13,17 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
     const [price, setPrice] = useState(String(product.price));
     const [stock, setStock] = useState(String(product.stock));
     
-    // 실제 파일
     const [imageFile, setImageFile] = useState<File | null>(null);
-    // 미리보기용 주소
     const [previewUrl, setPreviewUrl] = useState<string>(
         product.imageFileUrl ? `http://localhost:8080/${product.imageFileUrl}` : '/baseThumbnail.png'
     );
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleNumberChange = (value: string, setter: (val: string) => void) => {
+        const onlyNumbers = value.replace(/[^0-9]/g, '');
+        setter(onlyNumbers);
+    };
 
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -33,21 +36,24 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        const requestData = {
-            name: name,
-            price: Number(price),
-            stock: Number(stock),
-            fileName: imageFile ? imageFile.name : product.imageFileUrl
-        };
+        if (!name.trim()) {
+            alert("상품명을 입력해주세요.");
+            return;
+        }
+        if (!price || Number(price) <= 0) {
+            alert("올바른 가격을 입력해주세요. (0보다 큰 숫자)");
+            return;
+        }
+        if (!stock || Number(stock) < 0) {
+            alert("올바른 재고 수량을 입력해주세요. (0 이상의 숫자)");
+            return;
+        }
     
         try {
-            const jsonBlob = new Blob([JSON.stringify(requestData)], {
-                type: 'application/json'
-            });
-
             const formData = new FormData();
-            
-            formData.append('request', jsonBlob);
+            formData.append('name', name);
+            formData.append('price', price);
+            formData.append('stock', stock);
             
             if (imageFile) {
                 formData.append('image', imageFile);
@@ -97,20 +103,20 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
                         <label htmlFor="price" className="font-bold text-xl">가격</label>
                         <input 
                             value={price}
-                            onChange={(e) => setPrice(e.target.value)} 
+                            onChange={(e) => handleNumberChange(e.target.value, setPrice)} 
                             type="text" name="price" id="price" 
                             className="p-2 rounded border bg-white" 
-                            placeholder="가격을 입력해주세요." 
+                            placeholder="가격을 입력해주세요. (숫자만)" 
                         />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label htmlFor="stock" className="font-bold text-xl">재고</label>
                         <input 
                             value={stock}
-                            onChange={(e) => setStock(e.target.value)} 
+                            onChange={(e) => handleNumberChange(e.target.value, setStock)} 
                             type="text" name="stock" id="stock" 
                             className="p-2 rounded border bg-white" 
-                            placeholder="재고를 입력해주세요." 
+                            placeholder="재고를 입력해주세요. (숫자만)" 
                         />
                     </div>
                     <div className="flex items-end gap-2">
@@ -133,7 +139,7 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
                         <button type="submit" className="w-24 rounded p-2 bg-gray-700 text-white text-m hover:bg-black">
                             수정 완료
                         </button>
-                        <button onClick={onClose} type="button" className="w-24 rounded p-2 bg-gray-700 text-white text-m hover:bg-black">
+                        <button onClick={() => onClose()} type="button" className="w-24 rounded p-2 bg-gray-700 text-white text-m hover:bg-black">
                             취소
                         </button>
                     </div>
