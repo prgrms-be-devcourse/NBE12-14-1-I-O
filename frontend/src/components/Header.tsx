@@ -30,9 +30,17 @@ export default function Header() {
         </Link>
 
         {isAdmin && (
-          <Link href="/admin">
-            상품 관리
-          </Link>
+          <>
+            <div>ㅣ</div>
+            <div>
+              <Link href="/admin" className="pr-2">
+                상품 관리
+              </Link>
+              <Link href="/admin/dashboard" className="px-2">
+                대시 보드
+              </Link>
+            </div>
+          </>
         )}
       </nav>
 

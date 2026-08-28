@@ -3,6 +3,7 @@ package io.project.domain.order.service;
 import io.project.domain.delivery.entity.Delivery;
 import io.project.domain.delivery.entity.DeliveryStatus;
 import io.project.domain.delivery.repository.DeliveryRepository;
+import io.project.domain.order.dto.DashBoardResponse;
 import io.project.domain.order.dto.OrderCreateRequest;
 import io.project.domain.order.dto.OrderItemRequest;
 import io.project.domain.order.dto.OrderListResponse;
@@ -229,5 +230,13 @@ public class OrderService {
         deliveries.forEach(
                 Delivery::updateShipped
         );
+    }
+
+    public List<DashBoardResponse> getDashBoard(LocalDate startDate, LocalDate endDate) {
+        List<DashBoardResponse> dashBoard = deliveryRepository.findDashBoard(startDate, endDate);
+        for (DashBoardResponse dashBoardResponse : dashBoard) {
+            System.out.println("dashBoardResponse = " + dashBoardResponse);
+        }
+        return dashBoard;
     }
 }
