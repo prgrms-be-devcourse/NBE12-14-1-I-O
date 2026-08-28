@@ -57,7 +57,7 @@ export default function OrderDetailPage({
       >
         {/* 주문 번호 */}
         <h2 className="text-3xl font-medium">
-          주문 번호: {order.id}
+          주문 번호: {order.orderId}
         </h2>
 
         {/* 주문 정보 + Summary */}

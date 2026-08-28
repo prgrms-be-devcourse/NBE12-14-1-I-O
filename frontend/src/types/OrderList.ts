@@ -1,28 +1,29 @@
-export type Order = {
+
+export type OrderList = {
     orderId: number;
     orderedAt: string;
     orderStatus: OrderStatus;
-    email: string;
+    deliveryStatus: DeliveryStatus;
     address: string;
     postalCode: string;
-    price: number;
-    deliveryStatus: DeliveryStatus;
-    createdAt: string;
-    shippedAt: string | null;
-    deliveredAt: string | null;
+    price: number
     orderItemResponses: OrderItem[];
-};
+}
 
 export type OrderItem = {
     name: string;
     quantity: number;
     price: number;
     imageFilename: string;
-};
-export type OrderStatus = "ORDERED" | "CANCELED";
+}
+
+export type OrderStatus =
+    | "ORDERED"
+    | "CANCELED";
 
 export type DeliveryStatus =
     | "ORDERED"
     | "SHIPPING"
     | "DELIVERED"
     | "CANCELLED";
+
