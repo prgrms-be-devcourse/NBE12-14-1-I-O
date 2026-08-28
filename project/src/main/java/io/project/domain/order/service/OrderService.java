@@ -24,6 +24,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import static io.project.domain.delivery.repository.DeliveryRepository.*;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -233,11 +235,17 @@ public class OrderService {
         );
     }
 
-    public List<DashBoardResponse> getDashBoard(LocalDate startDate, LocalDate endDate) {
-        List<DashBoardResponse> dashBoard = deliveryRepository.findDashBoard(startDate, endDate);
-        for (DashBoardResponse dashBoardResponse : dashBoard) {
-            System.out.println("dashBoardResponse = " + dashBoardResponse);
-        }
-        return dashBoard;
+    public DashBoardResponse getDashBoard(LocalDate startDate, LocalDate endDate) {
+        List<RevenueDashBoard> revenueDashBoards = deliveryRepository.findDashBoard(startDate, endDate);
+        List<SoldTop3DashBoard> soldTop3DashBoards = deliveryRepository.findSoldTop3DashBoard(startDate, endDate);
+        List<RevenueTop3DashBoard> revenueTop3DashBoards = deliveryRepository.findRevenueTop3DashBoard(startDate, endDate);
+
+        DashBoardResponse dashBoardResponse =
+                new DashBoardResponse(
+                        revenueDashBoards,
+                        soldTop3DashBoards,
+                        revenueTop3DashBoards);
+
+        return dashBoardResponse;
     }
 }
