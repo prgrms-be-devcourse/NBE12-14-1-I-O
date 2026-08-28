@@ -3,6 +3,9 @@ package io.project.domain.product.controller;
 import io.project.domain.product.service.ProductService;
 import io.project.global.dto.RsData;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +30,13 @@ public class AdminProductController {
             description = "상품의 이름, 가격, 재고 정보와 첨부 이미지를 새롭게 갱신합니다."
     )
     @PatchMapping(value = "/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiResponse(responseCode = "200", description = "상품 수정 성공",
+            content = @Content(examples = @ExampleObject(value = "상품 정보가 성공적으로 수정되었습니다.")))
     public ResponseEntity<String> updateProduct(
             @PathVariable(name = "productId") Integer id,
-            @RequestPart(value = "request") @Valid ProductUpdateRequest request,
-            @RequestPart(value = "image", required = false) MultipartFile image
+            @ModelAttribute @Valid ProductUpdateRequest request
     ) {
-        productService.updateProduct(id, request, image);
+        productService.updateProduct(id, request, request.image());
 
         return ResponseEntity.ok("상품 정보가 성공적으로 수정되었습니다.");
     }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.web.multipart.MultipartFile;
 
 public class ProductRequest {
     public record ProductUpdateRequest(
@@ -16,7 +17,9 @@ public class ProductRequest {
             @Min(value = 0, message = "가격은 0원 이상이어야 합니다.")
             Integer price,
 
-            String fileName
+            String fileName,
+
+            MultipartFile image
     ) {
         public ProductUpdateRequest {
             if (name != null && name.isBlank()) {
