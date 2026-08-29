@@ -2,6 +2,7 @@ package io.project.domain.product.entity;
 
 import io.project.global.entity.BaseEntity;
 import io.project.global.exception.BusinessException;
+import io.project.global.exception.InvalidException;
 import io.project.global.exception.OutOfStockException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,24 +44,6 @@ public class Product extends BaseEntity {
         if (fileName != null) this.fileName = fileName;
     }
 
-    public void decreaseStock(Integer quantity) {
-        int restStock = this.stock - quantity;
-
-        if (restStock < 0) {
-            throw new OutOfStockException("주문 수량은 재고를 초과할 수 없습니다. 현재 재고: " + this.stock);
-        }
-
-        this.stock = restStock;
-    }
-
-    public void addStock(Integer quantity) {
-        if (quantity == null || quantity <= 0) {
-            throw new BusinessException("주문 취소 복구 수량은 0 이하일 수 없습니다.");
-        }
-
-        this.stock += quantity;
-    }
-
     public void delete() {
         if (this.deletedAt != null) {
             throw new BusinessException("이미 판매 중지된 상품입니다.");
@@ -78,7 +61,7 @@ public class Product extends BaseEntity {
 
     public void decreaseStock(int quantity) {
         if (quantity <= 0) {
-            throw new IllegalArgumentException(
+            throw new BusinessException(
                     "주문 수량은 1개 이상이어야 합니다."
             );
         }
@@ -86,7 +69,7 @@ public class Product extends BaseEntity {
         int restStock = this.stock - quantity;
 
         if (restStock < 0) {
-            throw new IllegalArgumentException(
+            throw new OutOfStockException(
                     "주문 수량은 재고를 초과할 수 없습니다. 현재 재고: "
                             + this.stock
             );
@@ -95,9 +78,9 @@ public class Product extends BaseEntity {
         this.stock = restStock;
     }
 
-    public void increaseStock(int quantity) {
-        if (quantity <= 0) {
-            throw new IllegalArgumentException(
+    public void increaseStock(Integer quantity) {
+        if (quantity == null || quantity <= 0) {
+            throw new BusinessException(
                     "복원할 재고 수량은 1개 이상이어야 합니다."
             );
         }
