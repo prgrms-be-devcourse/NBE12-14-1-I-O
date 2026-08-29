@@ -3,6 +3,7 @@ export type OrderList = {
     orderId: number;
     orderedAt: string;
     orderStatus: OrderStatus;
+    email: string;
     deliveryStatus: DeliveryStatus;
     address: string;
     postalCode: string;
