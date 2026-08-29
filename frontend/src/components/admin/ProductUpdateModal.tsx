@@ -1,7 +1,7 @@
 'use client';
 import { Product } from "@/types/Product";
 import Image from "next/image";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState, useEffect } from "react";
 
 interface ProductUpdateModalProps {
     product: Product;
@@ -14,9 +14,22 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
     const [stock, setStock] = useState(String(product.stock));
     
     const [imageFile, setImageFile] = useState<File | null>(null);
-    const [previewUrl, setPreviewUrl] = useState<string>(
-        product.imageFileUrl ? `http://localhost:8080/${product.imageFileUrl}` : '/baseThumbnail.png'
-    );
+    const [previewUrl, setPreviewUrl] = useState<string>(() => {
+        if (!product.imageFileUrl) return '/baseThumbnail.png';
+        let cleanPath = product.imageFileUrl.trim().replace(/^\//, '');
+        if (cleanPath.startsWith('api/v1/')) cleanPath = cleanPath.substring(7);
+        if (cleanPath.startsWith('images/')) cleanPath = cleanPath.substring(7);
+        return `http://localhost:8080/api/v1/images/${cleanPath}?v=${Date.now()}`;
+    });
+
+    useEffect(() => {
+        if (product.imageFileUrl) {
+            let cleanPath = product.imageFileUrl.trim().replace(/^\//, '');
+            if (cleanPath.startsWith('api/v1/')) cleanPath = cleanPath.substring(7);
+            if (cleanPath.startsWith('images/')) cleanPath = cleanPath.substring(7);
+            setPreviewUrl(`http://localhost:8080/api/v1/images/${cleanPath}?t=${Date.now()}`);
+        }
+    }, [product.imageFileUrl]);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -70,7 +83,7 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
                     name: name,
                     price: Number(price),
                     stock: Number(stock),
-                    fileName: imageFile ? imageFile.name : (product.imageFileUrl || '')
+                    fileName: product.imageFileUrl || ''
                 });
             } else {
                 const errorText = await response.text();
@@ -128,7 +141,14 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
                             onChange={handleImageChange}
                             className="hidden"
                         />
-                        <Image src={previewUrl} alt="상품 이미지" width={70} height={70} className="object-cover rounded"></Image>
+                        <Image 
+                            src={previewUrl} 
+                            alt="상품 이미지" 
+                            width={70} 
+                            height={70} 
+                            className="object-cover rounded"
+                            unoptimized 
+                        />
                         <label htmlFor="image" className="border rounded w-48 p-1 truncate block bg-white">
                             {imageFile ? imageFile.name : (product.imageFileUrl || "기본 이미지 상태")}
                         </label>
