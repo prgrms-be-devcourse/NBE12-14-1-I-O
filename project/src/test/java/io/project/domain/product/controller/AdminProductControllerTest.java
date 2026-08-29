@@ -141,7 +141,7 @@ class ProductControllerTest {
         }
 
         @Test
-        @DisplayName("실패: 존재하지 않는 상품 ID를 넘기면 서비스에서 NotFoundException 예외가 발생한다.")
+        @DisplayName("실패: 존재하지 않는 상품 ID를 넘기면 서비스에서 NotFoundException 예외가 발생한다")
         void fail_productNotFound() {
             Integer nonExistProductId = 999;
 
@@ -154,7 +154,7 @@ class ProductControllerTest {
         }
 
         @Test
-        @DisplayName("실패: 이미 비활성화(판매 중지)된 상품을 다시 비활성화하려고 하면 BusinessException 예외가 발생한다.")
+        @DisplayName("실패: 이미 비활성화(판매 중지)된 상품을 다시 비활성화하려고 하면 BusinessException 예외가 발생한다")
         void fail_alreadyDeletedProduct() {
             Integer alreadyDeletedProductId = 2;
 
