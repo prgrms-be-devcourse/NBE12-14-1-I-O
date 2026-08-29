@@ -62,19 +62,6 @@ class OrderCreateServiceTest {
         productRepository.deleteAll();
     }
 
-    /*
-    1. 정상 요청이면 Order가 생성된다.     ← 지금
-    2. 생성된 Order의 상태는 ORDERED다.
-    3. 상품 수만큼 OrderItem이 생성된다.
-    4. OrderItem의 quantity/unitPrice가 정확하다.
-    5. 주문 수량만큼 Product.stock이 감소한다.
-    6. 새로운 배송 조건이면 Delivery가 생성된다.
-    7. 같은 배송 조건이면 Delivery를 재사용한다.
-    8. 재고 부족이면 OutOfStockException이 발생한다.
-    9. 상품이 없으면 NotFoundException이 발생한다.
-    10. 실패 시 앞선 재고/Delivery 변경이 롤백된다.
-     */
-
     @Test
     @DisplayName("정상적인 주문 요청이면 주문이 생성된다")
     void createOrder() {
