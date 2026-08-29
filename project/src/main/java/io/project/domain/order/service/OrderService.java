@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -325,7 +327,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Page<OrderListResponse> orderListPaging(String name, LocalDate startDate, LocalDate endDate,
-                                String status, int page, int size) {
+                                String status, int page, int size, String sort) {
         if (startDate == null) {
             startDate = LocalDate.now();
         }
@@ -337,9 +339,8 @@ public class OrderService {
         }
         DeliveryStatus deliveryStatus = DeliveryStatus.valueOf(status);
 
-        System.out.println("page = " + page);
-        System.out.println("size = " + size);
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.by(Sort.Direction.valueOf(sort.toUpperCase()), "createdAt"));
 
         Page<Order> orderPage = orderRepository.findAdminOrderList(name, startDate, endDate, deliveryStatus, pageable);
         return orderPage.map(OrderListResponse::new);
