@@ -254,7 +254,9 @@ public class OrderService {
         if (startDate != null && endDate == null) {
             throw new InvalidException("종료일을 입력해주세요.");
         }
-
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new InvalidException("시작일은 종료일보다 이후일 수 없습니다.");
+        }
 
         if (startDate != null && endDate != null) {
             LocalDateTime startDateTime = startDate.atStartOfDay();
