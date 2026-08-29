@@ -92,7 +92,9 @@ public class ProductService {
         return productRepository.findAllByDeletedAtIsNull();
     }
 
-    public void save(ProductAddRequest dto, MultipartFile image) {
+    public void save(ProductAddRequest dto) {
+        MultipartFile image = dto.image();
+
         String fileName = (image != null && !image.isEmpty())
                 ? imageSave(image, dto.name()) : null;
 

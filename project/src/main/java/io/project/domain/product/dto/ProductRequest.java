@@ -34,6 +34,8 @@ public class ProductRequest {
             @NotNull(message = "상품의 재고를 입력해주세요.")
             Integer stock,
             @NotNull(message = "상품의 가격을 입력해주세요.")
-            Integer price) {
+            Integer price,
+            MultipartFile image
+            ) {
     }
 }

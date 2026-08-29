@@ -62,10 +62,9 @@ public class AdminProductController {
     )
     @PostMapping
     public ResponseEntity<RsData<?>> createProduct(
-            @RequestPart(value = "request") @Valid ProductAddRequest request,
-            @RequestPart(value = "image", required = false) MultipartFile image
+            @ModelAttribute(value = "request") @Valid ProductAddRequest request
     ) {
-        productService.save(request, image);
+        productService.save(request);
 
         return ResponseEntity.ok(new RsData<>(
                 "201",
