@@ -6,7 +6,6 @@ import io.project.domain.order.dto.OrderCreateRequest;
 import io.project.domain.order.dto.OrderItemRequest;
 import io.project.domain.order.repository.OrderRepository;
 import io.project.domain.product.service.ProductService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static io.project.domain.product.dto.ProductRequest.ProductAddRequest;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("test")
 @SpringBootTest
