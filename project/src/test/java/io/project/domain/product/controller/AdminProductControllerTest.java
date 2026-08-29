@@ -1,7 +1,9 @@
 package io.project.domain.product.controller;
 
 import io.project.domain.product.service.ProductService;
-import io.project.global.exception.InvalidException; // 실제 InvalidException 패키지 경로 확인 필요
+import io.project.global.exception.BusinessException;
+import io.project.global.exception.InvalidException;
+import io.project.global.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -116,6 +118,52 @@ class ProductControllerTest {
                     .hasMessageContaining("이름은 공백일 수 없습니다.");
 
             verify(productService, never()).updateProduct(any(), any(), any());
+        }
+    }
+
+    @Nested
+    @DisplayName("상품 비활성화(삭제) 기능")
+    class DeleteProduct {
+
+        @Test
+        @DisplayName("성공: 존재하는 상품 ID를 넘기면 정상적으로 삭제 처리되고 200 OK 메시지를 반환한다")
+        void success_deleteProduct() {
+            Integer productId = 1;
+
+            doNothing().when(productService).deleteProduct(productId);
+
+            ResponseEntity<String> response = adminProductController.deleteProduct(productId);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody()).isEqualTo("상품이 성공적으로 삭제되었습니다.");
+
+            verify(productService, times(1)).deleteProduct(productId);
+        }
+
+        @Test
+        @DisplayName("실패: 존재하지 않는 상품 ID를 넘기면 서비스에서 NotFoundException 예외가 발생한다")
+        void fail_productNotFound() {
+            Integer nonExistProductId = 999;
+
+            doThrow(new NotFoundException("존재하지 않는 상품입니다."))
+                    .when(productService).deleteProduct(nonExistProductId);
+
+            assertThatThrownBy(() -> adminProductController.deleteProduct(nonExistProductId))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessageContaining("존재하지 않는 상품입니다.");
+        }
+
+        @Test
+        @DisplayName("실패: 이미 비활성화(판매 중지)된 상품을 다시 비활성화하려고 하면 BusinessException 예외가 발생한다")
+        void fail_alreadyDeletedProduct() {
+            Integer alreadyDeletedProductId = 2;
+
+            doThrow(new BusinessException("이미 판매 중지된 상품입니다."))
+                    .when(productService).deleteProduct(alreadyDeletedProductId);
+
+            assertThatThrownBy(() -> adminProductController.deleteProduct(alreadyDeletedProductId))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("이미 판매 중지된 상품입니다.");
         }
     }
 }
