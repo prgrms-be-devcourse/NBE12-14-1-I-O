@@ -504,8 +504,8 @@ export default function OrderDetailPage({
             )}
 
             {/* 닫기 */}
-            <Link
-                href={closeHref}
+            <button
+                onClick={() => router.back()}
                 className="
               rounded-md
               bg-neutral-700
@@ -514,7 +514,7 @@ export default function OrderDetailPage({
             "
             >
               닫기
-            </Link>
+            </button>
 
           </div>
 
