@@ -39,6 +39,9 @@ export default function Header() {
               <Link href="/admin/dashboard" className="px-2">
                 대시 보드
               </Link>
+              <Link href="/admin/orders" className="px-2">
+                주문 목록
+              </Link>
             </div>
           </>
         )}

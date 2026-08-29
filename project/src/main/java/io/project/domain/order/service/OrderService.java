@@ -336,6 +336,9 @@ public class OrderService {
             status = "ORDERED";
         }
         DeliveryStatus deliveryStatus = DeliveryStatus.valueOf(status);
+
+        System.out.println("page = " + page);
+        System.out.println("size = " + size);
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Order> orderPage = orderRepository.findAdminOrderList(name, startDate, endDate, deliveryStatus, pageable);
