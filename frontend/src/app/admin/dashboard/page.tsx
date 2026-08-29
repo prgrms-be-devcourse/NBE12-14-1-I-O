@@ -70,46 +70,56 @@ export default function DashBoardPage() {
     return (
         <main className="mx-auto mt-8 max-w-7xl rounded-[40px] bg-white p-10">
             <div className="flex justify-between">
-                <h1 className="justify-center text-2xl font-bold">대시보드</h1>
-                <form onSubmit={handleSubmit} className="flex items-end gap-3 m-3">
-                    <div className="flex items-center gap-3">
-                        <label htmlFor="startDate" className="block text-sm font-medium">
-                            시작일
-                        </label>
-                        <input
-                            type="date"
-                            name="startDate"
-                            id="startDate"
-                            defaultValue={date.startDate}
-                            className="
+                <h1 className="text-4xl font-bold">대시보드</h1>
+                <form onSubmit={handleSubmit} className="flex flex-col items-end gap-3 m-3">
+                    <div className="flex gap-2">
+                        <button type="button" className="px-3 py-1 font-bold text-sm border rounded bg-[#f4e5cc] hover:bg-[#dab58a]">
+                            금일 통계
+                        </button>
+                        <button type="button" className="px-3 py-1 font-bold text-sm border rounded bg-[#f4e5cc] hover:bg-[#dab58a]">
+                            한달 통계
+                        </button>
+                    </div>
+                    <div className="flex items-end gap-3">
+                        <div className="flex items-center gap-3">
+                            <label htmlFor="startDate" className="block text-sm font-medium">
+                                시작일
+                            </label>
+                            <input
+                                type="date"
+                                name="startDate"
+                                id="startDate"
+                                defaultValue={date.startDate}
+                                className="
                                 rounded-md
                                 border border-neutral-300
                                 bg-white
                                 p-3
                             "
-                        />
-                    </div>
-                    <span className="pb-3 text-xl">
-                        ~
-                    </span>
-                    <div className="flex items-center gap-3">
-                        <label htmlFor="endDate" className="block text-sm font-medium">
-                            종료일
-                        </label>
-                        <input
-                            type="date"
-                            name="endDate"
-                            id="endDate"
-                            defaultValue={date.endDate}
-                            className="
+                            />
+                        </div>
+                        <span className="pb-3 text-xl">
+                            ~
+                        </span>
+                        <div className="flex items-center gap-3">
+                            <label htmlFor="endDate" className="block text-sm font-medium">
+                                종료일
+                            </label>
+                            <input
+                                type="date"
+                                name="endDate"
+                                id="endDate"
+                                defaultValue={date.endDate}
+                                className="
                                 rounded-md
                                 border border-neutral-300
                                 bg-white
                                 p-3
                             "
-                        />
+                            />
+                        </div>
+                        <button type="submit" className="p-3 border rounded bg-gray-400 text-white hover:bg-gray-700">가져오기</button>
                     </div>
-                    <button type="submit" className="p-3 border rounded bg-gray-400 text-white hover:bg-gray-700">가져오기</button>
                 </form>
             </div>
             <section className="
@@ -119,13 +129,16 @@ export default function DashBoardPage() {
             p-8
           ">
                 <div>
-                    <span className="text-3xl py-8">총 수익: {revenue.toLocaleString()}원</span>
+                    <p className="font-bold">기간: {date.startDate} ~ {date.endDate}</p>
+                    <p className="text-3xl my-2">총 수익: {revenue.toLocaleString()}원</p>
                 </div>
-                <div>
-                    <span className="text-3xl py-8">판매 목록</span>
+                <div className="border-2 p-2 my-8 bg-[#f2f7f2] rounded">
+                    <span className="text-3xl py-8">
+                        판매 목록
+                    </span>
                     <ul>
                         {revenueDashBoards.map((dashBoard, index) => (
-                            <li key={index} className="flex m-4">
+                            <li key={index} className="flex border-2 rounded p-2 m-4 bg-white">
                                 <span className="text-xl font-bold m-2">- {dashBoard.name}</span>
                                 <span className="text-l m-2">{dashBoard.unitPrice.toLocaleString()}</span>
                                 <span className="text-l m-2">x</span>
@@ -135,24 +148,24 @@ export default function DashBoardPage() {
                         ))}
                     </ul>
                 </div>
-                <div>
+                <div className="border-2 p-2 my-8 bg-[#f2f7f2] rounded">
                     <span className="text-3xl py-8">가장 많이 팔린 원두 TOP 3</span>
                     <ul>
                         {soldTop3DashBoards.map((dashBoard, index) => (
-                            <li key={index} className="flex m-4">
-                                <span className="text-xl font-bold m-2">{index+1}등 - {dashBoard.name}</span>
+                            <li key={index} className="flex border-2 rounded p-2 m-4 bg-white">
+                                <span className="text-xl font-bold m-2">Top {index + 1}. {dashBoard.name}</span>
                                 <span className="text-l m-2">{dashBoard.quantity.toLocaleString()}개</span>
                                 <span className="text-l m-2">{dashBoard.totalPrice.toLocaleString()}원</span>
                             </li>
                         ))}
                     </ul>
                 </div>
-                <div>
+                <div className="border-2 p-2 my-8 bg-[#f2f7f2] rounded">
                     <span className="text-3xl py-8">수익이 가장 높은 원두 TOP 3</span>
                     <ul>
                         {revenueTop3DashBoards.map((dashBoard, index) => (
-                            <li key={index} className="flex m-4">
-                                <span className="text-xl font-bold m-2">{index+1}등 - {dashBoard.name}</span>
+                            <li key={index} className="flex border-2 rounded p-2 m-4 bg-white">
+                                <span className="text-xl font-bold m-2">Top {index + 1}. {dashBoard.name}</span>
                                 <span className="text-l m-2">{dashBoard.quantity.toLocaleString()}개</span>
                                 <span className="text-l m-2">{dashBoard.totalPrice.toLocaleString()}원</span>
                             </li>
