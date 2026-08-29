@@ -218,7 +218,7 @@ public class OrderService {
                 deliveryRepository
                         .findAllByStatusAndProcessingDate(
                                 DeliveryStatus.ORDERED,
-                                LocalDate.now()
+                                LocalDate.now(clock)
                         );
 
         deliveries.forEach(

@@ -11,7 +11,10 @@ public class DeliveryScheduler {
 
     private final OrderService orderService;
 
-    @Scheduled(cron = "0 0 14 * * *")
+    @Scheduled(
+            cron = "0 0 14 * * *",
+            zone = "Asia/Seoul"
+    )
     public void updateShip() {
         orderService.ship();
     }
