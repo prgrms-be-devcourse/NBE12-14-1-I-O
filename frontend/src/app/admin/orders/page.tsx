@@ -82,43 +82,24 @@ export default function AdminOrdersPage() {
 
     };
     return (
-        <main
-            className="
-        mx-auto mt-8
-        max-w-7xl
-        rounded-[40px]
-        bg-white
-        p-12
-      "
-        >
+        <main className="mx-auto mt-8 max-w-7xl rounded-[40px] bg-white p-12">
             {/* 검색 영역 */}
-            <section
-                className="
-          rounded-xl
-          border border-neutral-300
-          bg-[#fffaf0]
-          p-8
-        "
-            >
+            <section className="rounded-xl border border-neutral-300 bg-[#fffaf0] p-8">
                 <div className="flex items-end gap-8">
                     {/* 상품명 */}
                     <div className="flex-1">
                         <div>
                             <label className="block text-lg font-bold">
-                                상품명{productNameSelect && <span onClick={() => setProductNameSelect(false)} className="text-sm mx-4 p-1 border-2 rounded bg-gray-100 hover:bg-gray-300">다시 선택</span>}
+                                상품명{productNameSelect &&
+                                    <span onClick={() => setProductNameSelect(false)}
+                                        className="text-sm mx-4 p-1 border-2 rounded bg-gray-100 hover:bg-gray-300">다시 선택</span>
+                                }
                             </label>
                         </div>
                         {!productNameSelect &&
                             <select
                                 onChange={(e) => setProductName(e.target.value)}
-                                className="
-                                rounded-md
-                                mt-2
-                                border border-neutral-300
-                                bg-white
-                                hover:bg-gray-200
-                                p-3
-                            "
+                                className="rounded-md mt-2 border border-neutral-300 bg-white hover:bg-gray-200 p-3"
                             >
                                 <option value="">All</option>
                                 {products.map((product, index) =>
@@ -137,8 +118,6 @@ export default function AdminOrdersPage() {
                                 className="mt-2 w-full rounded-md border border-neutral-300 bg-white p-3"
                             />
                         }
-
-
                     </div>
                     <div className="flex-1">
                         <label className="block text-lg font-bold">
@@ -146,14 +125,7 @@ export default function AdminOrdersPage() {
                         </label>
                         <select
                             onChange={(e) => setDeliveryStatus(e.target.value)}
-                            className="
-                                rounded-md
-                                mt-2
-                                border border-neutral-300
-                                bg-white
-                                hover:bg-gray-200
-                                p-3
-                            "
+                            className="rounded-md mt-2 border border-neutral-300 bg-white hover:bg-gray-200 p-3"
                         >
                             <option value="ORDERED">주문 완료</option>
                             <option value="SHIPPING">배송 중</option>
@@ -167,18 +139,11 @@ export default function AdminOrdersPage() {
                         <label className="block text-lg font-bold">
                             시작일
                         </label>
-
                         <input
                             type="date"
                             value={date.startDate}
                             onChange={(e) => setDate({ ...date, startDate: e.target.value })}
-                            className="
-                mt-2 rounded-md
-                border border-neutral-300
-                bg-white
-                hover:bg-gray-200
-                p-3
-              "
+                            className="mt-2 rounded-md border border-neutral-300 bg-white hover:bg-gray-200 p-3"
                         />
                     </div>
 
@@ -191,31 +156,18 @@ export default function AdminOrdersPage() {
                         <label className="block text-lg font-bold">
                             종료일
                         </label>
-
                         <input
                             type="date"
                             value={date.endDate}
                             onChange={(e) => setDate({ ...date, endDate: e.target.value })}
-                            className="
-                mt-2 rounded-md
-                border border-neutral-300
-                bg-white
-                hover:bg-gray-200
-                p-3
-              "
+                            className="mt-2 rounded-md border border-neutral-300 bg-white hover:bg-gray-200 p-3"
                         />
                     </div>
 
                     {/* 검색 버튼 */}
                     <button
                         onClick={() => setSearchClick(!searchClick)}
-                        className="
-              rounded-md
-              bg-neutral-600
-              hover:bg-black
-              px-2 py-2
-              text-white
-            "
+                        className="rounded-md bg-neutral-600 hover:bg-black px-2 py-2 text-white"
                     >
                         검색
                     </button>
@@ -228,13 +180,7 @@ export default function AdminOrdersPage() {
                         {!pageSizeSelect &&
                             <select
                                 onChange={(e) => setPage({ ...page, size: e.target.value })}
-                                className="
-                                rounded-md
-                                border border-neutral-300
-                                bg-white
-                                hover:bg-gray-200
-                                p-3
-                            "
+                                className="rounded-md border border-neutral-300 bg-white hover:bg-gray-200 p-3"
                             >
                                 <option value="12">12개</option>
                                 <option value="18">18개</option>
@@ -270,12 +216,7 @@ export default function AdminOrdersPage() {
                     {orders.map((order) => (
                         <article
                             key={order.orderId}
-                            className="
-                rounded-xl
-                border border-neutral-300
-                bg-white
-                p-5
-              "
+                            className="rounded-xl border border-neutral-300 bg-white p-5"
                         >
                             <div className="space-y-2">
                                 <div className="flex justify-between">
@@ -334,14 +275,7 @@ export default function AdminOrdersPage() {
 
                             <Link
                                 href={`/orders/${order.orderId}`}
-                                className="
-                  mt-6 block
-                  rounded-md
-                  bg-neutral-800
-                  px-4 py-2
-                  text-center
-                  text-white
-                "
+                                className="mt-6 block rounded-md bg-neutral-800 px-4 py-2 text-center text-white"
                             >
                                 상세보기
                             </Link>
