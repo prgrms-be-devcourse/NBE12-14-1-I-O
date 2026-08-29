@@ -14,12 +14,13 @@ const toDateInput = (d: Date) => {
 };
 
 export default function AdminOrdersPage() {
+    const [searchClick, setSearchClick] = useState(false);
     const [orders, setOrders] = useState<OrderList[]>([]);
     const [productName, setProductName] = useState("");
     const [date, setDate] = useState(
         { startDate: toDateInput(new Date()), endDate: toDateInput(new Date()), });
     const [deliveryStatus, setDeliveryStatus] = useState("ORDERED");
-    const [page, setPage] = useState<{ curPage: string, totalPages: string, size: string }>({ curPage: "0", totalPages: "0", size: "12" });
+    const [page, setPage] = useState<{ curPage: string, totalPages: string, size: string, sort: string }>({ curPage: "0", totalPages: "0", size: "12", sort: "DESC" });
     const [products, setProducts] = useState<Product[]>([]);
     const [productNameSelect, setProductNameSelect] = useState(false);
     const [pageSizeSelect, setPageSizeSelect] = useState(false);
@@ -30,17 +31,12 @@ export default function AdminOrdersPage() {
             .then((res) => setProducts(res.data));
     }, []);
 
-    if (!productNameSelect && productName === "직접 입력") {
-        setProductNameSelect(!productNameSelect);
-        setProductName("");
-    }
+    useEffect(() => {
+        if (date.startDate > date.endDate) {
+            alert("시작일이 종료일보다 늦으면 안됩니다.");
+            return;
+        }
 
-    if (!pageSizeSelect && page.size === "직접 입력") {
-        setPageSizeSelect(!pageSizeSelect);
-        setPage({ ...page, size: "12" });
-    }
-
-    const handleSearch = async () => {
         if ((date.startDate && !date.endDate) || (!date.startDate && date.endDate)) {
             alert("시작일과 종료일을 모두 입력해주세요.");
             return;
@@ -60,15 +56,30 @@ export default function AdminOrdersPage() {
         params.append("status", deliveryStatus);
         params.append("page", page.curPage);
         params.append("size", page.size);
+        params.append("sort", page.sort);
 
-        const res = await fetch(
-            `http://localhost:8080/api/v1/admin/orders?${params.toString()}`
-        );
-        const data = await res.json();
-        setOrders(data.data.content);
-        setPage({
-            ...page, totalPages: data.data.totalPages
-        });
+        fetch(`http://localhost:8080/api/v1/admin/orders?${params.toString()}`)
+            .then((res) => res.json())
+            .then((data) => {
+                setOrders(data.data.content);
+                setPage({
+                    ...page, totalPages: data.data.totalPages
+                });
+            });
+    }, [searchClick, page.sort])
+
+    if (!productNameSelect && productName === "직접 입력") {
+        setProductNameSelect(!productNameSelect);
+        setProductName("");
+    }
+
+    if (!pageSizeSelect && page.size === "직접 입력") {
+        setPageSizeSelect(!pageSizeSelect);
+        setPage({ ...page, size: "12" });
+    }
+
+    const handleSearch = async () => {
+
     };
     return (
         <main
@@ -197,12 +208,12 @@ export default function AdminOrdersPage() {
 
                     {/* 검색 버튼 */}
                     <button
-                        onClick={handleSearch}
+                        onClick={() => setSearchClick(!searchClick)}
                         className="
               rounded-md
               bg-neutral-600
               hover:bg-black
-              px-6 py-3
+              px-2 py-2
               text-white
             "
                     >
@@ -239,11 +250,19 @@ export default function AdminOrdersPage() {
                                 type="text"
                                 placeholder="검색 개수 입력"
                                 onChange={(e) =>
-                                    setPage({...page, size: e.target.value})}
+                                    setPage({ ...page, size: e.target.value })}
                                 className="mt-2 w-full rounded-md border border-neutral-300 bg-white p-3"
                             />
                         }
                     </div>
+
+                    {/* 내림차순 올림차순 */}
+                    <button onClick={() => {
+                        let s = page.sort === "DESC" ? "ASC" : "DESC";
+                        setPage({ ...page, sort: s })
+                    }}
+                        className="border-1 rounded p-1 py-2 bg-gray-100 hover:bg-gray-300">{page.sort === "DESC" ? "내림차순" : "올림차순"}</button>
+
                 </div>
 
                 {/* 주문 목록 */}

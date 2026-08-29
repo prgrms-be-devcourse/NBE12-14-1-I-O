@@ -50,9 +50,10 @@ public class AdminOrderController {
             @RequestParam(value = "endDate", required = false) LocalDate endDate,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "10") int size
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(value = "sort", required = false, defaultValue = "desc") String sort
     ) {
-        Page<OrderListResponse> response = orderService.orderListPaging(name, startDate, endDate, status, page, size);
+        Page<OrderListResponse> response = orderService.orderListPaging(name, startDate, endDate, status, page, size, sort);
 
         return ResponseEntity.ok(new RsData<>(
                 "200",
