@@ -11,10 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
-@Tag(name = "주문 API", description = "고객 주문 생성, 조회, 장바구니 담기, 취소")
+@Tag(
+        name = "주문 API",
+        description = "고객 주문 생성, 조회, 수정, 취소"
+)
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -30,16 +32,27 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<RsData<List<OrderListResponse>>> orderList(
             @Valid @ModelAttribute OrderListRequest request
-    ){
-        List<OrderListResponse> orderListResponseList = this.orderService.orderList(
-                request.email(),request.startDate(),request.endDate());
+    ) {
 
-        RsData<List<OrderListResponse>> rsData = new RsData<>("200",
-                "주문목록을 성공적으로 불러왔습니다.",
-                orderListResponseList);
+        List<OrderListResponse> orderListResponseList =
+                orderService.orderList(
+                        request.email(),
+                        request.startDate(),
+                        request.endDate()
+                );
+
+        RsData<List<OrderListResponse>> rsData =
+                new RsData<>(
+                        "200",
+                        "주문목록을 성공적으로 불러왔습니다.",
+                        orderListResponseList
+                );
+
         return ResponseEntity.ok(rsData);
     }
 
+
+    // 주문 상세 조회
     @Operation(
             summary = "주문 내역 상세조회",
             description = "주문한 내역의 상세 내용을 확인합니다."
@@ -49,7 +62,8 @@ public class OrderController {
             @PathVariable int orderId
     ) {
 
-        Order order = orderService.findById(orderId);
+        Order order =
+                orderService.findById(orderId);
 
         OrderDetailResponse orderDetailResponse =
                 new OrderDetailResponse(order);
@@ -64,6 +78,8 @@ public class OrderController {
         return ResponseEntity.ok(rsData);
     }
 
+
+    // 주문 생성
     @Operation(
             summary = "새로운 주문 생성",
             description = "상품 정보를 받아 새로운 주문을 생성합니다."
@@ -73,7 +89,8 @@ public class OrderController {
             @Valid @RequestBody OrderCreateRequest request
     ) {
 
-        Order order = orderService.createOrder(request);
+        Order order =
+                orderService.createOrder(request);
 
         RsData<OrderCreateResponse> response =
                 new RsData<>(
@@ -88,26 +105,30 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
+
+    // 주문 수정
     @Operation(
             summary = "주문 수정",
-            description = "주문을 수정합니다."
+            description = "주문의 주소와 우편번호를 수정합니다."
     )
     @PatchMapping("/{orderId}")
     public ResponseEntity<Void> updateOrder(
             @PathVariable int orderId,
-            @RequestParam int orderItemId,
-            @RequestParam int quantity
+            @RequestParam String address,
+            @RequestParam String postalCode
     ) {
 
         orderService.updateOrder(
                 orderId,
-                orderItemId,
-                quantity
+                address,
+                postalCode
         );
 
         return ResponseEntity.noContent().build();
     }
 
+
+    // 주문 취소
     @Operation(
             summary = "주문 취소",
             description = "결제한 주문을 취소합니다."
