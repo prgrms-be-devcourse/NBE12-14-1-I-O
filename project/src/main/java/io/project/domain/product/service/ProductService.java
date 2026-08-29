@@ -19,13 +19,15 @@ import java.util.List;
 
 import static io.project.domain.product.dto.ProductRequest.*;
 
-@RequiredArgsConstructor
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final String IMAGE_PATH;
 
-    @Value("${app.image.path}")
-    private String IMAGE_PATH;
+    public ProductService(ProductRepository productRepository, @Value("${app.image.path}")String IMAGE_PATH) {
+        this.productRepository = productRepository;
+        this.IMAGE_PATH = IMAGE_PATH;
+    }
 
     @Transactional
     public void updateProduct(Integer id, ProductUpdateRequest request, MultipartFile image) {
@@ -92,7 +94,7 @@ public class ProductService {
         return productRepository.findAllByDeletedAtIsNull();
     }
 
-    public void save(ProductAddRequest dto) {
+    public Product save(ProductAddRequest dto) {
         MultipartFile image = dto.image();
 
         String fileName = (image != null && !image.isEmpty())
@@ -104,6 +106,8 @@ public class ProductService {
         } catch (DataIntegrityViolationException e) {
             throw new DuplicatedException("이미 존재하는 상품명입니다.");
         }
+
+        return product;
     }
 
     private String imageSave(MultipartFile image, String productName) {

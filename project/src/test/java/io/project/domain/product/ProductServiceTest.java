@@ -5,31 +5,63 @@ import io.project.domain.product.entity.Product;
 import io.project.domain.product.repository.ProductRepository;
 import io.project.domain.product.service.ProductService;
 import io.project.global.exception.DuplicatedException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+
 import io.project.domain.product.dto.ProductRequest.*;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
 class ProductServiceTest {
+
+    private final String IMAGE_PATH = "./test-images";
+
+    // 테스트 중 저장 된 이미지 제거
+    @AfterEach
+    void cleanUp() throws IOException {
+        Path dir = Path.of(IMAGE_PATH).toAbsolutePath().normalize();
+
+        if (Files.notExists(dir)) {
+            return;
+        }
+
+        try (var paths = Files.walk(dir)) {
+            paths.sorted(Comparator.reverseOrder())
+                    .forEach(path -> {
+                        try {
+                            Files.delete(path);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException("파일 제거 실패", e);
+                        }
+                    });
+        }
+    }
 
     @Test
     @DisplayName("상품 목록 출력")
     void findAll() {
         // 목 레파지토리 생성 및 서비스에 주입
         ProductRepository productRepository = mock(ProductRepository.class);
-        ProductService productService = new ProductService(productRepository);
+        ProductService productService = new ProductService(productRepository, null);
 
         // 출력할 데이터 설정
-        when(productRepository.findAll())
+        when(productRepository.findAllByDeletedAtIsNull())
                 .thenReturn(
                         IntStream.rangeClosed(1, 10)
                                 .mapToObj(i -> new Product("name" + i, i, i, "filename" + i))
@@ -45,37 +77,60 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("상품 저장")
-    void save() {
+    @DisplayName("상품 저장(이미지 제외)")
+    void saveNoImage() {
         ProductRepository productRepository = mock(ProductRepository.class);
-        ProductService productService = new ProductService(productRepository);
+        ProductService productService = new ProductService(productRepository, null);
 
         Product testProduct = new Product("name1", 1, 1, "1");
         when(productRepository.save(testProduct))
                 .thenReturn(testProduct);
 
-        productService.save(new ProductAddRequest("name1", 1, 1), null);
-        // 예외가 발생하지 않으면 성공
+        Product product = productService.save(new ProductAddRequest("name1", 1, 1, null));
+
+        assertEquals(testProduct.getName(), product.getName());
+        assertEquals(testProduct.getPrice(), product.getPrice());
+        assertEquals(testProduct.getStock(), product.getStock());
     }
 
     @Test
-    @DisplayName("상품 저장 - 상품명 중복으로 실패")
-    void saveFailed() {
+    @DisplayName("상품 저장(이미지 제외) - 상품명 중복으로 실패")
+    void saveFailedNoImage() {
         ProductRepository productRepository = mock(ProductRepository.class);
-        ProductService productService = new ProductService(productRepository);
+        ProductService productService = new ProductService(productRepository, null);
 
         Product testProduct = new Product("name1", 1, 1, "1");
         when(productRepository.save(any(Product.class)))
                 .thenReturn(testProduct)
                 .thenThrow(DataIntegrityViolationException.class);
 
-        ProductAddRequest requestDto = new ProductAddRequest("name1", 1, 1);
+        ProductAddRequest requestDto = new ProductAddRequest("name1", 1, 1, null);
 
         // 첫번째 실행은 예외가 발생되지 않음
-        productService.save(requestDto, null);
+        productService.save(requestDto);
 
         // 두번째 실행은 unique 규칙이 설정된 name을 같은 이름으로 등록했으므로 예외 발생
         assertThrows(DuplicatedException.class,
-                () -> productService.save(requestDto, null));
+                () -> productService.save(requestDto));
+    }
+
+    @Test
+    @DisplayName("상품 저장(이미지 포함)")
+    void saveWithImage() {
+        ProductRepository productRepository = mock(ProductRepository.class);
+        ProductService productService = new ProductService(productRepository, IMAGE_PATH);
+        MockMultipartFile image = new MockMultipartFile("image", "coffee.png", "image/png", "dummy".getBytes());
+        Product testProduct = new Product("name", 1, 1, image.getOriginalFilename());
+        ProductAddRequest requestDto = new ProductAddRequest("name", 1, 1, image);
+
+        when(productRepository.save(testProduct))
+                .thenReturn(testProduct);
+
+        Product product = productService.save(requestDto);
+
+        assertEquals(testProduct.getName(), product.getName());
+        assertEquals(testProduct.getPrice(), product.getPrice());
+        assertEquals(testProduct.getStock(), product.getStock());
+        assertEquals("name-image.png", product.getFileName());
     }
 }
