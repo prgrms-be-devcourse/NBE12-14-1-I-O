@@ -16,6 +16,9 @@ import io.project.domain.product.service.ProductService;
 import io.project.global.exception.InvalidException;
 import io.project.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -318,5 +321,24 @@ public class OrderService {
         return orderList.stream()
                 .map(OrderListResponse::new)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderListResponse> orderListPaging(String name, LocalDate startDate, LocalDate endDate,
+                                String status, int page, int size) {
+        if (startDate == null) {
+            startDate = LocalDate.now();
+        }
+        if (endDate == null) {
+            endDate = LocalDate.now();
+        }
+        if (status == null || status.isEmpty()) {
+            status = "ORDERED";
+        }
+        DeliveryStatus deliveryStatus = DeliveryStatus.valueOf(status);
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Order> orderPage = orderRepository.findAdminOrderList(name, startDate, endDate, deliveryStatus, pageable);
+        return orderPage.map(OrderListResponse::new);
     }
 }
