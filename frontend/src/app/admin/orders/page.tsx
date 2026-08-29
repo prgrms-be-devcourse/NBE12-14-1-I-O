@@ -25,6 +25,25 @@ export default function AdminOrdersPage() {
     const [productNameSelect, setProductNameSelect] = useState(false);
     const [pageSizeSelect, setPageSizeSelect] = useState(false);
 
+    if (Number(page.curPage) < 0) {
+        setPage({ ...page, curPage: "0" });
+    }
+
+    if ((page.curPage !== "0" && page.totalPages !== "0") &&
+        Number(page.curPage) > Number(page.totalPages) - 1) {
+        setPage({ ...page, curPage: String(Number(page.totalPages) - 1) })
+    }
+
+    const curPage = Number(page.curPage);
+    const totalPages = Number(page.totalPages);
+    const PAGE_SIZE = 5;
+
+    const currentGroup = Math.floor(curPage / PAGE_SIZE);
+    const startPage = currentGroup * PAGE_SIZE;
+    const endPage = Math.min(startPage + PAGE_SIZE, totalPages);
+
+    const pageNumbers = Array.from({ length: endPage - startPage }, (_, i) => startPage + i);
+
     useEffect(() => {
         fetch(`http://localhost:8080/api/v1/products`)
             .then((data) => data.json())
@@ -66,7 +85,7 @@ export default function AdminOrdersPage() {
                     ...page, totalPages: data.data.totalPages
                 });
             });
-    }, [searchClick, page.sort])
+    }, [searchClick, page.sort, page.curPage])
 
     if (!productNameSelect && productName === "직접 입력") {
         setProductNameSelect(!productNameSelect);
@@ -78,9 +97,6 @@ export default function AdminOrdersPage() {
         setPage({ ...page, size: "12" });
     }
 
-    const handleSearch = async () => {
-
-    };
     return (
         <main className="mx-auto mt-8 max-w-7xl rounded-[40px] bg-white p-12">
             {/* 검색 영역 */}
@@ -104,7 +120,7 @@ export default function AdminOrdersPage() {
                                 <option value="">All</option>
                                 {products.map((product, index) =>
                                     <option key={index} value={product.name}>
-                                        {product.name.length >= 10 ? product.name.slice(0, 20) + "..." : product.name}
+                                        {product.name.length >= 22 ? product.name.slice(0, 20) + "..." : product.name}
                                     </option>)
                                 }
                                 <option value="직접 입력">직접 입력</option>
@@ -281,6 +297,20 @@ export default function AdminOrdersPage() {
                             </Link>
                         </article>
                     ))}
+                </div>
+                <div className="font-bold flex justify-center m-2">
+                    <button onClick={() => { setPage({ ...page, curPage: String(curPage - 1) }) }} className="text-xl mr-3">이전</button>
+                    {
+                        pageNumbers.map((num) =>
+                            <button
+                                onClick={() => setPage({ ...page, curPage: String(num) })}
+                                key={num}
+                                className={num === curPage ? "underline text-xl mx-3 mt-1" : "text-l mx-3 mt-1"}>
+                                {num + 1}
+                            </button>
+                        )
+                    }
+                    <button onClick={() => setPage({ ...page, curPage: String(curPage + 1) })} className="text-xl ml-3">다음</button>
                 </div>
             </section>
         </main>
