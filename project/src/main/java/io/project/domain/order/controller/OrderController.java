@@ -89,24 +89,6 @@ public class OrderController {
     }
 
     @Operation(
-            summary = "대시 보드",
-            description = "설정한 기간 내의 대시보드를 조회합니다."
-    )
-    @GetMapping("/dashboard")
-    public ResponseEntity<RsData<DashBoardResponse>> dashBoard(
-            @RequestParam("startDate")LocalDate startDate,
-            @RequestParam("endDate")LocalDate endDate
-            ) {
-        DashBoardResponse dashBoard = orderService.getDashBoard(startDate, endDate);
-
-        return ResponseEntity.ok(new RsData<>(
-                "200",
-                "대시보드를 성공적으로 불러왔습니다.",
-                dashBoard
-        ));
-    }
-
-    @Operation(
             summary = "주문 수정",
             description = "주문을 수정합니다."
     )

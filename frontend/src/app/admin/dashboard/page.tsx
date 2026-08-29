@@ -46,7 +46,7 @@ export default function DashBoardPage() {
     const revenue = revenueDashBoards.reduce((acc, cur) => acc + cur.totalPrice, 0);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/v1/orders/dashboard?startDate=${date.startDate}&endDate=${date.endDate}`)
+        fetch(`http://localhost:8080/api/v1/admin/orders/dashboard?startDate=${date.startDate}&endDate=${date.endDate}`)
             .then((res) => res.json())
             .then((data) => setDashBoards(data.data));
         console.log(dashBoards);
