@@ -1,10 +1,10 @@
 package io.project.domain.order.dto;
 
-public record DashBoardResponse(String name, long quantity, long unitPrice, long totalPrice) {
-    public DashBoardResponse(String name, long quantity, long unitPrice, long totalPrice) {
-        this.name = name;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.totalPrice = totalPrice;
-    }
+import java.util.List;
+
+import static io.project.domain.delivery.repository.DeliveryRepository.*;
+
+public record DashBoardResponse(List<RevenueDashBoard> revenueDashBoards,
+                                List<SoldTop3DashBoard> soldTop3DashBoards,
+                                List<RevenueTop3DashBoard> revenueTop3DashBoards) {
 }

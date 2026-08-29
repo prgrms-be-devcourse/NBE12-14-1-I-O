@@ -2,15 +2,31 @@
 import { useEffect, useState } from "react";
 
 type DashBoard = {
+    revenueDashBoards: RevenueDashBoard[];
+    soldTop3DashBoards: SoldTop3DashBoard[];
+    revenueTop3DashBoards: RevenueTop3DashBoard[];
+}
+
+type RevenueDashBoard = {
     name: string;
     quantity: number;
     unitPrice: number;
     totalPrice: number;
 }
 
-export default function DashBoardPage() {
+type SoldTop3DashBoard = {
+    name: string;
+    quantity: number;
+    totalPrice: number;
+}
 
-    const [dashBoards, setDashBoards] = useState<DashBoard[]>([]);
+type RevenueTop3DashBoard = {
+    name: string;
+    quantity: number;
+    totalPrice: number;
+}
+
+export default function DashBoardPage() {
 
     const toDateInput = (d: Date) => {
         const y = d.getFullYear();
@@ -19,15 +35,23 @@ export default function DashBoardPage() {
         return `${y}-${m}-${day}`;
     };
 
-    const revenue = dashBoards.reduce((acc, cur) => acc + cur.totalPrice, 0);
+    const [dashBoards, setDashBoards] = useState<DashBoard | null>(null);
     const [date, setDate] = useState(
-        {startDate: toDateInput(new Date()), endDate: toDateInput(new Date()),});
+        { startDate: toDateInput(new Date()), endDate: toDateInput(new Date()), });
+
+    const revenueDashBoards = dashBoards !== null ? dashBoards.revenueDashBoards : [];
+    const soldTop3DashBoards = dashBoards !== null ? dashBoards.soldTop3DashBoards : [];
+    const revenueTop3DashBoards = dashBoards !== null ? dashBoards.revenueTop3DashBoards : [];
+
+    const revenue = revenueDashBoards.reduce((acc, cur) => acc + cur.totalPrice, 0);
 
     useEffect(() => {
         fetch(`http://localhost:8080/api/v1/orders/dashboard?startDate=${date.startDate}&endDate=${date.endDate}`)
             .then((res) => res.json())
             .then((data) => setDashBoards(data.data));
+        console.log(dashBoards);
     }, [date]);
+
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -95,18 +119,42 @@ export default function DashBoardPage() {
             p-8
           ">
                 <div>
-                    <span className="text-3xl py-8">총 수익: {revenue}원</span>
+                    <span className="text-3xl py-8">총 수익: {revenue.toLocaleString()}원</span>
                 </div>
                 <div>
                     <span className="text-3xl py-8">판매 목록</span>
                     <ul>
-                        {dashBoards.map((dashBoard, index) => (
+                        {revenueDashBoards.map((dashBoard, index) => (
                             <li key={index} className="flex m-4">
                                 <span className="text-xl font-bold m-2">- {dashBoard.name}</span>
-                                <span className="text-l m-2">{dashBoard.unitPrice}</span>
+                                <span className="text-l m-2">{dashBoard.unitPrice.toLocaleString()}</span>
                                 <span className="text-l m-2">x</span>
-                                <span className="text-l m-2">{dashBoard.quantity}</span>
-                                <span className="text-l m-2">= {dashBoard.totalPrice}원</span>
+                                <span className="text-l m-2">{dashBoard.quantity.toLocaleString()}</span>
+                                <span className="text-l m-2">= {dashBoard.totalPrice.toLocaleString()}원</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div>
+                    <span className="text-3xl py-8">가장 많이 팔린 원두 TOP 3</span>
+                    <ul>
+                        {soldTop3DashBoards.map((dashBoard, index) => (
+                            <li key={index} className="flex m-4">
+                                <span className="text-xl font-bold m-2">{index+1}등 - {dashBoard.name}</span>
+                                <span className="text-l m-2">{dashBoard.quantity.toLocaleString()}개</span>
+                                <span className="text-l m-2">{dashBoard.totalPrice.toLocaleString()}원</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div>
+                    <span className="text-3xl py-8">수익이 가장 높은 원두 TOP 3</span>
+                    <ul>
+                        {revenueTop3DashBoards.map((dashBoard, index) => (
+                            <li key={index} className="flex m-4">
+                                <span className="text-xl font-bold m-2">{index+1}등 - {dashBoard.name}</span>
+                                <span className="text-l m-2">{dashBoard.quantity.toLocaleString()}개</span>
+                                <span className="text-l m-2">{dashBoard.totalPrice.toLocaleString()}원</span>
                             </li>
                         ))}
                     </ul>

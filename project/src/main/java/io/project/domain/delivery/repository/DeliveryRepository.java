@@ -32,7 +32,38 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Integer> {
             "AND CAST(d.createdAt as date) >= :startDate " +
             "AND CAST(d.createdAt as date) <= :endDate " +
             "group by p.name")
-    List<DashBoardResponse> findDashBoard(@Param("startDate") LocalDate startDate,
+    List<RevenueDashBoard> findDashBoard(@Param("startDate") LocalDate startDate,
                                           @Param("endDate") LocalDate endDate);
 
+    record RevenueDashBoard(String name, long quantity, long unitPrice, long totalPrice) {}
+
+    @Query("select p.name, sum(oi.quantity), sum(oi.quantity * oi.unitPrice) " +
+            "from Delivery d " +
+            "join Order o on d.id = o.delivery.id " +
+            "join OrderItem oi on o.id = oi.order.id " +
+            "join Product p on oi.product.id = p.id " +
+            "where d.status != DeliveryStatus.CANCELLED " +
+            "AND CAST(d.createdAt as date) >= :startDate " +
+            "AND CAST(d.createdAt as date) <= :endDate " +
+            "group by p.name " +
+            "order by sum(oi.quantity) desc")
+    List<SoldTop3DashBoard> findSoldTop3DashBoard(@Param("startDate") LocalDate startDate,
+                                                  @Param("endDate") LocalDate endDate);
+
+    record SoldTop3DashBoard(String name, long quantity, long totalPrice) {}
+
+    @Query("select p.name, sum(oi.quantity), sum(oi.quantity * oi.unitPrice) " +
+            "from Delivery d " +
+            "join Order o on d.id = o.delivery.id " +
+            "join OrderItem oi on o.id = oi.order.id " +
+            "join Product p on oi.product.id = p.id " +
+            "where d.status != DeliveryStatus.CANCELLED " +
+            "AND CAST(d.createdAt as date) >= :startDate " +
+            "AND CAST(d.createdAt as date) <= :endDate " +
+            "group by p.name " +
+            "order by sum(oi.quantity * oi.unitPrice) desc")
+    List<RevenueTop3DashBoard> findRevenueTop3DashBoard(@Param("startDate") LocalDate startDate,
+                                                        @Param("endDate") LocalDate endDate);
+
+    record RevenueTop3DashBoard(String name, long quantity, long totalPrice) {}
 }

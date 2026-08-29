@@ -93,11 +93,11 @@ public class OrderController {
             description = "설정한 기간 내의 대시보드를 조회합니다."
     )
     @GetMapping("/dashboard")
-    public ResponseEntity<RsData<List<DashBoardResponse>>> dashBoard(
+    public ResponseEntity<RsData<DashBoardResponse>> dashBoard(
             @RequestParam("startDate")LocalDate startDate,
             @RequestParam("endDate")LocalDate endDate
             ) {
-        List<DashBoardResponse> dashBoard = orderService.getDashBoard(startDate, endDate);
+        DashBoardResponse dashBoard = orderService.getDashBoard(startDate, endDate);
 
         return ResponseEntity.ok(new RsData<>(
                 "200",
