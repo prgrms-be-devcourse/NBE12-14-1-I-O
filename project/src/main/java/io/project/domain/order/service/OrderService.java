@@ -46,12 +46,12 @@ public class OrderService {
                 );
     }
 
-
     // 주문 생성
     @Transactional
     public Order createOrder(OrderCreateRequest request) {
 
         LocalDateTime orderedAt = LocalDateTime.now(clock);
+
         LocalDate processingDate =
                 calculateProcessingDate(orderedAt);
 
@@ -70,7 +70,6 @@ public class OrderService {
             delivery = optionalDelivery.get();
 
         } else {
-
             delivery = new Delivery(
                     request.email(),
                     request.address(),
@@ -82,7 +81,10 @@ public class OrderService {
         }
 
         Order order =
-                new Order(orderedAt, delivery);
+                new Order(
+                        orderedAt,
+                        delivery
+                );
 
         delivery.addOrder(order);
 
@@ -114,8 +116,8 @@ public class OrderService {
     @Transactional
     public void updateOrder(
             int orderId,
-            int orderItemId,
-            int quantity
+            String address,
+            String postalCode
     ) {
 
         Order order = findById(orderId);
@@ -126,49 +128,46 @@ public class OrderService {
             );
         }
 
-        if (quantity < 1) {
+        Delivery delivery =
+                order.getDelivery();
+
+        LocalDate processingDate =
+                delivery.getProcessingDate();
+
+        LocalDateTime updateDeadline =
+                processingDate.atTime(14, 0);
+
+        LocalDateTime now =
+                LocalDateTime.now();
+
+        if (!now.isBefore(updateDeadline)) {
+            throw new IllegalStateException(
+                    "배송 처리일 오후 2시 이후에는 주문을 수정할 수 없습니다."
+            );
+        }
+
+        if (delivery.getStatus() != DeliveryStatus.ORDERED) {
+            throw new IllegalStateException(
+                    "배송이 시작된 주문은 수정할 수 없습니다."
+            );
+        }
+
+        if (address == null || address.isBlank()) {
             throw new IllegalArgumentException(
-                    "주문 수량은 1개 이상이어야 합니다."
+                    "주소를 입력해주세요."
             );
         }
 
-        OrderItem orderItem =
-                order.getOrderItems()
-                        .stream()
-                        .filter(item ->
-                                item.getId() == orderItemId
-                        )
-                        .findFirst()
-                        .orElseThrow(() ->
-                                new NotFoundException(
-                                        "주문 상품을 찾을 수 없습니다."
-                                )
-                        );
-
-        int oldQuantity =
-                orderItem.getQuantity();
-
-        int quantityDifference =
-                quantity - oldQuantity;
-
-        // 주문 수량 증가
-        if (quantityDifference > 0) {
-
-            productService.decreaseStockForOrder(
-                    orderItem.getProduct().getId(),
-                    quantityDifference
-            );
-
-            // 주문 수량 감소
-        } else if (quantityDifference < 0) {
-
-            productService.increaseStockForCancel(
-                    orderItem.getProduct().getId(),
-                    -quantityDifference
+        if (postalCode == null || postalCode.isBlank()) {
+            throw new IllegalArgumentException(
+                    "우편번호를 입력해주세요."
             );
         }
 
-        orderItem.updateQuantity(quantity);
+        delivery.updateAddress(
+                address,
+                postalCode
+        );
     }
 
     // 주문 취소
@@ -227,18 +226,35 @@ public class OrderService {
         );
     }
 
-    public DashBoardResponse getDashBoard(LocalDate startDate, LocalDate endDate) {
-        List<RevenueDashBoard> revenueDashBoards = deliveryRepository.findDashBoard(startDate, endDate);
-        List<SoldTop3DashBoard> soldTop3DashBoards = deliveryRepository.findSoldTop3DashBoard(startDate, endDate);
-        List<RevenueTop3DashBoard> revenueTop3DashBoards = deliveryRepository.findRevenueTop3DashBoard(startDate, endDate);
+    // 관리자 대시보드
+    public DashBoardResponse getDashBoard(
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
 
-        DashBoardResponse dashBoardResponse =
-                new DashBoardResponse(
-                        revenueDashBoards,
-                        soldTop3DashBoards,
-                        revenueTop3DashBoards);
+        List<RevenueDashBoard> revenueDashBoards =
+                deliveryRepository.findDashBoard(
+                        startDate,
+                        endDate
+                );
 
-        return dashBoardResponse;
+        List<SoldTop3DashBoard> soldTop3DashBoards =
+                deliveryRepository.findSoldTop3DashBoard(
+                        startDate,
+                        endDate
+                );
+
+        List<RevenueTop3DashBoard> revenueTop3DashBoards =
+                deliveryRepository.findRevenueTop3DashBoard(
+                        startDate,
+                        endDate
+                );
+
+        return new DashBoardResponse(
+                revenueDashBoards,
+                soldTop3DashBoards,
+                revenueTop3DashBoards
+        );
     }
 
     // 주문 목록 조회
@@ -250,27 +266,54 @@ public class OrderService {
     ) {
 
         if (startDate == null && endDate != null) {
-            throw new InvalidException("시작일을 입력해주세요.");
+            throw new InvalidException(
+                    "시작일을 입력해주세요."
+            );
         }
+
         if (startDate != null && endDate == null) {
-            throw new InvalidException("종료일을 입력해주세요.");
+            throw new InvalidException(
+                    "종료일을 입력해주세요."
+            );
         }
-        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
-            throw new InvalidException("시작일은 종료일보다 이후일 수 없습니다.");
+
+        if (startDate != null
+                && endDate != null
+                && startDate.isAfter(endDate)) {
+
+            throw new InvalidException(
+                    "시작일은 종료일보다 이후일 수 없습니다."
+            );
         }
 
         if (startDate != null && endDate != null) {
-            LocalDateTime startDateTime = startDate.atStartOfDay();
-            LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
-            List<Order> orderList =  this.orderRepository.findAllByDeliveryEmailAndOrderedAtBetweenOrderByOrderedAtDesc(
-                    email,startDateTime,endDateTime);
+
+            LocalDateTime startDateTime =
+                    startDate.atStartOfDay();
+
+            LocalDateTime endDateTime =
+                    endDate
+                            .plusDays(1)
+                            .atStartOfDay();
+
+            List<Order> orderList =
+                    orderRepository
+                            .findAllByDeliveryEmailAndOrderedAtBetweenOrderByOrderedAtDesc(
+                                    email,
+                                    startDateTime,
+                                    endDateTime
+                            );
 
             return orderList.stream()
                     .map(OrderListResponse::new)
                     .toList();
         }
 
-        List<Order> orderList = this.orderRepository.findAllByDeliveryEmailOrderByOrderedAtDesc(email);
+        List<Order> orderList =
+                orderRepository
+                        .findAllByDeliveryEmailOrderByOrderedAtDesc(
+                                email
+                        );
 
         return orderList.stream()
                 .map(OrderListResponse::new)
