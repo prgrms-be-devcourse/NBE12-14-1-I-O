@@ -46,7 +46,7 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Integer> {
             "AND CAST(d.createdAt as date) >= :startDate " +
             "AND CAST(d.createdAt as date) <= :endDate " +
             "group by p.name " +
-            "order by sum(oi.quantity) desc")
+            "order by sum(oi.quantity) desc limit 3")
     List<SoldTop3DashBoard> findSoldTop3DashBoard(@Param("startDate") LocalDate startDate,
                                                   @Param("endDate") LocalDate endDate);
 
@@ -61,7 +61,7 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Integer> {
             "AND CAST(d.createdAt as date) >= :startDate " +
             "AND CAST(d.createdAt as date) <= :endDate " +
             "group by p.name " +
-            "order by sum(oi.quantity * oi.unitPrice) desc")
+            "order by sum(oi.quantity * oi.unitPrice) desc limit 3")
     List<RevenueTop3DashBoard> findRevenueTop3DashBoard(@Param("startDate") LocalDate startDate,
                                                         @Param("endDate") LocalDate endDate);
 
