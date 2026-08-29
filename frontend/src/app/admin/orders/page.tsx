@@ -21,7 +21,8 @@ export default function AdminOrdersPage() {
     const [deliveryStatus, setDeliveryStatus] = useState("ORDERED");
     const [page, setPage] = useState<{ curPage: string, totalPages: string, size: string }>({ curPage: "0", totalPages: "0", size: "12" });
     const [products, setProducts] = useState<Product[]>([]);
-    const [select, setSelect] = useState(false);
+    const [productNameSelect, setProductNameSelect] = useState(false);
+    const [pageSizeSelect, setPageSizeSelect] = useState(false);
 
     useEffect(() => {
         fetch(`http://localhost:8080/api/v1/products`)
@@ -29,9 +30,14 @@ export default function AdminOrdersPage() {
             .then((res) => setProducts(res.data));
     }, []);
 
-    if (!select && productName === "직접 입력") {
-        setSelect(!select);
+    if (!productNameSelect && productName === "직접 입력") {
+        setProductNameSelect(!productNameSelect);
         setProductName("");
+    }
+
+    if (!pageSizeSelect && page.size === "직접 입력") {
+        setPageSizeSelect(!pageSizeSelect);
+        setPage({ ...page, size: "12" });
     }
 
     const handleSearch = async () => {
@@ -88,10 +94,10 @@ export default function AdminOrdersPage() {
                     <div className="flex-1">
                         <div>
                             <label className="block text-lg font-bold">
-                                상품명<span onClick={() => setSelect(false)} className="text-sm mx-4 p-1 border-2 rounded bg-gray-100 hover:bg-gray-300">다시 선택</span>
+                                상품명{productNameSelect && <span onClick={() => setProductNameSelect(false)} className="text-sm mx-4 p-1 border-2 rounded bg-gray-100 hover:bg-gray-300">다시 선택</span>}
                             </label>
                         </div>
-                        {!select &&
+                        {!productNameSelect &&
                             <select
                                 onChange={(e) => setProductName(e.target.value)}
                                 className="
@@ -111,7 +117,7 @@ export default function AdminOrdersPage() {
                                 }
                                 <option value="직접 입력">직접 입력</option>
                             </select>}
-                        {select &&
+                        {productNameSelect &&
                             <input
                                 type="text"
                                 placeholder="상품명"
@@ -202,24 +208,41 @@ export default function AdminOrdersPage() {
                     >
                         검색
                     </button>
-                    <div>
-                        <select
-                            onChange={(e) => setPage({ ...page, size: e.target.value })}
-                            className="
+                    <div className="flex-1">
+                        <div>
+                            <label className="block text-lg font-bold">
+                                검색 개수
+                            </label>
+                        </div>
+                        {!pageSizeSelect &&
+                            <select
+                                onChange={(e) => setPage({ ...page, size: e.target.value })}
+                                className="
                                 rounded-md
                                 border border-neutral-300
                                 bg-white
                                 hover:bg-gray-200
                                 p-3
                             "
-                        >
-                            <option value="12">12개</option>
-                            <option value="18">18개</option>
-                            <option value="24">24개</option>
-                            <option value="30">30개</option>
-                            <option value="60">60개</option>
-                            <option value="90">90개</option>
-                        </select>
+                            >
+                                <option value="12">12개</option>
+                                <option value="18">18개</option>
+                                <option value="24">24개</option>
+                                <option value="30">30개</option>
+                                <option value="60">60개</option>
+                                <option value="90">90개</option>
+                                <option value="직접 입력">직접 입력</option>
+                            </select>
+                        }
+                        {pageSizeSelect &&
+                            <input
+                                type="text"
+                                placeholder="검색 개수 입력"
+                                onChange={(e) =>
+                                    setPage({...page, size: e.target.value})}
+                                className="mt-2 w-full rounded-md border border-neutral-300 bg-white p-3"
+                            />
+                        }
                     </div>
                 </div>
 
