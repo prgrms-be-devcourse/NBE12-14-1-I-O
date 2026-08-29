@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -34,7 +35,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final DeliveryRepository deliveryRepository;
     private final ProductService productService;
-
+    private final Clock clock;
 
     // 주문 상세 조회
     @Transactional(readOnly = true)
@@ -50,7 +51,7 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderCreateRequest request) {
 
-        LocalDateTime orderedAt = LocalDateTime.now();
+        LocalDateTime orderedAt = LocalDateTime.now(clock);
         LocalDate processingDate =
                 calculateProcessingDate(orderedAt);
 

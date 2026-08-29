@@ -45,7 +45,6 @@ class OrderServiceTest {
     Product productC;
     Product productD;
 
-
     @BeforeEach
     void setUp() {
         productA = productService.save(new ProductAddRequest("productA", 100, 100, null));
@@ -58,7 +57,6 @@ class OrderServiceTest {
     @DisplayName("대시보드")
     @Transactional
     void getDashBoard() {
-        OrderService orderService = new OrderService(orderRepository, deliveryRepository, productService);
 
         createOrder("test@test", 1, 2); // 수익 200
         createOrder("test@test", 2, 5); // 수익 1000
