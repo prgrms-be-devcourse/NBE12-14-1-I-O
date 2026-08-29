@@ -46,11 +46,11 @@ export default function ProductAddModal({ onClose }: ProductAddModalProps) {
                 alert('상품이 등록되었습니다.');
                 onClose();
             } else {
-                const errorText = await response.text();
-                alert(`상품 등록 실패: ${errorText}`);
+                const errorText = await response.json();
+                alert(`상품 등록 실패: ${errorText.msg}`);
             }
         } catch (error) {
-            console.log('백엔드 서버와의 통신 에러', error);
+            console.error('백엔드 서버와의 통신 에러', error);
             alert('백엔드 서버 통신 에러');
         }
     }
