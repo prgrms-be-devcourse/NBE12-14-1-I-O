@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { OrderList } from "@/types/OrderList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/FormatDate";
+import { Product } from "@/types/Product";
 
 const toDateInput = (d: Date) => {
     const y = d.getFullYear();
@@ -19,6 +20,19 @@ export default function AdminOrdersPage() {
         { startDate: toDateInput(new Date()), endDate: toDateInput(new Date()), });
     const [deliveryStatus, setDeliveryStatus] = useState("ORDERED");
     const [page, setPage] = useState<{ curPage: string, totalPages: string, size: string }>({ curPage: "0", totalPages: "0", size: "12" });
+    const [products, setProducts] = useState<Product[]>([]);
+    const [select, setSelect] = useState(false);
+
+    useEffect(() => {
+        fetch(`http://localhost:8080/api/v1/products`)
+            .then((data) => data.json())
+            .then((res) => setProducts(res.data));
+    }, []);
+
+    if (!select && productName === "직접 입력") {
+        setSelect(!select);
+        setProductName("");
+    }
 
     const handleSearch = async () => {
         if ((date.startDate && !date.endDate) || (!date.startDate && date.endDate)) {
@@ -45,12 +59,10 @@ export default function AdminOrdersPage() {
             `http://localhost:8080/api/v1/admin/orders?${params.toString()}`
         );
         const data = await res.json();
-        console.log(data);
         setOrders(data.data.content);
         setPage({
             ...page, totalPages: data.data.totalPages
         });
-        console.log(data.data);
     };
     return (
         <main
@@ -74,24 +86,42 @@ export default function AdminOrdersPage() {
                 <div className="flex items-end gap-8">
                     {/* 상품명 */}
                     <div className="flex-1">
-                        <label className="block text-lg font-bold">
-                            상품명
-                        </label>
+                        <div>
+                            <label className="block text-lg font-bold">
+                                상품명<span onClick={() => setSelect(false)} className="text-sm mx-4 p-1 border-2 rounded bg-gray-100 hover:bg-gray-300">다시 선택</span>
+                            </label>
+                        </div>
+                        {!select &&
+                            <select
+                                onChange={(e) => setProductName(e.target.value)}
+                                className="
+                                rounded-md
+                                mt-2
+                                border border-neutral-300
+                                bg-white
+                                hover:bg-gray-200
+                                p-3
+                            "
+                            >
+                                <option value="">All</option>
+                                {products.map((product, index) =>
+                                    <option key={index} value={product.name}>
+                                        {product.name.length >= 10 ? product.name.slice(0, 20) + "..." : product.name}
+                                    </option>)
+                                }
+                                <option value="직접 입력">직접 입력</option>
+                            </select>}
+                        {select &&
+                            <input
+                                type="text"
+                                placeholder="상품명"
+                                onChange={(e) =>
+                                    setProductName(e.target.value)}
+                                className="mt-2 w-full rounded-md border border-neutral-300 bg-white p-3"
+                            />
+                        }
 
-                        <input
-                            type="text"
-                            placeholder="상품명"
-                            value={productName}
-                            onChange={(e) =>
-                                setProductName(e.target.value)}
-                            className="
-                mt-2 w-full
-                rounded-md
-                border border-neutral-300
-                bg-white
-                p-3
-              "
-                        />
+
                     </div>
                     <div className="flex-1">
                         <label className="block text-lg font-bold">
@@ -174,7 +204,7 @@ export default function AdminOrdersPage() {
                     </button>
                     <div>
                         <select
-                            onChange={(e) => setPage({...page, size: e.target.value})}
+                            onChange={(e) => setPage({ ...page, size: e.target.value })}
                             className="
                                 rounded-md
                                 border border-neutral-300
@@ -211,6 +241,13 @@ export default function AdminOrdersPage() {
                                         주문번호
                                     </span>
                                     <span>{order.orderId}</span>
+                                </div>
+
+                                <div className="flex justify-between">
+                                    <span className="font-bold">
+                                        주문자 이메일
+                                    </span>
+                                    <span>{order.email}</span>
                                 </div>
 
                                 <div className="flex justify-between">
