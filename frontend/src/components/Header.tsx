@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import CoffeeBean from "./icons/CoffeeBean";
 
 export default function Header() {
   const pathname = usePathname();
@@ -10,9 +11,12 @@ export default function Header() {
 
   return (
     <header className="relative flex flex-col items-center gap-6">
-      <Link href="/">
+      <Link href="/" className="flex">
+        <div className="text-amber-700 hover:text-amber-900">
+          <CoffeeBean className="w-10 h-10" />
+        </div>
         <h1 className="text-4xl font-bold">
-          카페이름
+          아요 Coffee
         </h1>
       </Link>
 
