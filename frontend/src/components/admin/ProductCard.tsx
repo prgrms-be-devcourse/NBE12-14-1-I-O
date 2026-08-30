@@ -24,7 +24,7 @@ export default function ProductCard({ product, onDelete, onEdit }: ProductCardPr
         >
             <img
                 className="w-full aspect-square rounded bg-neutral-100 object-cover"
-                src={product.imageFileUrl === 'images/null' ? '/baseThumbnail.png' : `${process.env.NEXT_PUBLIC_API_URL}/app/data/${product.imageFileUrl}`}
+                src={product.imageFileUrl === 'images/null' ? '/baseThumbnail.png' : `${process.env.NEXT_PUBLIC_IMAGE_URL}/${product.imageFileUrl}`}
                 alt="상품 이미지" />
 
             <h3 className="mt-4 font-bold w-[200px] truncate">
