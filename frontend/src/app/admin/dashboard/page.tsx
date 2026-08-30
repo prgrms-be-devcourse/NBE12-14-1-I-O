@@ -1,43 +1,19 @@
 'use client';
 import { useEffect, useState } from "react";
 
-type DashBoard = {
-    revenueDashBoards: RevenueDashBoard[];
-    soldTop3DashBoards: SoldTop3DashBoard[];
-    revenueTop3DashBoards: RevenueTop3DashBoard[];
-}
-
-type RevenueDashBoard = {
-    name: string;
-    quantity: number;
-    unitPrice: number;
-    totalPrice: number;
-}
-
-type SoldTop3DashBoard = {
-    name: string;
-    quantity: number;
-    totalPrice: number;
-}
-
-type RevenueTop3DashBoard = {
-    name: string;
-    quantity: number;
-    totalPrice: number;
-}
+const toDateInput = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+};
 
 export default function DashBoardPage() {
 
-    const toDateInput = (d: Date) => {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const day = String(d.getDate()).padStart(2, "0");
-        return `${y}-${m}-${day}`;
-    };
-
     const [dashBoards, setDashBoards] = useState<DashBoard | null>(null);
-    const [date, setDate] = useState(
-        { startDate: toDateInput(new Date()), endDate: toDateInput(new Date()), });
+    const [inputDate, setInputDate] = useState<{ startDate: string, endDate: string }>({ startDate: toDateInput(new Date()), endDate: toDateInput(new Date()), });
+    const [date, setDate] = useState<{ startDate: string, endDate: string }>({ startDate: toDateInput(new Date()), endDate: toDateInput(new Date()), });
+
 
     const revenueDashBoards = dashBoards !== null ? dashBoards.revenueDashBoards : [];
     const soldTop3DashBoards = dashBoards !== null ? dashBoards.soldTop3DashBoards : [];
@@ -49,15 +25,14 @@ export default function DashBoardPage() {
         fetch(`http://localhost:8080/api/v1/admin/orders/dashboard?startDate=${date.startDate}&endDate=${date.endDate}`)
             .then((res) => res.json())
             .then((data) => setDashBoards(data.data));
-        console.log(dashBoards);
     }, [date]);
 
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const form = new FormData(e.currentTarget);
-        const startDate = String(form.get("startDate"));
-        const endDate = String(form.get("endDate"));
+
+        const startDate = inputDate.startDate;
+        const endDate = inputDate.endDate;
 
         if (startDate > endDate) {
             alert("시작일이 종료일보다 늦으면 안됩니다.");
@@ -73,11 +48,29 @@ export default function DashBoardPage() {
                 <h1 className="text-4xl font-bold">대시보드</h1>
                 <form onSubmit={handleSubmit} className="flex flex-col items-end gap-3 m-3">
                     <div className="flex gap-2">
-                        <button type="button" className="px-3 py-1 font-bold text-sm border rounded bg-[#f4e5cc] hover:bg-[#dab58a]">
-                            금일 통계
+                        <button
+                            onClick={() => {
+                                setInputDate({ ...date, startDate: toDateInput(new Date()) });
+                                setDate({ ...date, startDate: toDateInput(new Date()) })
+                            }}
+                            type="button" className="px-3 py-1 font-bold text-sm border rounded bg-[#f4e5cc] hover:bg-[#dab58a]">
+                            일일 통계
                         </button>
-                        <button type="button" className="px-3 py-1 font-bold text-sm border rounded bg-[#f4e5cc] hover:bg-[#dab58a]">
-                            한달 통계
+                        <button 
+                        onClick={() => {
+                            setInputDate({...date, startDate: toDateInput(new Date(new Date().setDate(new Date().getDate() - 7)))})
+                            setDate({...date, startDate: toDateInput(new Date(new Date().setDate(new Date().getDate() - 7)))})
+                        }}
+                        type="button" className="px-3 py-1 font-bold text-sm border rounded bg-[#f4e5cc] hover:bg-[#dab58a]">
+                            주간 통계
+                        </button>
+                        <button 
+                        onClick={() => {
+                            setInputDate({...date, startDate: toDateInput(new Date(new Date().setMonth(new Date().getMonth() - 1)))})
+                            setDate({...date, startDate: toDateInput(new Date(new Date().setMonth(new Date().getMonth() - 1)))})
+                        }}
+                        type="button" className="px-3 py-1 font-bold text-sm border rounded bg-[#f4e5cc] hover:bg-[#dab58a]">
+                            월간 통계
                         </button>
                     </div>
                     <div className="flex items-end gap-3">
@@ -89,7 +82,8 @@ export default function DashBoardPage() {
                                 type="date"
                                 name="startDate"
                                 id="startDate"
-                                defaultValue={date.startDate}
+                                value={inputDate.startDate}
+                                onChange={(e) => { setInputDate({ ...inputDate, startDate: e.target.value }) }}
                                 className="
                                 rounded-md
                                 border border-neutral-300
@@ -109,7 +103,8 @@ export default function DashBoardPage() {
                                 type="date"
                                 name="endDate"
                                 id="endDate"
-                                defaultValue={date.endDate}
+                                value={inputDate.endDate}
+                                onChange={(e) => { setInputDate({ ...inputDate, endDate: e.target.value }) }}
                                 className="
                                 rounded-md
                                 border border-neutral-300
