@@ -5,6 +5,7 @@ import io.project.domain.product.repository.ProductRepository;
 import io.project.global.exception.NotFoundException;
 import io.project.global.exception.DuplicatedException;
 import io.project.global.exception.InvalidException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
 import static io.project.domain.product.dto.ProductRequest.*;
 
+@Slf4j
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
@@ -144,15 +147,28 @@ public class ProductService {
         }
 
         try {
-            Path imagePath = Path.of(IMAGE_PATH)
+            Path basePath = Path.of(IMAGE_PATH)
                     .toAbsolutePath()
-                    .normalize()
-                    .resolve(fileName);
+                    .normalize();
+
+            Path imagePath = basePath
+                    .resolve(fileName)
+                    .normalize();
+
+            if (!imagePath.startsWith(basePath)) {
+                log.warn(
+                        "잘못된 이미지 경로로 기존 이미지 삭제를 건너뜁니다. fileName={}",
+                        fileName
+                );
+                return;
+            }
 
             Files.deleteIfExists(imagePath);
-        } catch (IOException e) {
-            throw new InvalidException(
-                    "기존 이미지 삭제 중 오류가 발생했습니다.",
+
+        } catch (InvalidPathException | IOException e) {
+            log.warn(
+                    "기존 이미지 삭제에 실패했지만 상품 수정은 계속 진행합니다. fileName={}",
+                    fileName,
                     e
             );
         }
