@@ -13,7 +13,7 @@ export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/v1/products")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`)
         .then((res) => {
           if (!res.ok) {
             throw new Error(`백엔드 조회 실패 (상태코드: ${res.status})`);
@@ -39,7 +39,7 @@ export default function AdminPage() {
   const handleDeleteProduct = async (id: number) => {
     try {
       const response = await fetch(
-          `http://localhost:8080/api/v1/admin/products/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/products/${id}`,
           {
             method: "DELETE",
           }

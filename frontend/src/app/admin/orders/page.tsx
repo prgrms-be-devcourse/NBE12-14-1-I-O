@@ -45,7 +45,7 @@ export default function AdminOrdersPage() {
     const pageNumbers = Array.from({ length: endPage - startPage }, (_, i) => startPage + i);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/v1/products`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`)
             .then((data) => data.json())
             .then((res) => setProducts(res.data));
     }, []);
@@ -77,7 +77,7 @@ export default function AdminOrdersPage() {
         params.append("size", page.size);
         params.append("sort", page.sort);
 
-        fetch(`http://localhost:8080/api/v1/admin/orders?${params.toString()}`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/orders?${params.toString()}`)
             .then((res) => res.json())
             .then((data) => {
                 setOrders(data.data.content);
