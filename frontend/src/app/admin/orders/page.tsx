@@ -5,6 +5,7 @@ import { OrderList } from "@/types/OrderList";
 import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/FormatDate";
 import { Product } from "@/types/Product";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const toDateInput = (d: Date) => {
     const y = d.getFullYear();
@@ -14,16 +15,39 @@ const toDateInput = (d: Date) => {
 };
 
 export default function AdminOrdersPage() {
+
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const saveParams = ({ sort, size }: { sort: string, size: string }) => {
+        router.push(`?name=${productName}&startDate=${date.startDate}&endDate=${date.endDate}&status=${deliveryStatus}&page=${page.curPage}&size=${size || page.size}&sort=${sort || page.sort}&nameSelect=${productNameSelect}&sizeSelect=${pageSizeSelect}`);
+    }
+
     const [searchClick, setSearchClick] = useState(false);
     const [orders, setOrders] = useState<OrderList[]>([]);
-    const [productName, setProductName] = useState("");
+    const [productName, setProductName] = useState(searchParams.get('name') || "");
     const [date, setDate] = useState(
-        { startDate: toDateInput(new Date()), endDate: toDateInput(new Date()), });
-    const [deliveryStatus, setDeliveryStatus] = useState("ORDERED");
-    const [page, setPage] = useState<{ curPage: string, totalPages: string, size: string, sort: string }>({ curPage: "0", totalPages: "0", size: "12", sort: "DESC" });
+        {
+            startDate: searchParams.get('startDate') || toDateInput(new Date()),
+            endDate: searchParams.get('endDate') || toDateInput(new Date()),
+        });
+    const [deliveryStatus, setDeliveryStatus] = useState(searchParams.get('status') || "ORDERED");
+    const [page, setPage] = useState<{
+        curPage: string,
+        totalPages: string,
+        size: string,
+        sort: string
+    }>
+        ({
+            curPage: searchParams.get('page') || "0",
+            totalPages: "0",
+            size: searchParams.get('size') || "12",
+            sort: searchParams.get('sort') || "DESC"
+        });
+
     const [products, setProducts] = useState<Product[]>([]);
-    const [productNameSelect, setProductNameSelect] = useState(false);
-    const [pageSizeSelect, setPageSizeSelect] = useState(false);
+    const [productNameSelect, setProductNameSelect] = useState(searchParams.get('nameSelect') === 'true' || false);
+    const [pageSizeSelect, setPageSizeSelect] = useState(searchParams.get('sizeSelect') === 'true' || false);
 
     if (Number(page.curPage) < 0) {
         setPage({ ...page, curPage: "0" });
@@ -142,6 +166,7 @@ export default function AdminOrdersPage() {
                         <select
                             onChange={(e) => setDeliveryStatus(e.target.value)}
                             className="rounded-md mt-2 border border-neutral-300 bg-white hover:bg-gray-200 p-3"
+                            value={deliveryStatus}
                         >
                             <option value="ORDERED">주문 완료</option>
                             <option value="SHIPPING">배송 중</option>
@@ -182,7 +207,10 @@ export default function AdminOrdersPage() {
 
                     {/* 검색 버튼 */}
                     <button
-                        onClick={() => setSearchClick(!searchClick)}
+                        onClick={() => {
+                            saveParams({ size: "", sort: "" });
+                            setSearchClick(!searchClick)
+                        }}
                         className="rounded-md bg-neutral-600 hover:bg-black px-2 py-2 text-white"
                     >
                         검색
@@ -195,7 +223,11 @@ export default function AdminOrdersPage() {
                         </div>
                         {!pageSizeSelect &&
                             <select
-                                onChange={(e) => setPage({ ...page, size: e.target.value })}
+                                onChange={(e) => {
+                                    setPage({ ...page, size: e.target.value })
+                                    saveParams({ size: e.target.value, sort: "" });
+                                }}
+                                value={page.size}
                                 className="rounded-md border border-neutral-300 bg-white hover:bg-gray-200 p-3"
                             >
                                 <option value="12">12개</option>
@@ -222,6 +254,7 @@ export default function AdminOrdersPage() {
                     <button onClick={() => {
                         let s = page.sort === "DESC" ? "ASC" : "DESC";
                         setPage({ ...page, sort: s })
+                        saveParams({ sort: s, size: "" });
                     }}
                         className="border-1 rounded p-1 py-2 bg-gray-100 hover:bg-gray-300">{page.sort === "DESC" ? "내림차순" : "올림차순"}</button>
 

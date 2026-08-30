@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { OrderList } from "@/types/OrderList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/FormatDate";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const toDateInput = (d: Date) => {
     const y = d.getFullYear();
@@ -13,12 +14,28 @@ const toDateInput = (d: Date) => {
 };
 
 export default function OrdersPage() {
+
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const saveParams = () => {
+        router.push(`?email=${email}&startDate=${startDate}&endDate=${endDate}`);
+    }
+
     const [orders, setOrders] = useState<OrderList[]>([]);
-    const [email, setEmail] = useState("");
-    const [startDate, setStartDate] = useState(toDateInput(new Date()));
-    const [endDate, setEndDate] = useState(toDateInput(new Date()));
+    const [email, setEmail] = useState(searchParams.get('email') || "");
+    const [startDate, setStartDate] = useState(searchParams.get('startDate') || toDateInput(new Date()));
+    const [endDate, setEndDate] = useState(searchParams.get('endDate') || toDateInput(new Date()));
+
+    useEffect(() => {
+        handleSearch();
+    }, [])
 
     const handleSearch = async () => {
+        saveParams();
+        if (!searchParams.get('email') && !searchParams.get('startDate') && !searchParams.get('endDate')) {
+            return;
+        }
+
         if (!email.trim()) {
             alert("이메일을 입력해주세요.");
             return;
