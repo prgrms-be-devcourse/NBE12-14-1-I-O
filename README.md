@@ -1,13 +1,100 @@
 # NBE12-14-1-I-O
 
-백엔드 12기 14회차 1차 프로젝트 I/O팀 레포지터리입니다.
+## 아요 Coffee
 
-## 일정
+매일 오후 2시, 오늘의 커피를 준비합니다.
 
-| 일 | 월 | 화 | 수 | 목 | 금 | 토 |
-|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-| | 24 | 25 | 26 | 27<br>개발 마무리 | 28<br>멘토링 | 29 |
-| 30 | 31 | | | | | |
+## 프로젝트 개요
+
+‘아요 Coffee’는 스프링 부트 기반의 웹사이트입니다.
+비회원 고객이 이메일로 원두를 주문할 수 있으며,
+매일 전날 오후 2시부터 당일 오후 2시까지 받은 주문들을 하나의 배송 단위로 묶어 처리하는 원두 주문·배송 서비스를 제공합니다.
+상품 조회, 주문·배송 처리, 관리자 상품 관리 및 통계 조회, 이메일을 통한 주문 내역 확인 등의 CRUD를 구현했습니다.
+
+---
+
+# 🏗️ 시스템 아키텍처 (System Architecture)
+
+본 프로젝트는 Next.js 기반의 프론트엔드와 Spring Boot 기반의 백엔드가 분리된 멀티 모듈 구조로 설계되었습니다.
+컴포넌트 구조와 네트워크 인프라 배치는 다음과 같습니다.
+
+![시스템 아키텍처 다이어그램](https://github.com/user-attachments/assets/2e32ba8f-7b60-4769-be8c-5eec697139aa)
+
+--
+
+# 📊 ERD (Entity Relationship Diagram)
+
+프로젝트의 핵심 도메인(상품, 주문, 배송) 간의 RDB 설계 구조입니다.
+
+![아요 Coffee ERD](https://github.com/user-attachments/assets/b7cc46d6-350c-4a3f-8f00-40f468f8bf0d)
+
+### 💡 핵심 설계 포인트
+- **비회원 주문:** `ORDERS` 테이블에 `email`을 직접 저장하여 비회원 기반 서비스 구현
+- **배송 단위 묶음:** 매일 오후 2시 기준 스케줄러 처리를 위해 `DELIVERY` 엔티티가 다수의 `ORDERS`를 묶는 `1:N` 구조 설계
+
+---
+
+# 🛠️ 기술 스택 (Tech Stack)
+
+## 백엔드 (Backend)
+- **Java 25** (주 언어)
+- **Spring Boot** (v4.1.1)
+- **Spring Data JPA**
+- **H2 Database** (인메모리 DB)
+- **Lombok** / **Validation**
+
+## 프론트엔드 (Frontend)
+- **TypeScript** (주 언어)
+- **Next.js** (v16.3.3)
+- **React** (v19.2.8)
+- **Tailwind CSS** (v4)
+- **React Compiler**
+
+## API 문서화 (API Documentation)
+- **Swagger / Springdoc-openapi** (v3.1.0)
+
+## 빌드 도구 (Build Tool)
+- **Gradle** (Groovy DSL)
+
+---
+
+# 🔌 API 명세 (API Documentation)
+
+프론트엔드와 백엔드의 유기적인 데이터 흐름을 위해 **Swagger(Springdoc-openapi)**를 도입하여 API를 공유하고 검증했습니다.
+로컬 환경에서 서버 실행 시 아래 주소를 통해 전체 API 명세 확인 및 테스트가 가능합니다.
+
+- **Swagger UI 주소:** `http://localhost:8080/api/v1/swagger-ui/index.html`
+
+![Swagger 주문 API 명세 화면](https://github.com/user-attachments/assets/9af61d80-d727-4cae-a6b8-54278cf3843f)
+![Swagger 관리자 API 명세 화면](https://github.com/user-attachments/assets/72e50996-71cd-4371-b35b-a8ed4adc3150)
+
+---
+
+# 📂 프로젝트 구조 (Project Structure)
+
+루트 폴더를 기준으로 프론트엔드와 백엔드가 분리되어 유기적으로 관리되는 멀티 모듈 구조입니다.
+
+```text
+NBE12-14-1-I-O/                      # 루트 폴더
+│
+├── project/                        # 백엔드 영역 (Spring Boot 4.1.1)
+│   └── src/main/java/io/project/
+│       ├── domain/                 # 비즈니스 핵심 도메인 (배달, 주문, 상품)
+│       │   ├── delivery/           # 배달 관리 레이어
+│       │   ├── order/              # 주문/결제 API (OrderController, OrderAdminController)
+│       │   └── product/            # 상품 CRUD API (ProductController, AdminProductController)
+│       └── global/                 # 글로벌 공통 설정
+│           ├── exception/          # 공통 예외 처리 (GlobalExceptionHandler)
+│           └── scheduling/         # 관리자 대시보드 통계 자동 집계 스케줄러 (DeliveryScheduler)
+│
+└── frontend/                       # 프론트엔드 영역 (Next.js 16 & React 19)
+    └── src/
+        ├── app/                    # 서비스 페이지 및 라우팅 (App Router)
+        │   ├── admin/dashboard/    # 관리자 통계 대시보드 페이지
+        │   ├── cart/ & checkout/   # 장바구니 및 주문 결제 페이지
+        │   └── orders/[orderId]/   # 주문 내역 및 상세 조회 페이지 (동적 라우팅)
+        └── components/             # 독립형 UI 컴포넌트 (상품 추가/수정 모달, 카드 등)
+```
 
 ---
 
@@ -22,179 +109,21 @@
 
 ---
 
-## 협업 규칙
+🚀 시작하기 (Getting Started)
 
-### 브랜치 전략
+로컬 개발 환경에서 프로젝트를 검증하기 위한 실행 방법입니다.
 
-- 모든 작업 브랜치는 최신 `main` 브랜치에서 생성한다.
-- `main` 브랜치에는 직접 push하지 않는다.
-- 모든 변경 사항은 PR과 리뷰를 통해 `main`에 merge한다.
-
-### PR 규칙
-
-- 제목 규칙: `[타입] 작업내용`
-- PR 본문은 PR Template에 맞춰 작성한다.
-- 수정 사항과 중점 리뷰 포인트를 작성한다.
-- 관련 Notion WBS 작업을 기재한다.
-- 최소 1명의 리뷰 승인 후 `main`에 merge한다.
-
-예시:
-
-- `[feat] 주문 생성 API 구현`
-- `[fix] 주문 총액 계산 오류 수정`
-- `[docs] 협업 규칙 수정`
-
-### Branch 규칙
-
-명명 규칙:
-
-`타입/작업명`
-
-- 영문 소문자를 사용한다.
-- 단어는 `-`로 구분한다.
-
-예시:
-
-- `feat/order-create`
-- `feat/order-list`
-- `fix/order-price`
-- `chore/project-setting`
-
-### Commit Message 규칙
-
-형식:
-
-`타입: 작업내용`
-
-타입:
-
-- `feat`: 새로운 기능
-- `fix`: 버그 수정
-- `refactor`: 기능 변경 없는 코드 개선
-- `test`: 테스트 코드
-- `docs`: 문서 수정
-- `chore`: 설정 및 개발 환경 작업
-
-예시:
-
-- `feat: 주문 생성 API 구현`
-- `fix: 주문 총액 계산 오류 수정`
-- `refactor: 주문 생성 로직 분리`
-- `test: 주문 생성 테스트 추가`
-- `docs: README 협업 규칙 추가`
-- `chore: H2 설정 추가`
-
----
-
-## 작업 흐름
-
-### 1. 새로운 작업 시작
-
-새로운 기능 개발을 시작하기 전에 로컬 `main` 브랜치를 최신 상태로 갱신합니다.
-
+### 백엔드 실행 방법 (Backend Execution)
+```bash
+cd project
+./gradlew bootRun
 ```
-git checkout main
-git pull --ff-only origin main
+* 서버 실행 후 **Swagger API 문서**는 `http://localhost:8080/api/v1/swagger-ui/index.html`에서 확인하실 수 있습니다.
+
+### 프론트엔드 실행 방법 (Frontend Execution)
+```bash
+cd frontend
+npm install
+npm run dev
 ```
-
-- `git checkout main`
-    - 현재 브랜치를 `main`으로 변경합니다.
-- `git pull --ff-only origin main`
-    - 원격 저장소의 최신 `main` 내용을 로컬 `main`에 반영합니다.
-    - `--ff-only`를 사용하여 불필요한 merge commit이 생성되는 것을 방지합니다.
-
-최신 `main`을 기준으로 새로운 작업 브랜치를 생성합니다.
-
-```
-git checkout -b feat/order-create
-```
-
-브랜치명은 다음 규칙을 따릅니다.
-
-```
-타입/작업명
-```
-
-예시:
-
-```
-feat/order-create
-feat/order-list
-feat/product-create
-fix/order-price
-chore/project-setting
-```
-
----
-
-### 2. 작업 중 최신 `main` 반영
-
-기능을 개발하는 동안 다른 팀원의 PR이 `main`에 merge될 수 있습니다.
-
-현재 작업 중인 브랜치에 최신 `main`의 변경 사항을 반영해야 하는 경우 다음과 같이 진행합니다.
-
-커밋 후 원격 저장소의 최신 정보를 가져옵니다.
-
-```
-git add .
-git commit -m "feat: 주문 생성 기능 추가"
-git pull origin main --rebase
-```
-
-코드가 합쳐졌을 때 같은 줄을 동시에 수정했을 경우 conflict가 발생할 수도 있습니다.
-
-남길 코드를 정했다면 아래 코드를 입력합니다.
-
-충돌이 발생하지 않았을 경우 해당 부분은 건너뛰고 바로 push를 진행합니다.
-```
-git add .
-git rebase --continue
-```
-
-이후 push 합니다.
-```
-git push origin feat/order-create
-or
-git push origin feat/order-create -f
-```
-
-깃허브에서 PR 승인을 받고 브랜치를 지운 후 다음 코드를 입력합니다.
-```
-git checkout main
-git pull origin main
-git branch -D feat/order-create
-git fetch --prune
-```
-
-1번으로 돌아가 새로운 작업을 시작합니다.
-
---- 
-
-### 예외 처리
-
-- 예외 클래스는 `io/project/global/exception/비즈니스예외Exeption.java`를 상속받습니다.
-  - `BusinessException`: 비즈니스 예외 최상위 클래스
-  - `NotFoundException`
-  - 또 다른 예외가 생기는 경우 추가 바랍니다.
-- 각 도메인 패키지 하위 `/exception/비즈니스예외Exception.java` 로 생성하여 사용합니다.
-- `try-catch` 사용 또는 Optional로 기존 예외 대신 위에서 생성한 예외를 던져주시면 됩니다.
-- 사용
-  ```JAVA
-  public class ProductNotFoundException extends NotFoundException {
-    public ProductNotFoundException() {
-        super("제품을 찾을 수 없습니다.");
-    }
-  
-    public ProductNotFoundException(String message) {
-        super(message);
-    }
-
-    public ProductNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-  }
-  ```
-  ```JAVA
-  Product product = productRepository.findByName(name)
-                                        .orElseThrow(() -> new ProductNotFoundException());
-  ``` 
+* 브라우저에서 `http://localhost:3000`으로 접속하시면 **프론트엔드 개발 서버**를 확인하실 수 있습니다.
