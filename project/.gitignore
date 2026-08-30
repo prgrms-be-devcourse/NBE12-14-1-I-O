@@ -39,8 +39,9 @@ out/
 ###custom###
 db_dev.mv.db
 db_dev.trace.db
+/data/
+/images/**
 !/images/Brazil_Serra_Do_Caparaó-image.png
 !/images/Columbia_Nariño-image.png
 !/images/Columbia_Quindío-image.png
 !/images/Ethiopia_Sidamo-image.png
-/images/**
