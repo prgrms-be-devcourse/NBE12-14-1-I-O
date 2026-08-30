@@ -12,8 +12,6 @@ export default function ProductCardUser({ product, quantities, handleClickDecrea
 
     quantities === undefined ? quantities = 1 : undefined;
 
-    console.log(`${process.env.NEXT_PUBLIC_API_URL}/app/data/${product.imageFileUrl}`);
-
     return (
         <article
             key={product.id}
@@ -30,7 +28,7 @@ export default function ProductCardUser({ product, quantities, handleClickDecrea
                   items-center justify-center
                   bg-neutral-100
                   text-neutral-400"
-                src={product.imageFileUrl === 'images/null' ? '/baseThumbnail.png' : `${process.env.NEXT_PUBLIC_API_URL}/app/data/${product.imageFileUrl}`}
+                src={product.imageFileUrl === 'images/null' ? '/baseThumbnail.png' : `${process.env.NEXT_PUBLIC_IMAGE_URL}/${product.imageFileUrl}`}
                 alt="상품 이미지" />
 
 
