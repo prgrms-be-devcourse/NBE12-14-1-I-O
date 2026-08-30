@@ -1,10 +1,10 @@
 # NBE12-14-1-I-O
 
-## 아요 Coffee
+# ☕️ 아요 Coffee
 
 매일 오후 2시, 오늘의 커피를 준비합니다.
 
-## 프로젝트 개요
+## 📝 프로젝트 개요
 
 ‘아요 Coffee’는 스프링 부트 기반의 웹사이트입니다.
 비회원 고객이 이메일로 원두를 주문할 수 있으며,
@@ -13,7 +13,7 @@
 
 ---
 
-# 🏗️ 시스템 아키텍처 (System Architecture)
+## 🏗️ 시스템 아키텍처 (System Architecture)
 
 본 프로젝트는 Next.js 기반의 프론트엔드와 Spring Boot 기반의 백엔드가 분리된 멀티 모듈 구조로 설계되었습니다.
 컴포넌트 구조와 네트워크 인프라 배치는 다음과 같습니다.
@@ -22,7 +22,7 @@
 
 ---
 
-# 📊 ERD (Entity Relationship Diagram)
+## 📊 ERD (Entity Relationship Diagram)
 
 프로젝트의 핵심 도메인(상품, 주문, 배송) 간의 RDB 설계 구조입니다.
 
@@ -34,31 +34,31 @@
 
 ---
 
-# 🛠️ 기술 스택 (Tech Stack)
+## 🛠️ 기술 스택 (Tech Stack)
 
-## 백엔드 (Backend)
+### 백엔드 (Backend)
 - **Java 25** (주 언어)
 - **Spring Boot** (v4.1.1)
 - **Spring Data JPA**
 - **H2 Database** (인메모리 DB)
 - **Lombok** / **Validation**
 
-## 프론트엔드 (Frontend)
+### 프론트엔드 (Frontend)
 - **TypeScript** (주 언어)
 - **Next.js** (v16.3.3)
 - **React** (v19.2.8)
 - **Tailwind CSS** (v4)
 - **React Compiler**
 
-## API 문서화 (API Documentation)
+### API 문서화 (API Documentation)
 - **Swagger / Springdoc-openapi** (v3.1.0)
 
-## 빌드 도구 (Build Tool)
+### 빌드 도구 (Build Tool)
 - **Gradle** (Groovy DSL)
 
 ---
 
-# 🔌 API 명세 (API Documentation)
+## 🔌 API 명세 (API Documentation)
 
 프론트엔드와 백엔드의 유기적인 데이터 흐름을 위해 **Swagger(Springdoc-openapi)**를 도입하여 API를 공유하고 검증했습니다.
 로컬 환경에서 서버 실행 시 아래 주소를 통해 전체 API 명세 확인 및 테스트가 가능합니다.
@@ -70,7 +70,7 @@
 
 ---
 
-# 📂 프로젝트 구조 (Project Structure)
+## 📂 프로젝트 구조 (Project Structure)
 
 루트 폴더를 기준으로 프론트엔드와 백엔드가 분리되어 유기적으로 관리되는 멀티 모듈 구조입니다.
 
@@ -109,7 +109,7 @@ NBE12-14-1-I-O/                      # 루트 폴더
 
 ---
 
-# 🚀 시작하기 (Getting Started)
+## 🚀 시작하기 (Getting Started)
 
 로컬 개발 환경에서 프로젝트를 검증하기 위한 실행 방법입니다.
 
