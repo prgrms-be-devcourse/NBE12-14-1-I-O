@@ -91,7 +91,7 @@ NBE12-14-1-I-O/                      # 루트 폴더
 └── frontend/                       # 프론트엔드 영역 (Next.js 16 & React 19)
     └── src/
         ├── app/                    # 서비스 페이지 및 라우팅 (App Router)
-        │   ├── admin/dashboard/    # 관리자 통계 대시보드 페이지
+        │   ├── admin/dashboard/    # 관리자 상품 관리 및 통계 대시보드 페이지
         │   ├── cart/ & checkout/   # 장바구니 및 주문 결제 페이지
         │   └── orders/[orderId]/   # 주문 내역 및 상세 조회 페이지 (동적 라우팅)
         └── components/             # 독립형 UI 컴포넌트 (상품 추가/수정 모달, 카드 등)
