@@ -29,7 +29,7 @@ export default function OrderDetailPage({
 
   // 주문 상세 조회
   useEffect(() => {
-    fetch(`http://localhost:8080/api/v1/orders/${orderId}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}`)
         .then((res) => {
           if (!res.ok) {
             throw new Error(
@@ -80,7 +80,7 @@ export default function OrderDetailPage({
 
     try {
       const response = await fetch(
-          `http://localhost:8080/api/v1/orders/${orderId}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}`,
           {
             method: "DELETE",
           }
@@ -188,7 +188,7 @@ export default function OrderDetailPage({
 
     try {
       const response = await fetch(
-          `http://localhost:8080/api/v1/orders/${orderId}?${params.toString()}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}?${params.toString()}`,
           {
             method: "PATCH",
           }

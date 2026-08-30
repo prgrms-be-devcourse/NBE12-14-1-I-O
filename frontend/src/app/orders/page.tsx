@@ -40,7 +40,7 @@ export default function OrdersPage() {
 
         try {
             const res = await fetch(
-                `http://localhost:8080/api/v1/orders?${params.toString()}`
+                `${process.env.NEXT_PUBLIC_API_URL}/orders?${params.toString()}`
             );
 
             if (!res.ok) {

@@ -64,7 +64,7 @@ export default function CartPage() {
                   items-center justify-center
                   bg-neutral-100
                   text-neutral-400"
-              src={item.imageFileUrl === 'images/null' ? '/baseThumbnail.png' : `http://localhost:8080/api/v1/${item.imageFileUrl}`}
+              src={item.imageFileUrl === 'images/null' ? '/baseThumbnail.png' : `${process.env.NEXT_PUBLIC_API_URL}/${item.imageFileUrl}`}
               alt="상품 이미지" />
 
             {/* 상품 정보 */}
