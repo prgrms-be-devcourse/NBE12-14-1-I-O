@@ -74,6 +74,10 @@ export default function OrdersPage() {
         }
     };
 
+    if (orders === null) {
+        return <div>주문이 없습니다.</div>;
+    }
+
     return (
         <main
             className="

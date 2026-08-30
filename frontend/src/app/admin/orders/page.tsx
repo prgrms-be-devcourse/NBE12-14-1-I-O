@@ -121,6 +121,10 @@ export default function AdminOrdersPage() {
         setPage({ ...page, size: "12" });
     }
 
+    if (orders === null) {
+        return <div>주문 내역이 없습니다.</div>;
+    }
+
     return (
         <main className="mx-auto mt-8 max-w-7xl rounded-[40px] bg-white p-12">
             {/* 검색 영역 */}
