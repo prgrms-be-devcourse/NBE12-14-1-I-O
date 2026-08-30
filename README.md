@@ -20,7 +20,7 @@
 
 ![시스템 아키텍처 다이어그램](https://github.com/user-attachments/assets/2e32ba8f-7b60-4769-be8c-5eec697139aa)
 
---
+---
 
 # 📊 ERD (Entity Relationship Diagram)
 
@@ -109,7 +109,7 @@ NBE12-14-1-I-O/                      # 루트 폴더
 
 ---
 
-🚀 시작하기 (Getting Started)
+# 🚀 시작하기 (Getting Started)
 
 로컬 개발 환경에서 프로젝트를 검증하기 위한 실행 방법입니다.
 
