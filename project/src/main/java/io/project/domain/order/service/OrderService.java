@@ -143,7 +143,7 @@ public class OrderService {
                 processingDate.atTime(14, 0);
 
         LocalDateTime now =
-                LocalDateTime.now();
+                LocalDateTime.now(clock);
 
         if (!now.isBefore(updateDeadline)) {
             throw new IllegalStateException(
