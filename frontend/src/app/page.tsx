@@ -21,8 +21,6 @@ export default function Home() {
     fetch("http://localhost:8080/api/v1/products")
         .then((res) => res.json())
         .then((data) => {
-          console.log("상품 조회 결과:", data);
-
           setProducts(
               Array.isArray(data.data)
                   ? data.data
