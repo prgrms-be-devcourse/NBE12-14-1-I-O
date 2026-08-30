@@ -1,11 +1,14 @@
 package io.project.domain.order.controller;
 
 import io.project.domain.order.dto.DashBoardResponse;
+import io.project.domain.order.dto.OrderListResponse;
 import io.project.domain.order.service.OrderService;
 import io.project.global.dto.RsData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +40,25 @@ public class AdminOrderController {
                 "200",
                 "대시보드를 성공적으로 불러왔습니다.",
                 dashBoard
+        ));
+    }
+
+    @GetMapping
+    public ResponseEntity<RsData<Page<OrderListResponse>>> orderList(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "startDate", required = false) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) LocalDate endDate,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(value = "sort", required = false, defaultValue = "desc") String sort
+    ) {
+        Page<OrderListResponse> response = orderService.orderListPaging(name, startDate, endDate, status, page, size, sort);
+
+        return ResponseEntity.ok(new RsData<>(
+                "200",
+                "주문 목록을 성공적으로 불러왔습니다.",
+                response
         ));
     }
 }
