@@ -5,11 +5,18 @@ import { OrderList } from "@/types/OrderList";
 import { useState } from "react";
 import { formatDate } from "@/utils/FormatDate";
 
+const toDateInput = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+};
+
 export default function OrdersPage() {
     const [orders, setOrders] = useState<OrderList[]>([]);
     const [email, setEmail] = useState("");
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const [startDate, setStartDate] = useState(toDateInput(new Date()));
+    const [endDate, setEndDate] = useState(toDateInput(new Date()));
 
     const handleSearch = async () => {
         if (!email.trim()) {
