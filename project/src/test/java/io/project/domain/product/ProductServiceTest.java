@@ -17,10 +17,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import io.project.domain.product.dto.ProductRequest.*;
@@ -119,18 +119,40 @@ class ProductServiceTest {
     void saveWithImage() {
         ProductRepository productRepository = mock(ProductRepository.class);
         ProductService productService = new ProductService(productRepository, IMAGE_PATH);
-        MockMultipartFile image = new MockMultipartFile("image", "coffee.png", "image/png", "dummy".getBytes());
-        Product testProduct = new Product("name", 1, 1, image.getOriginalFilename());
-        ProductAddRequest requestDto = new ProductAddRequest("name", 1, 1, image);
 
-        when(productRepository.save(testProduct))
-                .thenReturn(testProduct);
+        MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "coffee.png",
+                "image/png",
+                "dummy".getBytes()
+        );
+
+        ProductAddRequest requestDto =
+                new ProductAddRequest("name", 1, 1, image);
 
         Product product = productService.save(requestDto);
 
-        assertEquals(testProduct.getName(), product.getName());
-        assertEquals(testProduct.getPrice(), product.getPrice());
-        assertEquals(testProduct.getStock(), product.getStock());
-        assertEquals("name-image.png", product.getFileName());
+        assertEquals("name", product.getName());
+        assertEquals(1, product.getPrice());
+        assertEquals(1, product.getStock());
+
+        // UUID 기반 파일명이 생성됐는지 확인
+        assertNotNull(product.getFileName());
+        assertTrue(product.getFileName().endsWith(".png"));
+
+        String uuidPart =
+                product.getFileName()
+                        .substring(0, product.getFileName().length() - 4);
+
+        assertDoesNotThrow(() -> UUID.fromString(uuidPart));
+
+        // 실제 테스트 이미지 디렉터리에 파일이 생성됐는지 확인
+        Path savedImage =
+                Path.of(IMAGE_PATH)
+                        .toAbsolutePath()
+                        .normalize()
+                        .resolve(product.getFileName());
+
+        assertTrue(Files.exists(savedImage));
     }
 }
