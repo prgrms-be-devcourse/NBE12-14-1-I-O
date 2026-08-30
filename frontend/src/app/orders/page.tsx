@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { OrderList } from "@/types/OrderList";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { formatDate } from "@/utils/FormatDate";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -13,7 +13,7 @@ const toDateInput = (d: Date) => {
     return `${y}-${m}-${day}`;
 };
 
-export default function OrdersPage() {
+function OrdersContent() {
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -282,3 +282,11 @@ export default function OrdersPage() {
         </main>
     );
 }
+
+export default function OrdersPage() {
+    return (
+      <Suspense fallback={<div>주문 내역 로딩 중...</div>}>
+        <OrdersContent />
+      </Suspense>
+    );
+  }

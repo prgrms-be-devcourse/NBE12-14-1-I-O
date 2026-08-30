@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { OrderList } from "@/types/OrderList";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { formatDate } from "@/utils/FormatDate";
 import { Product } from "@/types/Product";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -14,7 +14,7 @@ const toDateInput = (d: Date) => {
     return `${y}-${m}-${day}`;
 };
 
-export default function AdminOrdersPage() {
+function AdminOrdersContent() {
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -254,13 +254,13 @@ export default function AdminOrdersPage() {
                         }
                     </div>
 
-                    {/* 내림차순 올림차순 */}
+                    {/* 최신순 과거순 */}
                     <button onClick={() => {
                         let s = page.sort === "DESC" ? "ASC" : "DESC";
                         setPage({ ...page, sort: s })
                         saveParams({ sort: s, size: "" });
                     }}
-                        className="border-1 rounded p-1 py-2 bg-gray-100 hover:bg-gray-300">{page.sort === "DESC" ? "내림차순" : "올림차순"}</button>
+                        className="border-1 rounded p-1 py-2 bg-gray-100 hover:bg-gray-300">{page.sort === "DESC" ? "최신순" : "과거순"}</button>
 
                 </div>
 
@@ -351,5 +351,13 @@ export default function AdminOrdersPage() {
                 </div>
             </section>
         </main>
+    );
+}
+
+export default function AdminOrdersPage() {
+    return (
+        <Suspense fallback={<div className="p-12 text-center">로그딩 중...</div>}>
+            <AdminOrdersContent />
+        </Suspense>
     );
 }
