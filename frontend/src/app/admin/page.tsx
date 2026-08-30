@@ -15,8 +15,6 @@ export default function AdminPage() {
   useEffect(() => {
     fetch("http://localhost:8080/api/v1/products")
         .then((res) => {
-          console.log("상품 조회 상태코드:", res.status);
-
           if (!res.ok) {
             throw new Error(`백엔드 조회 실패 (상태코드: ${res.status})`);
           }
@@ -24,8 +22,6 @@ export default function AdminPage() {
           return res.json();
         })
         .then((data) => {
-          console.log("상품 조회 응답:", data);
-
           if (Array.isArray(data.data)) {
             setProducts(data.data);
           } else {
