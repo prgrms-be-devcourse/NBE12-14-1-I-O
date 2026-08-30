@@ -61,7 +61,7 @@
 
 ## 🔌 API 명세 (API Documentation)
 
-프론트엔드와 백엔드의 유기적인 데이터 흐름을 위해 **Swagger(Springdoc-openapi)**를 도입하여 API를 공유하고 검증했습니다.
+프론트엔드와 백엔드의 유기적인 데이터 흐름을 위해 **Swagger(Springdoc-openapi)를** 도입하여 API를 공유하고 검증했습니다.
 로컬 환경에서 서버 실행 시 아래 주소를 통해 전체 API 명세 확인 및 테스트가 가능합니다.
 
 - **Swagger UI 주소:** `http://localhost:8080/api/v1/swagger-ui/index.html`
