@@ -95,6 +95,7 @@ export default function ProductCardUser({ product, quantities, handleClickDecrea
                             name: product.name,
                             price: product.price,
                             quantity: quantities ?? 1,
+                            imageFileUrl: product.imageFileUrl,
                         };
                         const savedCart = localStorage.getItem("cart");
 
