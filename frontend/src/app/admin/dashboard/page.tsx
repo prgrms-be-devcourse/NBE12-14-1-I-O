@@ -49,7 +49,6 @@ export default function DashBoardPage() {
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/orders/dashboard?startDate=${date.startDate}&endDate=${date.endDate}`)
             .then((res) => res.json())
             .then((data) => setDashBoards(data.data));
-        console.log(dashBoards);
     }, [date]);
 
 
