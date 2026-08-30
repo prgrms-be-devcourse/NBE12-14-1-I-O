@@ -81,11 +81,11 @@ NBE12-14-1-I-O/                      # 루트 폴더
 ├── project/                        # 백엔드 영역 (Spring Boot 4.1.1)
 │   └── src/main/java/io/project/
 │       ├── domain/                 # 비즈니스 핵심 도메인 (배달, 주문, 상품)
-│       │   ├── delivery/           # 배달 관리 레이어
-│       │   ├── order/              # 주문/결제 API (OrderController, OrderAdminController)
-│       │   └── product/            # 상품 CRUD API (ProductController, AdminProductController)
-│       └── global/                 # 글로벌 공통 설정
-│           ├── exception/          # 공통 예외 처리 (GlobalExceptionHandler)
+│       │   ├── delivery/           # 배달 도메인 (오후 2시 마감 배송 묶음 배치 처리)
+│       │   ├── order/              # 주문 도메인 (비회원 주문 처리 및 내역 조회/검색 API)
+│       │   └── product/            # 상품 도메인 (전체 상품 정보 제공 및 관리자 관리 API)
+│       └── global/                 # 애플리케이션 전역 공통 아키텍처 설정 레이어
+│           ├── exception/          # 공통 예외 비즈니스 처리 (GlobalExceptionHandler)
 │           └── scheduling/         # 관리자 대시보드 통계 자동 집계 스케줄러 (DeliveryScheduler)
 │
 └── frontend/                       # 프론트엔드 영역 (Next.js 16 & React 19)
