@@ -19,7 +19,7 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
         let cleanPath = product.imageFileUrl.trim().replace(/^\//, '');
         if (cleanPath.startsWith('api/v1/')) cleanPath = cleanPath.substring(7);
         if (cleanPath.startsWith('images/')) cleanPath = cleanPath.substring(7);
-        return `http://localhost:8080/api/v1/images/${cleanPath}?v=${Date.now()}`;
+        return `${process.env.NEXT_PUBLIC_API_URL}/images/${cleanPath}?v=${Date.now()}`;
     });
 
     useEffect(() => {
@@ -27,7 +27,7 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
             let cleanPath = product.imageFileUrl.trim().replace(/^\//, '');
             if (cleanPath.startsWith('api/v1/')) cleanPath = cleanPath.substring(7);
             if (cleanPath.startsWith('images/')) cleanPath = cleanPath.substring(7);
-            setPreviewUrl(`http://localhost:8080/api/v1/images/${cleanPath}?t=${Date.now()}`);
+            setPreviewUrl(`${process.env.NEXT_PUBLIC_API_URL}/images/${cleanPath}?t=${Date.now()}`);
         }
     }, [product.imageFileUrl]);
 
@@ -72,7 +72,7 @@ export default function ProductUpdateModal({ product, onClose }: ProductUpdateMo
                 formData.append('image', imageFile);
             }
 
-            const response = await fetch(`http://localhost:8080/api/v1/admin/products/${product.id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/products/${product.id}`, {
                 method: 'PATCH',
                 body: formData,
             });
