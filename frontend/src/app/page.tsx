@@ -18,7 +18,7 @@ export default function Home() {
 
   // 상품 조회
   useEffect(() => {
-    fetch("http://localhost:8080/api/v1/products")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`)
         .then((res) => res.json())
         .then((data) => {
           setProducts(

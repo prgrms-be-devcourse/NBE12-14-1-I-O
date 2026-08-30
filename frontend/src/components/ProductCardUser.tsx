@@ -28,7 +28,7 @@ export default function ProductCardUser({ product, quantities, handleClickDecrea
                   items-center justify-center
                   bg-neutral-100
                   text-neutral-400"
-                src={product.imageFileUrl === 'images/null' ? '/baseThumbnail.png' : `${process.env.API_URL}/${product.imageFileUrl}`}
+                src={product.imageFileUrl === 'images/null' ? '/baseThumbnail.png' : `${process.env.NEXT_PUBLIC_API_URL}/${product.imageFileUrl}`}
                 alt="상품 이미지" />
 
 
