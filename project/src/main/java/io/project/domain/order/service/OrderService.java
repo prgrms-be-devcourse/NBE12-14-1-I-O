@@ -74,6 +74,10 @@ public class OrderService {
         if (optionalDelivery.isPresent()) {
             delivery = optionalDelivery.get();
 
+            if (delivery.getStatus() == DeliveryStatus.CANCELLED) {
+                delivery.reopen();
+            }
+
         } else {
             delivery = new Delivery(
                     request.email(),
@@ -125,17 +129,20 @@ public class OrderService {
             String postalCode
     ) {
 
+        // 1. 수정할 주문 조회
         Order order = findById(orderId);
 
+        // 2. 이미 취소된 주문인지 확인
         if (order.getStatus() == OrderStatus.CANCELED) {
             throw new IllegalStateException(
                     "취소된 주문은 수정할 수 없습니다."
             );
         }
 
-        Delivery delivery =
-                order.getDelivery();
+        // 3. 현재 주문이 속한 배송 그룹
+        Delivery delivery = order.getDelivery();
 
+        // 4. 배송 처리일 기준 수정 가능 시간 계산
         LocalDate processingDate =
                 delivery.getProcessingDate();
 
@@ -145,18 +152,21 @@ public class OrderService {
         LocalDateTime now =
                 LocalDateTime.now(clock);
 
+        // 5. 배송 처리일 오후 2시 이후에는 수정 불가
         if (!now.isBefore(updateDeadline)) {
             throw new IllegalStateException(
                     "배송 처리일 오후 2시 이후에는 주문을 수정할 수 없습니다."
             );
         }
 
+        // 6. 이미 배송이 시작된 주문은 수정 불가
         if (delivery.getStatus() != DeliveryStatus.ORDERED) {
             throw new IllegalStateException(
                     "배송이 시작된 주문은 수정할 수 없습니다."
             );
         }
 
+        // 7. 요청값 검증
         if (address == null || address.isBlank()) {
             throw new IllegalArgumentException(
                     "주소를 입력해주세요."
@@ -169,13 +179,71 @@ public class OrderService {
             );
         }
 
-        delivery.updateAddress(
-                address,
-                postalCode
-        );
+        // 8. 기존 배송지와 같다면 수정할 필요 없음
+        if (delivery.getAddress().equals(address)
+                && delivery.getPostalCode().equals(postalCode)) {
+            return;
+        }
+
+        // 9. 변경하려는 배송 조건과 동일한 Delivery 조회
+        Optional<Delivery> optionalNewDelivery =
+                deliveryRepository
+                        .findByEmailAndAddressAndPostalCodeAndProcessingDate(
+                                delivery.getEmail(),
+                                address,
+                                postalCode,
+                                processingDate
+                        );
+
+        Delivery newDelivery;
+
+        if (optionalNewDelivery.isPresent()) {
+
+            // 10-1. 기존 Delivery 재사용
+            newDelivery = optionalNewDelivery.get();
+
+            // 기존 배송 그룹이 취소 상태라면 다시 활성화
+            if (newDelivery.getStatus() == DeliveryStatus.CANCELLED) {
+                newDelivery.reopen();
+            }
+
+            // 방어 코드:
+            // 취소 상태는 reopen으로 ORDERED가 되지만,
+            // SHIPPING 등 이미 배송이 시작된 그룹에는 합칠 수 없음
+            if (newDelivery.getStatus() != DeliveryStatus.ORDERED) {
+                throw new IllegalStateException(
+                        "이미 배송이 시작된 배송 그룹으로 변경할 수 없습니다."
+                );
+            }
+
+        } else {
+
+            // 10-2. 같은 조건의 Delivery가 없다면 새로 생성
+            newDelivery = new Delivery(
+                    delivery.getEmail(),
+                    address,
+                    postalCode,
+                    processingDate
+            );
+
+            deliveryRepository.save(newDelivery);
+        }
+
+        // 11. 기존 배송 그룹에서 현재 주문 제거
+        delivery.removeOrder(order);
+
+        // 12. Order의 실제 Delivery 참조 변경
+        order.changeDelivery(newDelivery);
+
+        // 13. 새로운 배송 그룹의 주문 목록에도 추가
+        newDelivery.addOrder(order);
+
+        // 14. 기존 Delivery에 주문이 하나도 남지 않았다면 취소
+        if (delivery.getOrders().isEmpty()) {
+            delivery.cancel();
+        }
     }
 
-    // 주문 취소
     @Transactional
     public void cancelOrder(int orderId) {
 
@@ -184,6 +252,14 @@ public class OrderService {
         if (order.getStatus() == OrderStatus.CANCELED) {
             throw new IllegalStateException(
                     "이미 취소된 주문입니다."
+            );
+        }
+
+        Delivery delivery = order.getDelivery();
+
+        if (delivery.getStatus() != DeliveryStatus.ORDERED) {
+            throw new IllegalStateException(
+                    "배송이 시작된 주문은 취소할 수 없습니다."
             );
         }
 
@@ -196,6 +272,19 @@ public class OrderService {
         }
 
         order.cancel();
+
+        boolean allCanceled =
+                delivery.getOrders()
+                        .stream()
+                        .allMatch(
+                                deliveryOrder ->
+                                        deliveryOrder.getStatus()
+                                                == OrderStatus.CANCELED
+                        );
+
+        if (allCanceled) {
+            delivery.cancel();
+        }
     }
 
     // 배송 처리 날짜 계산
@@ -219,15 +308,17 @@ public class OrderService {
     @Transactional
     public void ship() {
 
+        LocalDateTime now = LocalDateTime.now(clock);
+
         List<Delivery> deliveries =
                 deliveryRepository
                         .findAllByStatusAndProcessingDate(
                                 DeliveryStatus.ORDERED,
-                                LocalDate.now(clock)
+                                now.toLocalDate()
                         );
 
         deliveries.forEach(
-                Delivery::updateShipped
+                delivery -> delivery.updateShipped(now)
         );
     }
 

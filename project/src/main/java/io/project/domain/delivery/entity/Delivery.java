@@ -68,9 +68,13 @@ public class Delivery extends BaseEntity {
         this.orders.add(order);
     }
 
-    public void updateShipped() {
+    public void removeOrder(Order order) {
+        this.orders.remove(order);
+    }
+
+    public void updateShipped(LocalDateTime shippedAt) {
         this.status = DeliveryStatus.SHIPPING;
-        this.shippedAt = LocalDateTime.now();
+        this.shippedAt = shippedAt;
     }
 
     // 배송 취소
@@ -78,12 +82,8 @@ public class Delivery extends BaseEntity {
         this.status = DeliveryStatus.CANCELLED;
     }
 
-    // 배송지 주소 수정
-    public void updateAddress(
-            String address,
-            String postalCode
-    ) {
-        this.address = address;
-        this.postalCode = postalCode;
+    public void reopen() {
+        this.status = DeliveryStatus.ORDERED;
     }
+
 }
