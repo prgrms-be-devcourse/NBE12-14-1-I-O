@@ -43,6 +43,10 @@ public class AdminOrderController {
         ));
     }
 
+    @Operation(
+            summary = "주문 검색",
+            description = "상품명, 기간, 배송 상태, 페이징 필드를 기준으로 고객의 주문 내역을 조회합니다."
+    )
     @GetMapping
     public ResponseEntity<RsData<Page<OrderListResponse>>> orderList(
             @RequestParam(value = "name", required = false) String name,
