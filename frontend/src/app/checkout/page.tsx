@@ -152,6 +152,13 @@ export default function CheckoutPage() {
               const result = await response.json();
 
               if (!response.ok) {
+                if (result.msg === 'email-NotBlank-이메일을 입력해주세요.') {
+                  alert('이메일을 입력해주세요.');
+                }
+                if (result.msg === 'email-Email-올바른 이메일 형식이 아닙니다.') {
+                  alert('올바른 이메일 형식을 입력해주세요.');
+                }
+                
                 console.log("주문 생성 실패:", result);
                 return;
               }
