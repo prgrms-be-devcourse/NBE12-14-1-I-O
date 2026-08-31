@@ -24,7 +24,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOriginPatterns(
                         "http://localhost:3000",
-                        "https://*.vercel.app"
+                        "https://www.devcproject.cloud/"
                 )
 
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
