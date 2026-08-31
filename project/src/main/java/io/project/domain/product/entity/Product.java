@@ -87,4 +87,5 @@ public class Product extends BaseEntity {
 
         this.stock += quantity;
     }
+    // CI 테스트
 }
